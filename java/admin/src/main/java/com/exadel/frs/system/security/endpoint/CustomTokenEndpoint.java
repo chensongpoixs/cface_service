@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Objects;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Slf4j
 @RequestMapping(ADMIN + "/oauth/token")
 public class CustomTokenEndpoint extends TokenEndpoint {
 
@@ -39,7 +42,7 @@ public class CustomTokenEndpoint extends TokenEndpoint {
             Principal principal,
             @RequestParam Map<String, String> parameters
     ) throws HttpRequestMethodNotSupportedException {
-
+        log.info("=======================================================================");
         if (principal instanceof UsernamePasswordAuthenticationToken authenticationToken
                 && authenticationToken.getPrincipal() instanceof User) {
             return ResponseEntity.status(HttpStatus.OK).build();

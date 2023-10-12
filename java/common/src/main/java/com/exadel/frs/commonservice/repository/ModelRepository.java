@@ -31,9 +31,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Long> {
 
+//    Optional<Model> findByApiKey(String apiKey);
     Optional<Model> findByApiKeyAndType(String apiKey, ModelType type);
 
     Stream<Model> findAllByIdIn(Set<Long> ids);
+//    List<Model> findAll();
 
     Optional<Model> findByGuid(String guid);
 

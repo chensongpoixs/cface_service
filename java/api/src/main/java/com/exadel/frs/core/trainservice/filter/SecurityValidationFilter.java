@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
@@ -63,6 +64,8 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Profile("!integration-test")
 @Order(1)
+@Slf4j
+
 public class SecurityValidationFilter implements Filter {
 
     public static final String VERIFICATION = "Verification";
@@ -85,7 +88,7 @@ public class SecurityValidationFilter implements Filter {
     ) throws IOException, ServletException {
         val httpRequest = (HttpServletRequest) servletRequest;
         val httpResponse = (HttpServletResponse) servletResponse;
-
+        log.info("==============================================doFilter==============================================");
         String requestURI = httpRequest.getRequestURI();
         if (!requestURI.matches("^/(swagger|webjars|v2|api/v1/migrate|api/v1/consistence/status|api/v1/static|api/v1/config).*$")) {
             val headersMap =
@@ -105,25 +108,34 @@ public class SecurityValidationFilter implements Filter {
                     }
 
                     UUID.fromString(key);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
+                    log.info(" api key failed !!! ");
                     val objectResponseEntity = handler.handleDefinedExceptions(new BadFormatModelKeyException());
                     buildException(httpResponse, objectResponseEntity);
 
                     return;
                 }
+
                 val modelType = getModelTypeByUrl(requestURI);
                 val validationResult = modelService.validateModelKey(key, modelType);
-                if (validationResult.getResult() != OK) {
+                if (validationResult.getResult() != OK)
+                {
+
                     val capitalize = ModelType.VERIFY.equals(modelType) ? VERIFICATION : StringUtils.capitalize(modelType.name().toLowerCase());
                     val objectResponseEntity = handler.handleDefinedExceptions(new ModelNotFoundException(key, capitalize));
                     buildException(httpResponse, objectResponseEntity);
 
                     return;
                 }
-                if (requestURI.matches("^/(api/v1/recognition/recognize|api/v1/detection/detect|api/v1/verification/verify).*$")) {
+                if (requestURI.matches("^/(api/v1/recognition/recognize|api/v1/detection/detect|api/v1/verification/verify).*$"))
+                {
+                    log.info(" recognize --> "  );
                     modelStatisticCacheProvider.incrementRequestCount(validationResult.getModelId());
                 }
             } else {
+                log.info("not  find apikey failed !!!");
                 val objectResponseEntity = handler.handleMissingRequestHeader(X_FRS_API_KEY_HEADER);
                 buildException(httpResponse, objectResponseEntity);
 

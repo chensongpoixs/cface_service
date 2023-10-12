@@ -48,6 +48,7 @@ public class FeignClientsConfig {
 
     private final EnvironmentProperties properties;
 
+    // python java
     @Bean
     public FacesFeignClient facesFeignClient() {
         return Feign.builder()
