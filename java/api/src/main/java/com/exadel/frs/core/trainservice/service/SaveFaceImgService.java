@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface SaveFaceImgService
 {
 
-      void AddSaveFace(SaveFaceImg saveFaceImg);
+      SaveFaceImg AddSaveFace(SaveFaceImg saveFaceImg);
 }

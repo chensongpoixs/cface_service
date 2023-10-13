@@ -22,7 +22,7 @@ import java.util.UUID;
 //public class User {
 //    //...
 //}
-@Table(name = "savefaceimg", schema = "public")
+@Table(name = "t_savefaceimg", schema = "public")
 //记得添加上依赖包
 //        结合@Data注解进行自动注入
 //主要功能是：丰富java自动资源管理，自动生成getter、setter、equals、hashCode和toString等等
@@ -39,11 +39,11 @@ public class SaveFaceImg
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
-    @Basic
-    @Column(name = "uuid_id", nullable = false, length = 255)
-    private String uuid_id;
+//    @Basic
+//    @Column(name = "uuid_id", nullable = false, length = 255)
+//    private String uuid_id;
 
     @Basic
     @Column(name = "api_key", nullable = false, length = 255)

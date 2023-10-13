@@ -20,8 +20,10 @@ import com.exadel.frs.commonservice.sdk.faces.FacesApiClient;
 import com.exadel.frs.commonservice.sdk.faces.exception.FacesServiceException;
 import com.exadel.frs.commonservice.sdk.faces.feign.dto.FacesStatusResponse;
 import com.exadel.frs.core.trainservice.cache.EmbeddingCacheProvider;
+import com.exadel.frs.core.trainservice.component.ResultEmbeddingData;
 import com.google.common.primitives.Doubles;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -39,6 +41,7 @@ import static java.lang.Math.min;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class EuclideanDistanceClassifier implements Classifier {
 
     public static final int PREDICTION_COUNT_INFINITY = -1;
@@ -63,8 +66,38 @@ public class EuclideanDistanceClassifier implements Classifier {
             for (int i = 0; i < min(predictionCount, sortedIndexes.length); i++) {
                 var prob = probabilities[sortedIndexes[i]];
                 var embedding = indexMap.get(sortedIndexes[i]);
-
+//                embedding.projection2Index()
+                log.info("embeddingId ==> " + embedding.embeddingId());
                 result.add(Pair.of(prob, embedding.subjectName()));
+            }
+        }
+        return result;
+    }
+    @Override
+    public List<Pair<Double, ResultEmbeddingData>> predict(final double[] input, final String apiKey, final int resultCount, int c) {
+        INDArray inputFace = Nd4j.create(input);
+        inputFace = normalizeOne(inputFace);
+
+        var embeddingCollection = embeddingCacheProvider.getOrLoad(apiKey);
+        final INDArray embeddings = embeddingCollection.getEmbeddings();
+
+        var result = new ArrayList<Pair<Double, ResultEmbeddingData>>();
+        if (embeddings != null && embeddings.length() > 0) {
+            val probabilities = recognize(inputFace, embeddings);
+            val sortedIndexes = sortedIndexes(probabilities);
+            val indexMap = embeddingCollection.getIndexMap();
+            int predictionCount = getPredictionCount(resultCount, sortedIndexes);
+
+            for (int i = 0; i < min(predictionCount, sortedIndexes.length); i++) {
+                var prob = probabilities[sortedIndexes[i]];
+                var embedding = indexMap.get(sortedIndexes[i]);
+//                embedding.projection2Index()
+                log.info("embeddingId ==> " + embedding.embeddingId());
+                ResultEmbeddingData  data_embedding = new ResultEmbeddingData();
+                data_embedding.setSubjectName(embedding.subjectName());
+                data_embedding.setEmbeddingId(embedding.embeddingId().toString());
+//                data_embedding.setProd(prob);
+                result.add(Pair.of(prob, data_embedding));
             }
         }
         return result;

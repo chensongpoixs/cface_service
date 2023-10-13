@@ -27,5 +27,7 @@ public class FaceSimilarityDto {
 
     String subject;
 
+    String embeddingId;
+
     float similarity;
 }

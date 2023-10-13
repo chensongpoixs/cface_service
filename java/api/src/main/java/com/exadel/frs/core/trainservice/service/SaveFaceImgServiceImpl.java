@@ -15,9 +15,9 @@ public class SaveFaceImgServiceImpl implements SaveFaceImgService
     private SaveFaceImgRepository saveFaceImgRepository;
 
     @Override
-    public void AddSaveFace(SaveFaceImg saveFaceImg)
+    public SaveFaceImg AddSaveFace(SaveFaceImg saveFaceImg)
     {
-        saveFaceImgRepository.save(saveFaceImg);
+        return  saveFaceImgRepository.save(saveFaceImg);
     }
 
 //    @Override

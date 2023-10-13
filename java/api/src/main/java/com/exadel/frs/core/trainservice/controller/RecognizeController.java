@@ -91,19 +91,19 @@ public class RecognizeController {
             final Boolean status,
             @ApiParam(value = DETECT_FACES_DESC)
             @RequestParam(value = DETECT_FACES, required = false, defaultValue = DETECT_FACES_DEFAULT_VALUE)
-            final Boolean detectFaces//,
+            final Boolean detectFaces,
 //            @ApiParam(value = DETECT_FACE_TIMESTAMP)
 //            @RequestParam(value = FACE_TIMESTAMP, required = false, defaultValue = "1")
-//            @ApiParam(value = DETECT_FACE_TIMESTAMP, example = NUMBER_VALUE_EXAMPLE)
-//            @RequestParam(defaultValue = PREDICTION_COUNT_DEFAULT_VALUE, name = FACE_TIMESTAMP, required = false)
-//            @Min(value = 1, message = DETECT_FACE_TIMESTAMP)
-//            final Integer timestamp,
-////            @ApiParam(value = DETECT_DeviceID)
-////            @RequestParam(value = DETECT_DEVICE_ID, required = false, defaultValue = "0")
-//            @ApiParam(value = DETECT_DeviceID, example = NUMBER_VALUE_EXAMPLE)
-//            @RequestParam(defaultValue = PREDICTION_COUNT_DEFAULT_VALUE, name = DETECT_DEVICE_ID, required = false)
-//            @Min(value = 1, message = DETECT_DeviceID)
-//            final Integer device_id
+            @ApiParam(value = DETECT_FACE_TIMESTAMP, example = NUMBER_VALUE_EXAMPLE)
+            @RequestParam(defaultValue = PREDICTION_COUNT_DEFAULT_VALUE, name = FACE_TIMESTAMP, required = false)
+            @Min(value = 1, message = DETECT_FACE_TIMESTAMP)
+            final Integer timestamp,
+//            @ApiParam(value = DETECT_DeviceID)
+//            @RequestParam(value = DETECT_DEVICE_ID, required = false, defaultValue = "0")
+            @ApiParam(value = DETECT_DeviceID, example = NUMBER_VALUE_EXAMPLE)
+            @RequestParam(defaultValue = PREDICTION_COUNT_DEFAULT_VALUE, name = DETECT_DEVICE_ID, required = false)
+            @Min(value = 1, message = DETECT_DeviceID)
+            final Integer device_id
 
     ) {
         ProcessImageParams processImageParams = ProcessImageParams
@@ -125,9 +125,9 @@ public class RecognizeController {
 
         long cur_ms =  System.currentTimeMillis();
 //        String outpath = "";
-        String originalFilename = file.getOriginalFilename();
+//        String originalFilename = file.getOriginalFilename();
         /*获取文件格式*/
-        String fileFormat = originalFilename.substring(originalFilename.lastIndexOf("."));
+//        String fileFormat = originalFilename.substring(originalFilename.lastIndexOf("."));
 //        JinshanTable jinshanTable = new JinshanTable();
 //        jinshanTable.setFileId(fileId);
 //        List<JinshanTable> list = jinshanTableService.selectJinshanTableList(jinshanTable);
@@ -143,25 +143,25 @@ public class RecognizeController {
 //            File file1 = new File(path);
 //            boolean mkdir = file1.mkdir();
 //        }
-        Date day = new Date();
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
-        String outpath = "D:/Work/cai/face/images/" + sdf.format(day) +"/" + apiKey + "/";
-        File file1 = new File(outpath);
-        boolean mkdir =  file1.mkdir();
-//        static long image_count = 0;
-        SimpleDateFormat  file_prefix= new SimpleDateFormat("yyyyMMddHHmmss");
-        String new_file_name = file_prefix.format(day) + "_" +UUID.randomUUID();
-        MultipartFileToFileUtils.saveMultipartFile(file, new_file_name, outpath);
+      //  Date day = new Date();
+       // SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
+        String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
+//        File file1 = new File(outpath);
+//        boolean mkdir =  file1.mkdir();
+////        static long image_count = 0;
+//        SimpleDateFormat  file_prefix= new SimpleDateFormat("yyyyMMddHHmmss");
+//        String new_file_name = file_prefix.format(day) + "_" +UUID.randomUUID();
+      String local_file_name_prefix =  MultipartFileToFileUtils.saveMultipartFile(file, apiKey, outpath);
         log.info("save img = " + (System.currentTimeMillis() - cur_ms) + " ms");
 
         SaveFaceImg sfaceimg = new SaveFaceImg();
-        sfaceimg.setUuid_id(UUID.randomUUID().toString());
-        sfaceimg.setTimestmap((int) System.currentTimeMillis());
+//        sfaceimg.setUuid_id(UUID.randomUUID().toString());
+        sfaceimg.setTimestmap(timestamp);
         sfaceimg.setApi_key(apiKey);
-        sfaceimg.setImg_url(new_file_name);
-        sfaceimg.setDevice_id(44);
-        saveFaceImgService.AddSaveFace(sfaceimg);
-
+        sfaceimg.setImg_url(local_file_name_prefix);
+        sfaceimg.setDevice_id(device_id);
+        SaveFaceImg new_sfaceimg =   saveFaceImgService.AddSaveFace(sfaceimg);
+        log.info(new_sfaceimg.toString());
         // 拦截并保存图片和信息
         return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
     }

@@ -20,12 +20,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
+import com.exadel.frs.core.trainservice.component.ResultEmbeddingData;
 import org.apache.commons.lang3.tuple.Pair;
 
 public interface Classifier extends Serializable {
 
     List<Pair<Double, String>> predict(double[] input, String apiKey, int resultCount);
 
+    List<Pair<Double, ResultEmbeddingData>> predict(double[] input, String apiKey, int resultCount, int c);
     Double verify(double[] input, String apiKey, UUID embeddingId);
 
     double[] verify(double[] sourceImageEmbedding, double[][] targetImageEmbedding);

@@ -66,9 +66,9 @@ public class Constants {
     public static final String CACHE_CONTROL_HEADER_VALUE = "public, max-age=31536000";
 
 
-//    public static final String DETECT_FACE_TIMESTAMP = "face timestamp ";
-//    public static final String FACE_TIMESTAMP = "timestamp";
-//    public static final String DETECT_DeviceID = "device_id";
-//    public static final String DETECT_DEVICE_ID = "device_id";
+    public static final String DETECT_FACE_TIMESTAMP = "face timestamp ";
+    public static final String FACE_TIMESTAMP = "timestamp";
+    public static final String DETECT_DeviceID = "device_id";
+    public static final String DETECT_DEVICE_ID = "device_id";
 //}
 }

@@ -33,7 +33,9 @@ public class FaceClassifierPredictor {
     public List<Pair<Double, String>> predict(final String modelKey, final double[] input, final int resultCount) {
         return classifier.predict(input, modelKey, resultCount);
     }
-
+    public List<Pair<Double, ResultEmbeddingData>> predict(final String modelKey, final double[] input, final int resultCount, int c) {
+        return classifier.predict(input, modelKey, resultCount, 0);
+    }
     public Double verify(final String modelKey, final double[] input, final UUID embeddingId) {
         return classifier.verify(input, modelKey, embeddingId);
     }
