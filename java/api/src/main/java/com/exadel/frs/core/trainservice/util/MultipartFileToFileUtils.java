@@ -1,7 +1,11 @@
 package com.exadel.frs.core.trainservice.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -9,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 public class MultipartFileToFileUtils
 {
     /**
@@ -90,5 +95,50 @@ public class MultipartFileToFileUtils
         }
     }
 
+
+
+
+
+
+    public static boolean  buildSubImage(String img_file_path, String sub_img_file_path, int x, int y, int w, int h)
+    {
+        try {
+            // 读取原始图像
+//            File input = new File(img_file_path);
+            BufferedImage originalImage = ImageIO.read(new File(img_file_path));
+
+            // Assume the subtracted area is at (100, 100) with width 200 and height 200
+//            int x = 100;
+//            int y = 100;
+//            int width = 200;
+//            int height = 200;
+            // 定义要裁剪的矩形区域
+            Rectangle cropRect = new Rectangle(x, y, w, h);
+            // 获取裁剪后的图像
+            BufferedImage croppedImage = originalImage.getSubimage(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
+            File dir = new File(sub_img_file_path);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            // 将裁剪后的图像写入到文件
+            ImageIO.write(croppedImage, "jpg", dir);
+            // Create a new BufferedImage that represents the subtracted area
+//            BufferedImage subtraction = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+//            Graphics2D g = subtraction.createGraphics();
+//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_IN));
+//            g.drawImage(image, x, y, w, h, null);
+//            g.dispose();
+//
+//            // Write the subtracted image to a file
+//            File output = new File(sub_img_file_path);
+//            ImageIO.write(subtraction, "jpg", output);
+            log.info(" save sub img " +x +", "+ y +","+ w +"," + h +", img url = " + sub_img_file_path + ", OK !!!");
+        } catch (IOException e) {
+            log.error( e.getMessage());
+            log.info("======================================================================");
+            return false;
+        }
+        return true;
+    }
 
 }

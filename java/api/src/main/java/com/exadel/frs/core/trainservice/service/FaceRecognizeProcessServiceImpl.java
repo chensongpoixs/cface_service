@@ -63,7 +63,7 @@ public class FaceRecognizeProcessServiceImpl implements FaceProcessService {
         }
         long end_ms = System.currentTimeMillis();
         log.info("[======== >>> " + (end_ms - cur_ms) + " ms]");
-        log.info(findFacesResponse.toString());
+       log.info(findFacesResponse.toString());
         val facesRecognitionDto = facesMapper.toFacesRecognitionResponseDto(findFacesResponse);
         if (facesRecognitionDto == null) {
             return FacesRecognitionResponseDto.builder().build();
