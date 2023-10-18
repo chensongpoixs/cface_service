@@ -17,52 +17,58 @@ public class StorageImgDto
 
     // As of backward compatibility we are not allowed to rename property 'image_id' --> 'embedding_id'
     // but, notice, actually it is Embedding.id
-    @JsonProperty("timestamp")
-    private long timestamp;
-
-    @JsonProperty("master_url")
-    private String master_url;
+    @JsonProperty("id") // subtable id
+    private long subId;
 
     @JsonProperty("device_id")
-    private long device_id;
+    private int deviceId;
+
+    @JsonProperty("timestamp")
+    private int timestamp;
+
+    @JsonProperty("img_url")
+    private String imgUrl;
+
+
 
 
     ////////////////////////////////////////////////subtable///////////////////////////////////////////////////////
 
-//    @JsonProperty("subject")
-//    private String subjectName;
+   @JsonProperty("sub_img_url")
+    private String subImgUrl;
+
 
 
     /////////////////////////////////////////////////////////////////////////////////
     @JsonProperty("gender")
-    private long gender;
+    private int gender;
 
     @JsonProperty("min_age")
-    private long min_age;
+    private int minAge;
 
 
     @JsonProperty("max_age")
-    private long max_age;
+    private int maxAge;
 
 
     @JsonProperty("similarity")
-    private Double similarity;
+    private float similarity;
 
 
     @JsonProperty("box_min_x")
-    private long box_min_x;
+    private int boxMinX;
 
 
     @JsonProperty("box_min_y")
-    private long box_min_y;
+    private int boxMinY;
 
 
     @JsonProperty("box_max_x")
-    private long box_max_x;
+    private int boxMaxX;
 
 
     @JsonProperty("box_max_y")
-    private long box_max_y;
+    private int boxMaxY;
 
 //    public <U> StorageImgDto(Page<U> map) {
 //

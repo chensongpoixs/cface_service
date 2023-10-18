@@ -3,7 +3,10 @@ package com.exadel.frs.core.trainservice.controller;
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
+import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
+//import com.exadel.frs.core.trainservice.mapper.StorageFaceImgMapper;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
+import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.StorageSaveFaceImgServiceImpl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
@@ -25,41 +28,69 @@ import static com.exadel.frs.core.trainservice.system.global.Constants.*;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
+
+/*
+@Validated
+@RestController
+@RequestMapping(API_V1 + "/recognition/subjects")
+@RequiredArgsConstructor
+ */
 public class StorageController
 {
 
-    private final StorageSaveFaceImgServiceImpl storageSaveFaceImgService;
+//    private final StorageSaveFaceImgServiceImpl storageSaveFaceImgService;
     private final SaveFaceImgServiceImpl saveFaceImgService;
+    private final SaveFaceImgSubService saveFaceImgSubService;
+//    private final SaveFaceImgSubService saveFaceImgSubService;
 //    private final SaveFaceImgService saveFaceImgService;
+    private final SaveFaceImgMapper saveFaceImgMapper;
     @GetMapping("/histroy/search")
-    public StorageImg listStorageImg(
+    public StorageImgs listStorageImg(
             @ApiParam(value = API_KEY_DESC, required = true)
             @RequestHeader(name = X_FRS_API_KEY_HEADER)
             final String apiKey,
-            @ApiParam(value = DETECT_FACE_TIMESTAMP)
+            @ApiParam(value = API_STORAGE_START_TIMESTAMP_DES , required = true)
             @Valid
-            @RequestParam(name = FACE_TIMESTAMP, required = false)
-            final long timestamp,
+            @RequestParam(name = API_STORAGE_START_TIMESTAMP )
+            final long start_timestamp,
+            @ApiParam(value = API_STORAGE_END_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_END_TIMESTAMP )
+            final long end_timestamp,
+            @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES , required = false)
+            @Valid
+            @RequestParam(name = API_STORAGE_FACE_DEVICEID )
+            final int device_id, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = API_STORAGE_FACE_GENDER_DES , required = false)
+            @Valid
+            @RequestParam(name = API_STORAGE_FACE_GENDER )
+            final int gender, //API_STORAGE_FACE_GENDER_DES
             final Pageable pageable
     )
     {
 
         log.info("==============================================>");
-        try {
-            List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgService.listSaveFaceImgs( );
-            log.info(saveFaceImgs.toString());
-//            saveFaceImgs.stream().map(Objects::toString).forEach(System.out::println);
-//            Optional<SaveFaceImg> p = saveFaceImgService.findById(timestamp);
-//            if (!p.isEmpty())
-//            {
-//                log.info(p.get().toString());
-//            }
-        }
-        catch (final Exception exception)
-        {
-            log.info(exception.toString());
-        }
-        return null;
+//        try {
+////            List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgService.listSaveFaceImgs( );
+////            log.info(saveFaceImgs.toString());
+//////            saveFaceImgs.stream().map(Objects::toString).forEach(System.out::println);
+//////            Optional<SaveFaceImg> p = saveFaceImgService.findById(timestamp);
+//////            if (!p.isEmpty())
+//////            {
+//////                log.info(p.get().toString());
+//////            }
+//        }
+//        catch (final Exception exception)
+//        {
+//            log.info(exception.toString());
+//        }
+
+//        List<SaveFaceImgProjection> saveFaceImgProjections =  saveFaceImgSubService.listSaveFaceSubImgs();
+//        System.out.println(saveFaceImgProjections.toArray().toString());
+//        log.info(saveFaceImgProjections.toString());
+//        return null;
+        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKey(apiKey, start_timestamp, end_timestamp, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/));
+//        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
     }
@@ -99,7 +130,7 @@ public class StorageController
 //        return null;
 //    }
         @RequiredArgsConstructor
-        private static final class StorageImg {
+        private static final class StorageImgs {
 
             private final Page<StorageImgDto> source;
 

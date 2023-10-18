@@ -65,10 +65,28 @@ public class Constants {
     public static final String SERVER_UUID = UUID.randomUUID().toString();
     public static final String CACHE_CONTROL_HEADER_VALUE = "public, max-age=31536000";
 
-
+    public static final  String FACE_TIMESTAMP = "face_timestamp";
     public static final String DETECT_FACE_TIMESTAMP = "face timestamp ";
-    public static final String FACE_TIMESTAMP = "timestamp";
+    public static final String API_STORAGE_START_TIMESTAMP_DES = "start timestamp";
+    public static  final String API_STORAGE_END_TIMESTAMP_DES = "end timestamp";
+    public static final String API_STORAGE_START_TIMESTAMP = "start_timestamp";
+    public static final String API_STORAGE_END_TIMESTAMP = "end_timestamp";
     public static final String DETECT_DeviceID = "device_id";
     public static final String DETECT_DEVICE_ID = "device_id";
+
+
+
+
+
+    public static  final String API_STORAGE_FACE_DEVICEID_DES = "Capture device ID";
+    public static  final String API_STORAGE_FACE_DEVICEID = "device_id";
+
+
+    public static  final String API_STORAGE_FACE_GENDER_DES = "gender  0:all  1: 男   2: 女";
+    public static  final String API_STORAGE_FACE_GENDER = "gender";
+
+
+
+
 //}
 }

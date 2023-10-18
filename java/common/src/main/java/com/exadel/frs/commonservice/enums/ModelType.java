@@ -27,7 +27,11 @@ public enum ModelType implements EnumCode {
 
     RECOGNITION("R"),
     DETECTION("D"),
-    VERIFY("V");
+    VERIFY("V"),
+
+
+
+    STORAGER("S");
 
     @Getter
     @Setter

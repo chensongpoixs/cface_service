@@ -16,9 +16,7 @@
 
 package com.exadel.frs.core.trainservice.filter;
 
-import static com.exadel.frs.commonservice.enums.ModelType.DETECTION;
-import static com.exadel.frs.commonservice.enums.ModelType.RECOGNITION;
-import static com.exadel.frs.commonservice.enums.ModelType.VERIFY;
+import static com.exadel.frs.commonservice.enums.ModelType.*;
 import static com.exadel.frs.commonservice.enums.ValidationResult.OK;
 import static com.exadel.frs.core.trainservice.system.global.Constants.API_V1;
 import static com.exadel.frs.core.trainservice.system.global.Constants.X_FRS_API_KEY_HEADER;
@@ -119,21 +117,25 @@ public class SecurityValidationFilter implements Filter {
                 }
 
                 val modelType = getModelTypeByUrl(requestURI);
-                val validationResult = modelService.validateModelKey(key, modelType);
-                if (validationResult.getResult() != OK)
+                if (modelType != STORAGER)
                 {
+                    val validationResult = modelService.validateModelKey(key, modelType);
+                    if (validationResult.getResult() != OK)
+                    {
 
-                    val capitalize = ModelType.VERIFY.equals(modelType) ? VERIFICATION : StringUtils.capitalize(modelType.name().toLowerCase());
-                    val objectResponseEntity = handler.handleDefinedExceptions(new ModelNotFoundException(key, capitalize));
-                    buildException(httpResponse, objectResponseEntity);
+                        val capitalize = ModelType.VERIFY.equals(modelType) ? VERIFICATION : StringUtils.capitalize(modelType.name().toLowerCase());
+                        val objectResponseEntity = handler.handleDefinedExceptions(new ModelNotFoundException(key, capitalize));
+                        buildException(httpResponse, objectResponseEntity);
 
-                    return;
+                        return;
+                    }
+                    if (requestURI.matches("^/(api/v1/recognition/recognize|api/v1/detection/detect|api/v1/verification/verify).*$"))
+                    {
+                        log.info(" recognize --> "  );
+                        modelStatisticCacheProvider.incrementRequestCount(validationResult.getModelId());
+                    }
                 }
-                if (requestURI.matches("^/(api/v1/recognition/recognize|api/v1/detection/detect|api/v1/verification/verify).*$"))
-                {
-                    log.info(" recognize --> "  );
-                    modelStatisticCacheProvider.incrementRequestCount(validationResult.getModelId());
-                }
+
             } else {
                 log.info("not  find apikey failed !!!");
                 val objectResponseEntity = handler.handleMissingRequestHeader(X_FRS_API_KEY_HEADER);
@@ -168,9 +170,9 @@ public class SecurityValidationFilter implements Filter {
         } else if (url.contains(API_V1 + "/recognition")) {
             return RECOGNITION;
         }
-        else if (url.contains("/storage/histroy/search"))
+        else if (url.contains(API_V1 + "/storage"))
         {
-            return RECOGNITION;
+            return STORAGER;
         }
 
         throw new IncorrectModelTypeException(url.substring(API_V1.length()));

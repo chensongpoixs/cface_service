@@ -1,19 +1,18 @@
 package com.exadel.frs.core.trainservice.controller;
 
-import static com.exadel.frs.core.trainservice.system.global.Constants.API_KEY_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.API_V1;
-import static com.exadel.frs.core.trainservice.system.global.Constants.SUBJECT_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.SUBJECT_NAME_IS_EMPTY;
-import static com.exadel.frs.core.trainservice.system.global.Constants.X_FRS_API_KEY_HEADER;
+import static com.exadel.frs.core.trainservice.system.global.Constants.*;
+//import static com.exadel.frs.core.trainservice.system.global.Constants.FACE_TIMESTAMP;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
+import com.exadel.frs.core.trainservice.dto.StorageImgDto;
 import com.exadel.frs.core.trainservice.dto.SubjectDto;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgService;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.SubjectService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 
 import java.util.*;
@@ -22,17 +21,9 @@ import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -65,7 +56,7 @@ public class SubjectController {
             @RequestHeader(X_FRS_API_KEY_HEADER)
             final String apiKey
     ) {
-     if (false)
+     if (true)
      {
          long  seed = 1000;
          Random random = new Random(seed);
@@ -84,6 +75,7 @@ public class SubjectController {
          for (int i = 0; i < 5; ++i)
          {
              SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
+//             saveFaceImgSub.setSubImgUrl("images/"+ UUID.randomUUID().toString());
 //        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
 //        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
              saveFaceImgSub.setGender(random.nextInt() %1);
@@ -118,8 +110,8 @@ public class SubjectController {
 //         saveFaceImgSub2.setSavefaceimg(newsaveface);
 //         saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub2);
      }
-        List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgSubService.listSaveFaceSubImgs();
-        log.info(saveFaceImgs.toString());
+//        List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgSubService.listSaveFaceSubImgs();
+//        log.info(saveFaceImgs.toString());
 //        saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub2);
 //
 //        log.info(newsaveface.toString());
@@ -184,4 +176,78 @@ public class SubjectController {
                 subjectService.deleteSubjectsByApiKey(apiKey)
         );
     }
+
+//    @GetMapping("/search")
+//    public  StorageImgs listStorageImg(
+//            @ApiParam(value = API_KEY_DESC, required = true)
+//            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+//            final String apiKey,
+//            @ApiParam(value = DETECT_FACE_TIMESTAMP)
+//            @Valid
+//            @RequestParam(name = FACE_TIMESTAMP, required = false)
+//            final long timestamp,
+//            final Pageable pageable
+//    )
+//    {
+//
+//        log.info("==============================================>");
+////        try {
+//////            List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgService.listSaveFaceImgs( );
+//////            log.info(saveFaceImgs.toString());
+////////            saveFaceImgs.stream().map(Objects::toString).forEach(System.out::println);
+////////            Optional<SaveFaceImg> p = saveFaceImgService.findById(timestamp);
+////////            if (!p.isEmpty())
+////////            {
+////////                log.info(p.get().toString());
+////////            }
+////        }
+////        catch (final Exception exception)
+////        {
+////            log.info(exception.toString());
+////        }
+//
+//        List<SaveFaceImgProjection> saveFaceImgProjections =  saveFaceImgSubService.listSaveFaceSubImgs();
+////        System.out.println(saveFaceImgProjections.toArray().toString());
+//        log.info(saveFaceImgProjections.toString());
+//        return null;//new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKey(apiKey, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/));
+////        return null;
+//        //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
+////        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
+//    }
+
+
+//    @RequiredArgsConstructor
+//    private static final class StorageImgs {
+//
+//        private final Page<StorageImgDto> source;
+//
+////        public StorageImg(Page<StorageImgProjection> listStorageImgs) {
+////
+////        }
+//
+//        // As of backward compatibility we are not allowed to rename property 'faces' --> 'embedding'
+//        public List<StorageImgDto> getFaces() {
+//            return source.getContent();
+//        }
+//
+//        @JsonProperty("total_pages")
+//        public int getTotalPages() {
+//            return source.getTotalPages();
+//        }
+//
+//        @JsonProperty("total_elements")
+//        public long getTotalElements() {
+//            return source.getTotalElements();
+//        }
+//
+//        @JsonProperty("page_number")
+//        public int getNumber() {
+//            return source.getNumber();
+//        }
+//
+//        @JsonProperty("page_size")
+//        public int getSize() {
+//            return source.getSize();
+//        }
+//    }
 }

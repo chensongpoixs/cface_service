@@ -35,6 +35,12 @@ public class SaveFaceImgSub
 //    private String embeddingId;
 
 
+    @Basic
+    @Column(name = "sub_img_url", nullable = true, precision = 0)
+    private String subImgUrl;
+
+
+
 //    @Basic
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = SaveFaceImg.class ,optional = false)
     @JoinColumn(name = "master_id",   referencedColumnName = "id")

@@ -61,8 +61,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class RecognizeController {
 
     private final EmbeddingsProcessService recognitionService;
-    private final SaveFaceImgService saveFaceImgService;
-    private final SaveFaceImgSubService saveFaceImgSubService;
+//    private final SaveFaceImgService saveFaceImgService;
+//    private final SaveFaceImgSubService saveFaceImgSubService;
     @PostMapping(value = "/recognition/recognize", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FacesRecognitionResponseDto recognize(
             @ApiParam(value = API_KEY_DESC, required = true)
