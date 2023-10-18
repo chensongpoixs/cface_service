@@ -68,7 +68,7 @@ public class SaveFaceImg
     @Column(name = "api_key", nullable = false, length = 255)
     private String apiKey;
     @Column(name = "timestamp", nullable = true, precision = 0)
-    private Integer  timestmap;
+    private Integer  timestamp;
 
 
     @Basic

@@ -16,10 +16,7 @@ import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.SubjectService;
 import io.swagger.annotations.ApiParam;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -70,27 +67,36 @@ public class SubjectController {
     ) {
      if (false)
      {
+         long  seed = 1000;
+         Random random = new Random(seed);
          SaveFaceImg saveFaceImg = new SaveFaceImg();
 //        saveFaceImg.setId(1L);
-//         saveFaceImg.setApi_key("===========api_key======");
-//         saveFaceImg.setTimestmap(766767);
-////         saveFaceImg.setImg_url("imgurl");
-//         saveFaceImg.setDevice_id(5);
-////        List<SaveFaceImg> saveFaceImgs = new ArrayList<>();
-////        saveFaceImgs.add(saveFaceImg);
-////        Embedding embedding = new Embedding();
-////        Embedding
-//         SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
-////        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
-////        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
-//         saveFaceImgSub.setGender(1);
-//         saveFaceImgSub.setMin_age(2);
-//         saveFaceImgSub.setMax_age(4);
-//         saveFaceImgSub.setSimilarity(4.4f);
-//         saveFaceImgSub.setBox_min_x(4);
-//         saveFaceImgSub.setBox_min_y(3);
-//         saveFaceImgSub.setBox_max_x(34);
-//         saveFaceImgSub.setBox_max_y(44);
+         saveFaceImg.setApiKey("0a16386c-2609-4e37-9883-a6ec18555d2a");
+         saveFaceImg.setTimestamp(random.nextInt());
+         saveFaceImg.setImgUrl("images/" + UUID.randomUUID().toString() + ".jpg");
+
+         saveFaceImg.setDeviceId(random.nextInt() %5);
+         SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
+//        List<SaveFaceImg> saveFaceImgs = new ArrayList<>();
+//        saveFaceImgs.add(saveFaceImg);
+//        Embedding embedding = new Embedding();
+//        Embedding
+         for (int i = 0; i < 5; ++i)
+         {
+             SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
+//        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
+//        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
+             saveFaceImgSub.setGender(random.nextInt() %1);
+             saveFaceImgSub.setMinAge(random.nextInt() % 80);
+             saveFaceImgSub.setMaxAge(random.nextInt() % 80);
+             saveFaceImgSub.setSimilarity(random.nextFloat());
+             saveFaceImgSub.setBoxMinX(random.nextInt());
+             saveFaceImgSub.setBoxMinY(random.nextInt());
+             saveFaceImgSub.setBoxMaxX(random.nextInt());
+             saveFaceImgSub.setBoxMaxY(random.nextInt());
+             saveFaceImgSub.setSaveFaceImg(newsaveface);
+             saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
+         }
 //         SaveFaceImgSub saveFaceImgSub2 = new SaveFaceImgSub();
 ////        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
 ////        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
@@ -106,7 +112,7 @@ public class SubjectController {
 //         saveFaceImgSubs.add(saveFaceImgSub);
 //         saveFaceImgSubs.add(saveFaceImgSub2);
 ////         saveFaceImg.setSaveFaceImgSubs(saveFaceImgSubs);
-//         SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
+//
 //         saveFaceImgSub.setSavefaceimg(newsaveface);
 //         saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
 //         saveFaceImgSub2.setSavefaceimg(newsaveface);
