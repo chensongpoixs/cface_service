@@ -4,6 +4,8 @@ package com.exadel.frs.commonservice.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,9 +39,26 @@ import java.util.UUID;
 public class SaveFaceImg
 {
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @OneToMany(fetch = FetchType.LAZY, targetEntity=SaveFaceImgSub.class)
+//    @JoinColumn(name = "id", referencedColumnName = "master_id")
     private Long id;
+
+    //task对channel时一对多
+    @OneToMany(
+            //EAGER 为全局加载，在有内存屏蔽的情况下建议使用，因为session关闭后无法查询hannelDO
+            //普通情况使用LAZY即可，LAZY时，只有在getChannelDOs时才会去查询ChannelDO
+            fetch=FetchType.LAZY,
+            targetEntity=SaveFaceImgSub.class,
+            mappedBy="saveFaceImg"
+    )
+    private List<SaveFaceImgSub> saveFaceImgSubs  = new ArrayList<>();
+//    @ToString.Exclude
+//    @Builder.Default
+//    @OneToMany(mappedBy = "saveFaceImg", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<SaveFaceImgSub> saveFaceImgSubs = new ArrayList<>();
+
 
 //    @Basic
 //    @Column(name = "uuid_id", nullable = false, length = 255)
@@ -47,17 +66,17 @@ public class SaveFaceImg
 
     @Basic
     @Column(name = "api_key", nullable = false, length = 255)
-    private String api_key;
+    private String apiKey;
     @Column(name = "timestamp", nullable = true, precision = 0)
     private Integer  timestmap;
 
 
     @Basic
     @Column(name = "img_url", nullable = false, length = 255)
-    private String img_url;
+    private String imgUrl;
 
     @Basic
     @Column(name = "device_id", nullable = true, precision = 0)
-    private Integer  device_id;
+    private Integer  deviceId;
 
 }

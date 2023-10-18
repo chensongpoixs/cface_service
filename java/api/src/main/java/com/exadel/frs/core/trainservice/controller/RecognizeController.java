@@ -120,46 +120,46 @@ public class RecognizeController {
         FacesRecognitionResponseDto facesRecognitionResponseDto = (FacesRecognitionResponseDto)recognitionService.processImage(processImageParams);
         log.info("face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
 
-        String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
-
-        String local_file_name_prefix =  MultipartFileToFileUtils.saveMultipartFile(file, apiKey, outpath);
-
-
-        SaveFaceImg sfaceimg = new SaveFaceImg();
-        sfaceimg.setTimestmap(timestamp);
-        sfaceimg.setApi_key(apiKey);
-        sfaceimg.setImg_url(local_file_name_prefix);
-        sfaceimg.setDevice_id(device_id);
-        SaveFaceImg new_sfaceimg =   saveFaceImgService.AddSaveFace(sfaceimg);
-        log.info(new_sfaceimg.toString());
-        Date day = new Date();
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
-        String file_prefix =    sdf.format(day) +"/" + apiKey + "/";
-        for(FacePredictionResultDto facePredictionResultDto  :facesRecognitionResponseDto.getResult())
-        {
-            SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
-            saveFaceImgSub.setMaster_id(new_sfaceimg.getId());
-            saveFaceImgSub.setGender(1 );
-            saveFaceImgSub.setMin_age(facePredictionResultDto.getAge().getLow());
-            saveFaceImgSub.setMax_age(facePredictionResultDto.getAge().getHigh());
-            List<FaceSimilarityDto> temp_face = facePredictionResultDto.getSubjects();
-            for (FaceSimilarityDto temp_fce :temp_face)
-            {
-                saveFaceImgSub.setSimilarity(temp_fce.getSimilarity());
-                saveFaceImgSub.setEmbeddingId(temp_fce.getEmbeddingId());
-
-                break;
-            }
-            MultipartFileToFileUtils.buildSubImage(outpath + local_file_name_prefix , outpath + file_prefix+ "/subimg/chensong_" + UUID.randomUUID().toString() + ".jpg"
-                    , facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMin()
-                    , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin());
-            saveFaceImgSub.setBox_min_x(facePredictionResultDto.getBox().getXMin());
-            saveFaceImgSub.setBox_min_y(facePredictionResultDto.getBox().getYMin());
-            saveFaceImgSub.setBox_max_x(facePredictionResultDto.getBox().getXMax());
-            saveFaceImgSub.setBox_max_y(facePredictionResultDto.getBox().getYMax());
-            saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
-        }
-        log.info("save img = " + (System.currentTimeMillis() - cur_ms) + " ms");
+//        String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
+//
+//        String local_file_name_prefix =  MultipartFileToFileUtils.saveMultipartFile(file, apiKey, outpath);
+//
+//
+//        SaveFaceImg sfaceimg = new SaveFaceImg();
+//        sfaceimg.setTimestmap(timestamp);
+//        sfaceimg.setApi_key(apiKey);
+//        sfaceimg.setImg_url(local_file_name_prefix);
+//        sfaceimg.setDevice_id(device_id);
+//        SaveFaceImg new_sfaceimg =   saveFaceImgService.AddSaveFace(sfaceimg);
+//        log.info(new_sfaceimg.toString());
+//        Date day = new Date();
+//        SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
+//        String file_prefix =    sdf.format(day) +"/" + apiKey + "/";
+//        for(FacePredictionResultDto facePredictionResultDto  :facesRecognitionResponseDto.getResult())
+//        {
+//            SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
+//            saveFaceImgSub.setMaster_id(new_sfaceimg.getId());
+//            saveFaceImgSub.setGender(1 );
+//            saveFaceImgSub.setMin_age(facePredictionResultDto.getAge().getLow());
+//            saveFaceImgSub.setMax_age(facePredictionResultDto.getAge().getHigh());
+//            List<FaceSimilarityDto> temp_face = facePredictionResultDto.getSubjects();
+//            for (FaceSimilarityDto temp_fce :temp_face)
+//            {
+//                saveFaceImgSub.setSimilarity(temp_fce.getSimilarity());
+//                saveFaceImgSub.setEmbeddingId(temp_fce.getEmbeddingId());
+//
+//                break;
+//            }
+//            MultipartFileToFileUtils.buildSubImage(outpath + local_file_name_prefix , outpath + file_prefix+ "/subimg/chensong_" + UUID.randomUUID().toString() + ".jpg"
+//                    , facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMin()
+//                    , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin());
+//            saveFaceImgSub.setBox_min_x(facePredictionResultDto.getBox().getXMin());
+//            saveFaceImgSub.setBox_min_y(facePredictionResultDto.getBox().getYMin());
+//            saveFaceImgSub.setBox_max_x(facePredictionResultDto.getBox().getXMax());
+//            saveFaceImgSub.setBox_max_y(facePredictionResultDto.getBox().getYMax());
+//            saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
+//        }
+//        log.info("save img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         // 拦截并保存图片和信息
         return facesRecognitionResponseDto;
 //        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);

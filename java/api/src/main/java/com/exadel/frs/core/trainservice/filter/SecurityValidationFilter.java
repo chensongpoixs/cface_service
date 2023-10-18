@@ -168,6 +168,10 @@ public class SecurityValidationFilter implements Filter {
         } else if (url.contains(API_V1 + "/recognition")) {
             return RECOGNITION;
         }
+        else if (url.contains("/storage/histroy/search"))
+        {
+            return RECOGNITION;
+        }
 
         throw new IncorrectModelTypeException(url.substring(API_V1.length()));
     }

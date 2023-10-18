@@ -1,9 +1,9 @@
 package com.exadel.frs.core.trainservice.controller;
 
-import com.exadel.frs.commonservice.projection.StorageImgProjection;
+import com.exadel.frs.commonservice.entity.SaveFaceImg;
+import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
-import com.exadel.frs.core.trainservice.mapper.StorageFaceImgMapper;
-import com.exadel.frs.core.trainservice.service.SaveFaceImgService;
+import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.StorageSaveFaceImgServiceImpl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
@@ -29,6 +29,7 @@ public class StorageController
 {
 
     private final StorageSaveFaceImgServiceImpl storageSaveFaceImgService;
+    private final SaveFaceImgServiceImpl saveFaceImgService;
 //    private final SaveFaceImgService saveFaceImgService;
     @GetMapping("/histroy/search")
     public StorageImg listStorageImg(
@@ -43,6 +44,21 @@ public class StorageController
     )
     {
 
+        log.info("==============================================>");
+        try {
+            List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgService.listSaveFaceImgs( );
+            log.info(saveFaceImgs.toString());
+//            saveFaceImgs.stream().map(Objects::toString).forEach(System.out::println);
+//            Optional<SaveFaceImg> p = saveFaceImgService.findById(timestamp);
+//            if (!p.isEmpty())
+//            {
+//                log.info(p.get().toString());
+//            }
+        }
+        catch (final Exception exception)
+        {
+            log.info(exception.toString());
+        }
         return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));

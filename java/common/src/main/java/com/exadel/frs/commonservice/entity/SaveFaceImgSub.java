@@ -14,6 +14,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@NamedEntityGraph(name = "savefaceimgsu-with-savefaceimg", attributeNodes = {@NamedAttributeNode("saveFaceImg")})
+
 public class SaveFaceImgSub
 {
     @Id
@@ -25,13 +27,24 @@ public class SaveFaceImgSub
 //    @Column(name = "uuid_id", nullable = false, length = 255)
 //    private String uuid_id;
 
-    @Basic
-    @Column(name = "embeddingid", nullable = true, length = 255)
-    private String embeddingId;
+//    @Basic
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "embeddingid", nullable = true, referencedColumnName = "id")
+//    private Embedding embedding;
+//    @Column(name = "embeddingid", nullable = true, length = 255)
+//    private String embeddingId;
 
-    @Basic
-    @Column(name = "master_id", nullable = true, precision = 0)
-    private long  master_id;
+
+//    @Basic
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SaveFaceImg.class ,optional = false)
+    @JoinColumn(name = "master_id",   referencedColumnName = "id")
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "master_id", referencedColumnName = "id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "master_id" )
+    private SaveFaceImg saveFaceImg = new SaveFaceImg();
+//    @Column(name = "master_id", nullable = true, precision = 0)
+//    private long  master_id;
 
 
     @Basic
@@ -40,29 +53,29 @@ public class SaveFaceImgSub
 
     @Basic
     @Column(name = "min_age", nullable = true, precision = 0)
-    private Integer  min_age;
+    private Integer  minAge;
 
 
     @Basic
     @Column(name = "max_age", nullable = true, precision = 0)
-    private Integer  max_age;
+    private Integer  maxAge;
 
     @Basic
     @Column(name = "similarity", nullable = true, precision = 0)
     private float  similarity;
     @Basic
     @Column(name = "box_min_x", nullable = true, precision = 0)
-    private Integer  box_min_x;
+    private Integer  boxMinX;
 
     @Basic
     @Column(name = "box_min_y", nullable = true, precision = 0)
-    private Integer  box_min_y;
+    private Integer  boxMinY;
 
     @Basic
     @Column(name = "box_max_x", nullable = true, precision = 0)
-    private Integer  box_max_x;
+    private Integer  boxMaxX;
 
     @Basic
     @Column(name = "box_max_y", nullable = true, precision = 0)
-    private Integer  box_max_y;
+    private Integer  boxMaxY;
 }
