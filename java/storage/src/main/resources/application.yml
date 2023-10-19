@@ -45,7 +45,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
     hibernate:
       ddl-auto: none
-      show-sql: true
     database: postgresql
     open-in-view: true
     generate-ddl: false
@@ -63,9 +62,6 @@ environment:
   servers:
     PYTHON:
       url: ${PYTHON_URL:http://192.168.1.133:3000}
-    STORAGE:
-      url: ${STORAGE_URL:http://127.0.0.1:9300}
-
 
 image:
   types:
@@ -90,11 +86,6 @@ app:
       url: https://api.appery.io/rest/1/db/collections
       api-key: ${APPERY_API_KEY:#{null}}
     faces:
-      connect-timeout: ${CONNECTION_TIMEOUT:10000}
-      read-timeout: ${READ_TIMEOUT:60000}
-      retryer:
-        max-attempts: ${MAX_ATTEMPTS:1}
-    storage:
       connect-timeout: ${CONNECTION_TIMEOUT:10000}
       read-timeout: ${READ_TIMEOUT:60000}
       retryer:

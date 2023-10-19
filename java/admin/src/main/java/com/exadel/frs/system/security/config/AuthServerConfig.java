@@ -112,7 +112,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
                 .tokenServices(tokenServices())
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-                .pathMapping("/oauth/token", ADMIN + "/oauth/token");
+                .pathMapping("/oauth/token", ADMIN + "/oauth/token")
+                ;
 
         endpoints.exceptionTranslator(exception -> {
             if (exception instanceof OAuth2Exception oAuth2Exception) {

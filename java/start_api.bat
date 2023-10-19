@@ -1,0 +1,1 @@
+java -jar   E:\Work\face\face_service\CompreFace\java\api\target\frs-core-app-0.0.1-SNAPSHOT.jar   -Dspring.config.location=application.yml

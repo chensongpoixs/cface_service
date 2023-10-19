@@ -86,7 +86,12 @@ public class Constants {
     public static  final String API_STORAGE_FACE_GENDER = "gender";
 
 
+    public static  final String API_STORAGE_FACE_SUBJECTNAME_DES = "subjectName";
+    public static  final String API_STORAGE_FACE_SUBJECTNAME = "subjectName";
 
 
+
+
+    public static String API_HTTP_URL = "http://127.0.0.1/";
 //}
 }

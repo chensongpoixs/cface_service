@@ -2,6 +2,7 @@ package com.exadel.frs.core.trainservice.controller;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
+import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
 import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
 //import com.exadel.frs.core.trainservice.mapper.StorageFaceImgMapper;
@@ -18,8 +19,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.exadel.frs.core.trainservice.system.global.Constants.*;
 
@@ -44,7 +49,14 @@ public class StorageController
 //    private final SaveFaceImgSubService saveFaceImgSubService;
 //    private final SaveFaceImgService saveFaceImgService;
     private final SaveFaceImgMapper saveFaceImgMapper;
-    @GetMapping("/histroy/search")
+
+    /*
+   @ApiParam(value = SUBJECT_DESC)
+            @Valid
+            @RequestParam(name = SUBJECT, required = false)
+     */
+
+    @GetMapping("/search")
     public StorageImgs listStorageImg(
             @ApiParam(value = API_KEY_DESC, required = true)
             @RequestHeader(name = X_FRS_API_KEY_HEADER)
@@ -57,19 +69,23 @@ public class StorageController
             @Valid
             @RequestParam(name = API_STORAGE_END_TIMESTAMP )
             final long end_timestamp,
-            @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES , required = false)
+            @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
             @Valid
-            @RequestParam(name = API_STORAGE_FACE_DEVICEID )
+            @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
             final int device_id, //API_STORAGE_FACE_GENDER_DES
-            @ApiParam(value = API_STORAGE_FACE_GENDER_DES , required = false)
+            @ApiParam(value = API_STORAGE_FACE_GENDER_DES )
             @Valid
-            @RequestParam(name = API_STORAGE_FACE_GENDER )
+            @RequestParam( defaultValue = "0", name = API_STORAGE_FACE_GENDER, required = false )
             final int gender, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = API_STORAGE_FACE_SUBJECTNAME_DES )
+            @Valid
+            @RequestParam( name = API_STORAGE_FACE_SUBJECTNAME, required = false )
+            final String subjectName, //API_STORAGE_FACE_GENDER_DES
             final Pageable pageable
     )
     {
 
-        log.info("==============================================>");
+//        log.info("==============================================>");
 //        try {
 ////            List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgService.listSaveFaceImgs( );
 ////            log.info(saveFaceImgs.toString());
@@ -89,11 +105,32 @@ public class StorageController
 //        System.out.println(saveFaceImgProjections.toArray().toString());
 //        log.info(saveFaceImgProjections.toString());
 //        return null;
-        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKey(apiKey, start_timestamp, end_timestamp, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/));
+        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(apiKey, start_timestamp, end_timestamp, device_id, gender, subjectName,  pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+                "http://127.0.0.1/");
 //        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
     }
+
+
+
+
+    @WriteEndpoint
+    @DeleteMapping("/delete_img")
+    public Subtable removeAllSubjectEmbeddings(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "delete img id", required = true)
+            @Validated
+            @RequestParam(name = "img_id")
+            final long img_id
+    ) {
+         return new  Subtable(saveFaceImgSubService.removeSaveFaceSubimgByApiAkyAndId(apiKey, img_id));
+    }
+
+
+
     ///
 //    @PostMapping(value = "/histroy/search", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    public FacesRecognitionResponseDto recognize(
@@ -129,11 +166,21 @@ public class StorageController
 //
 //        return null;
 //    }
+    @RequiredArgsConstructor
+    private static final class Subtable {
+        private final int count;
+
+
+        @JsonProperty("count")
+        private int getCount () {return count;}
+
+    }
         @RequiredArgsConstructor
         private static final class StorageImgs {
 
             private final Page<StorageImgDto> source;
 
+            private final String httpUrl;
 //        public StorageImg(Page<StorageImgProjection> listStorageImgs) {
 //
 //        }
@@ -143,6 +190,8 @@ public class StorageController
                 return source.getContent();
             }
 
+            @JsonProperty("http_url")
+            private String getHttpUrl () {return httpUrl;}
             @JsonProperty("total_pages")
             public int getTotalPages() {
                 return source.getTotalPages();

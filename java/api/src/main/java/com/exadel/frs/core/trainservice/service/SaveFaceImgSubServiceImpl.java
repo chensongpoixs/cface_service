@@ -38,4 +38,14 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
 
         return  saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestamp(apiKey, (int) startTimestamp,  (int) endTimestamp, pageable);
     }
+
+    @Override
+    public Page<SaveFaceImgProjection> listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, int deviceId, int gender, String subjectName, Pageable pageable) {
+        return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceIdAndGenderAndSubjectName(apiKey, (int) startTimestamp, (int) endTimestamp, deviceId, gender,  subjectName, pageable);
+    }
+
+    @Override
+    public int removeSaveFaceSubimgByApiAkyAndId(String apiKey, long id) {
+        return  saveFaceImgSubRepository.deleteById(id);
+    }
 }

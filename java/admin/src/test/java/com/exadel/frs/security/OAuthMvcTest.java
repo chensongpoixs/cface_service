@@ -107,6 +107,7 @@ class OAuthMvcTest extends EmbeddedPostgreSQLTest {
         ResultActions result
                 = mockMvc.perform(post(ADMIN + "/oauth/token")
                 .params(params)
+                        .header("Access-Control-Allow-Origin:*")
                 .with(httpBasic("CommonClientId", "password"))
                 .accept("application/json;charset=UTF-8"))
                          .andExpect(status().isOk())

@@ -39,6 +39,7 @@ public class EnvironmentProperties {
     }
 
     public enum ServerType {
-        PYTHON
+        PYTHON,
+        STORAGE,
     }
 }

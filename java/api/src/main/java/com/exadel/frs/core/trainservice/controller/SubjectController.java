@@ -4,6 +4,7 @@ import static com.exadel.frs.core.trainservice.system.global.Constants.*;
 //import static com.exadel.frs.core.trainservice.system.global.Constants.FACE_TIMESTAMP;
 import static org.springframework.http.HttpStatus.CREATED;
 
+import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
@@ -63,29 +64,43 @@ public class SubjectController {
          SaveFaceImg saveFaceImg = new SaveFaceImg();
 //        saveFaceImg.setId(1L);
          saveFaceImg.setApiKey("0a16386c-2609-4e37-9883-a6ec18555d2a");
-         saveFaceImg.setTimestamp(random.nextInt());
+         saveFaceImg.setTimestamp(random.nextInt(1000000000));
          saveFaceImg.setImgUrl("images/" + UUID.randomUUID().toString() + ".jpg");
 
-         saveFaceImg.setDeviceId(random.nextInt() %5);
+         saveFaceImg.setDeviceId(random.nextInt(10) %5);
          SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
 //        List<SaveFaceImg> saveFaceImgs = new ArrayList<>();
 //        saveFaceImgs.add(saveFaceImg);
 //        Embedding embedding = new Embedding();
 //        Embedding
-         for (int i = 0; i < 5; ++i)
+         Embedding embedding = new Embedding();
+         UUID [] pp = new UUID[5];
+         pp[0] = UUID.fromString("260a4672-e65e-4519-a91d-7d78746fd4ea");
+         pp[1] = UUID.fromString("c01deb13-720a-4adb-82e4-463be8760309");
+         pp[2] = UUID.fromString("f9875ea2-ec4b-420b-99fb-db28810b85be");
+         pp[3] = UUID.fromString("ca182403-10e0-4c62-ab76-65ee126c76d2");
+         pp[4] = UUID.fromString("08212d49-e751-4fbb-aed9-76bc8a0c10e8");
+//         pp[0] = UUID.fromString("36c06d19-70d2-4b6a-8183-9ee18a39d2be");
+
+         // c01deb13-720a-4adb-82e4-463be8760309
+         for (int i = 0; i < 2; ++i)
          {
+             embedding.setId(pp[random.nextInt(5)]);
              SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
-//             saveFaceImgSub.setSubImgUrl("images/"+ UUID.randomUUID().toString());
+             saveFaceImgSub.setEmbeddingId(embedding);
+//             saveFaceImgSub.set
+
+             saveFaceImgSub.setSubImgUrl("images/"+ UUID.randomUUID().toString()+ ".jpg");
 //        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
 //        saveFaceImgSub.setSaveFaceImg(saveFaceImg);
-             saveFaceImgSub.setGender(random.nextInt() %1);
-             saveFaceImgSub.setMinAge(random.nextInt() % 80);
-             saveFaceImgSub.setMaxAge(random.nextInt() % 80);
-             saveFaceImgSub.setSimilarity(random.nextFloat());
-             saveFaceImgSub.setBoxMinX(random.nextInt());
-             saveFaceImgSub.setBoxMinY(random.nextInt());
-             saveFaceImgSub.setBoxMaxX(random.nextInt());
-             saveFaceImgSub.setBoxMaxY(random.nextInt());
+             saveFaceImgSub.setGender(random.nextInt(2) %1);
+             saveFaceImgSub.setMinAge(random.nextInt(100) % 80);
+             saveFaceImgSub.setMaxAge(random.nextInt(100) % 80);
+             saveFaceImgSub.setSimilarity(random.nextFloat(1.0f));
+             saveFaceImgSub.setBoxMinX(random.nextInt(1000));
+             saveFaceImgSub.setBoxMinY(random.nextInt(1000));
+             saveFaceImgSub.setBoxMaxX(random.nextInt(1000));
+             saveFaceImgSub.setBoxMaxY(random.nextInt(1000));
              saveFaceImgSub.setSaveFaceImg(newsaveface);
              saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
          }

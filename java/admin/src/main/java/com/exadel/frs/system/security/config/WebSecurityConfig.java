@@ -17,6 +17,8 @@
 package com.exadel.frs.system.security.config;
 
 import static com.exadel.frs.system.global.Constants.ADMIN;
+
+import com.exadel.frs.config.AnonymousAuthenticationEntryPoint;
 import com.exadel.frs.system.security.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private AnonymousAuthenticationEntryPoint anonymousAuthenticationEntryPoint;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -47,18 +51,54 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, ADMIN + "/oauth/**").permitAll()
+//        http
+//                .csrf().disable()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.OPTIONS, ADMIN + "/oauth/**").permitAll()
+//                .antMatchers("/actuator/**", ADMIN + "/user/register", ADMIN + "/user/forgot-password", ADMIN + "/user/reset-password", ADMIN + "/config",
+//                        "/api/**").permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .logout()
+//                .permitAll();
+//        http.cors().and().csrf().disable();
+//        // 设置允许添加静态文件
+//        http.headers().contentTypeOptions().disable();
+        http.cors().and().csrf().disable();
+        // 设置允许添加静态文件
+        http.headers().contentTypeOptions().disable();
+        http.authorizeRequests()
+                // 放行接口
                 .antMatchers("/actuator/**", ADMIN + "/user/register", ADMIN + "/user/forgot-password", ADMIN + "/user/reset-password", ADMIN + "/config",
-                        "/api/**").permitAll()
+                     "/api/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, ADMIN + "/oauth/**").permitAll()
+                // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
-                .and()
-                .logout()
-                .permitAll();
+                // 异常处理(权限拒绝、登录失效等)
+                .and().exceptionHandling()
+                //匿名用户访问无权限资源时的异常处理
+                .authenticationEntryPoint(anonymousAuthenticationEntryPoint)
+//                .accessDeniedHandler(accessDeniedHandler)//登录用户没有权限访问资源
+                // 登入 允许所有用户
+                .and().formLogin().permitAll()
+                //登录成功处理逻辑
+//                .successHandler(loginSuccessHandler)
+//                登录失败处理逻辑
+//                .failureHandler(loginFailureHandler)
+                // 登出
+                .and().logout().logoutUrl("/api/user/logout").permitAll()
+                //登出成功处理逻辑
+//                .logoutSuccessHandler(logoutHandler)
+                .deleteCookies("JSESSIONID")
+        // 会话管理
+//                .and().sessionManagement().invalidSessionStrategy(invalidSessionHandler) // 超时处理
+//                .maximumSessions(1)//同一账号同时登录最大用户数
+//                .expiredSessionStrategy(sessionInformationExpiredHandler) // 顶号处理
+        ;
+
     }
 
     @Override

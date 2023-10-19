@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -37,8 +39,14 @@ public class StorageImgDto
    @JsonProperty("sub_img_url")
     private String subImgUrl;
 
+    ////////////////////////
+    @JsonProperty("embedding_id")
+    private UUID embeddingId;
 
 
+    @JsonProperty("subject_name")
+    private String subjectName;
+    ///////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////
     @JsonProperty("gender")
     private int gender;

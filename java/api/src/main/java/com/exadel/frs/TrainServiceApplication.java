@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @EnableFeignClients(basePackages = "com.exadel.frs.commonservice.system.feign")
+//@EnableFeignClients(basePackages = "com")
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class TrainServiceApplication {
 

@@ -1,5 +1,5 @@
 server:
-  port: ${API_PORT:8072}
+  port: ${API_PORT:8077}
   tomcat:
     relaxed-path-chars: [ '[', ']' ]
     relaxed-query-chars: [ '[', ']' ]
@@ -10,7 +10,7 @@ spring:
   profiles:
     active: prod
 
----
+--- 
 
 spring:
   cache:
@@ -22,16 +22,18 @@ spring:
       indent-output: true
   datasource-pg:
     driver-class-name: org.postgresql.Driver
-    url: ${POSTGRES_URL:jdbc:postgresql://192.168.1.133:5432/frs}
+    url: ${POSTGRES_URL:jdbc:postgresql://192.168.1.133:5432/optimize_test}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
     continue-on-error: true
     hikari:
-      maximum-pool-size: 3
-      minimum-idle: 3
-      data-source-properties:
-        stringtype: unspecified
-  jpa:
+      data-source-proxy: true
+     # maximum-pool-size: 3
+     # minimum-idle: 3
+     # data-source-properties:
+     #   stringtype: unspecified
+  jpa: # 显示sql语句
+    show-sql: true
     properties:
       hibernate:
         default_schema: public
@@ -41,10 +43,11 @@ spring:
         order_inserts: true
         order_updates: true
         batch_versioned_data: true
-        format_sql: true
+        format_sql: true 
+        show-sql: true
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       show-sql: true
     database: postgresql
     open-in-view: true
@@ -55,6 +58,14 @@ spring:
       max-file-size: ${MAX_FILE_SIZE:5MB}
       max-request-size: ${MAX_REQUEST_SIZE:10MB}
 
+
+logging:
+  level:
+    # 基本类型绑定
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    # 枚举类型绑定
+    org.hibernate.metamodel.model.convert.internal.NamedEnumValueConverter: trace
+
 # "environment" and "image" blocks should be same in those files:
 #    * api/src/main/resources/application.properties
 #    * admin/src/main/resources/application.properties
@@ -62,11 +73,11 @@ spring:
 environment:
   servers:
     PYTHON:
-      url: ${PYTHON_URL:http://192.168.1.133:3000}
+      url: ${PYTHON_URL:http://192.168.1.133:3020}
     STORAGE:
       url: ${STORAGE_URL:http://127.0.0.1:9300}
-
-
+  storage:
+      path: E:/Work/face/images
 image:
   types:
     - tif
@@ -99,7 +110,6 @@ app:
       read-timeout: ${READ_TIMEOUT:60000}
       retryer:
         max-attempts: ${MAX_ATTEMPTS:1}
-
 ---
 
 spring:

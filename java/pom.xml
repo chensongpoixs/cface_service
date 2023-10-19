@@ -21,6 +21,7 @@
         <module>common</module>
         <module>admin</module>
         <module>api</module>
+        <module>storage</module>
     </modules>
 
     <properties>

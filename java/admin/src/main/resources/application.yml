@@ -1,5 +1,5 @@
 server:
-  port: ${CRUD_PORT:8080}
+  port: ${CRUD_PORT:8082}
   tomcat:
     relaxed-path-chars: [ '[', ']' ]
     relaxed-query-chars: [ '[', ']' ]
@@ -36,7 +36,7 @@ spring:
       max-request-size: ${MAX_REQUEST_SIZE:10MB}
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${POSTGRES_URL:jdbc:postgresql://compreface-postgres-db:5432/frs}
+    url: ${POSTGRES_URL:jdbc:postgresql://192.168.1.133:5432/postgres}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
     continue-on-error: true

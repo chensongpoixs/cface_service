@@ -40,7 +40,9 @@ public class SaveFaceImgSub
     private String subImgUrl;
 
 
-
+    @ManyToOne (fetch = FetchType.LAZY, targetEntity = Embedding.class/*,  orphanRemoval = true*/)
+    @JoinColumn(name = "embedding_id", referencedColumnName = "id",  nullable = false)
+    private Embedding embeddingId;
 //    @Basic
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = SaveFaceImg.class ,optional = false)
     @JoinColumn(name = "master_id",   referencedColumnName = "id")

@@ -191,6 +191,7 @@ public class EmbeddingController {
         );
     }
 
+
     @WriteEndpoint
     @DeleteMapping("/faces/{embeddingId}")
     public EmbeddingDto deleteEmbeddingById(
