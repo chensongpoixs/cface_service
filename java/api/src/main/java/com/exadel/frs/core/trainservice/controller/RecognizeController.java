@@ -176,7 +176,7 @@ public class RecognizeController {
                             , facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMin()
                             , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin());
 
-                    saveFaceImgSub.setSubImgUrl(maser_new_jpg + subImgName);
+                    saveFaceImgSub.setSubImgUrl(file_prefix +master_file_name + subImgName);
                     saveFaceImgSub.setBoxMinX(facePredictionResultDto.getBox().getXMin());
                     saveFaceImgSub.setBoxMinY(facePredictionResultDto.getBox().getYMin());
                     saveFaceImgSub.setBoxMaxX(facePredictionResultDto.getBox().getXMax());
