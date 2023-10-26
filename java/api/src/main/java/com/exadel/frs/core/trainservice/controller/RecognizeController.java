@@ -127,64 +127,68 @@ public class RecognizeController {
         log.info("face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
 
 
-        String path = env.getProperty("environment.storage.path");
-        log.info("storage path = " + path);
-        if(true)
-        {
-            if (facesRecognitionResponseDto.getResult().size() > 0)
-            {
-                SaveFaceImg saveFaceImg = new SaveFaceImg();
+
+       if (timestamp > 0)
+       {
+           new Thread(() ->
+           {
+               String path = env.getProperty("environment.storage.path");
+               log.info("storage path = " + path);
+               if (facesRecognitionResponseDto.getResult().size() > 0)
+               {
+                   SaveFaceImg saveFaceImg = new SaveFaceImg();
 //        saveFaceImg.setId(1L);
-                saveFaceImg.setApiKey(apiKey);
-                saveFaceImg.setTimestamp(timestamp);
+                   saveFaceImg.setApiKey(apiKey);
+                   saveFaceImg.setTimestamp(timestamp);
 
 
-                Date day = new Date();
-                SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
-                String file_prefix =    "/"+ sdf.format(day) +"/" + apiKey + "/";
-                SimpleDateFormat  file_prefixDate = new SimpleDateFormat("yyyyMMddHHmmss");
+                   Date day = new Date();
+                   SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
+                   String file_prefix =    "/"+ sdf.format(day) +"/" + apiKey + "/";
+                   SimpleDateFormat  file_prefixDate = new SimpleDateFormat("yyyyMMddHHmmss");
 //            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
-                String master_file_name = file_prefixDate.format(day) + "_" +  UUID.randomUUID().toString() /*+ ".jpg"*/;
+                   String master_file_name = file_prefixDate.format(day) + "_" +  UUID.randomUUID().toString() /*+ ".jpg"*/;
 
 //            String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
-                String maser_new_jpg =  MultipartFileToFileUtils.saveMultipartFile(file, path, file_prefix, master_file_name);
-                saveFaceImg.setImgUrl(maser_new_jpg);
-                saveFaceImg.setDeviceId(device_id);
-                SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
-                for(FacePredictionResultDto facePredictionResultDto  :facesRecognitionResponseDto.getResult())
-                {
-                    SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
-                    saveFaceImgSub.setSaveFaceImg(newsaveface);
-                    Embedding embedding = new Embedding();
+                   String maser_new_jpg =  MultipartFileToFileUtils.saveMultipartFile(file, path, file_prefix, master_file_name);
+                   saveFaceImg.setImgUrl(maser_new_jpg);
+                   saveFaceImg.setDeviceId(device_id);
+                   SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
+                   for(FacePredictionResultDto facePredictionResultDto  :facesRecognitionResponseDto.getResult())
+                   {
+                       SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
+                       saveFaceImgSub.setSaveFaceImg(newsaveface);
+                       Embedding embedding = new Embedding();
 
-                    saveFaceImgSub.setGender(1 );
-                    saveFaceImgSub.setMinAge(facePredictionResultDto.getAge().getLow());
-                    saveFaceImgSub.setMaxAge(facePredictionResultDto.getAge().getHigh());
-                    List<FaceSimilarityDto> temp_face = facePredictionResultDto.getSubjects();
-                    for (FaceSimilarityDto temp_fce :temp_face)
-                    {
-                        saveFaceImgSub.setSimilarity(temp_fce.getSimilarity());
-                        embedding.setId(UUID.fromString(temp_fce.getEmbeddingId()));
+                       saveFaceImgSub.setGender(1 );
+                       saveFaceImgSub.setMinAge(facePredictionResultDto.getAge().getLow());
+                       saveFaceImgSub.setMaxAge(facePredictionResultDto.getAge().getHigh());
+                       List<FaceSimilarityDto> temp_face = facePredictionResultDto.getSubjects();
+                       for (FaceSimilarityDto temp_fce :temp_face)
+                       {
+                           saveFaceImgSub.setSimilarity(temp_fce.getSimilarity());
+                           embedding.setId(UUID.fromString(temp_fce.getEmbeddingId()));
 //                saveFaceImgSub.setEmbeddingId(temp_fce.getEmbeddingId());
 
-                        break;
-                    }
+                           break;
+                       }
 
-                    saveFaceImgSub.setEmbeddingId(embedding);
-                    String subImgName = "/"+UUID.randomUUID().toString() + ".jpg";
-                    MultipartFileToFileUtils.buildSubImage(path + maser_new_jpg , path + file_prefix +master_file_name +subImgName
-                            , facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMin()
-                            , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin());
+                       saveFaceImgSub.setEmbeddingId(embedding);
+                       String subImgName = "/"+UUID.randomUUID().toString() + ".jpg";
+                       MultipartFileToFileUtils.buildSubImage(path + maser_new_jpg , path + file_prefix +master_file_name +subImgName
+                               , facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMin()
+                               , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin());
 
-                    saveFaceImgSub.setSubImgUrl(file_prefix +master_file_name + subImgName);
-                    saveFaceImgSub.setBoxMinX(facePredictionResultDto.getBox().getXMin());
-                    saveFaceImgSub.setBoxMinY(facePredictionResultDto.getBox().getYMin());
-                    saveFaceImgSub.setBoxMaxX(facePredictionResultDto.getBox().getXMax());
-                    saveFaceImgSub.setBoxMaxY(facePredictionResultDto.getBox().getYMax());
-                    saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
-                }
-            }
-        }
+                       saveFaceImgSub.setSubImgUrl(file_prefix +master_file_name + subImgName);
+                       saveFaceImgSub.setBoxMinX(facePredictionResultDto.getBox().getXMin());
+                       saveFaceImgSub.setBoxMinY(facePredictionResultDto.getBox().getYMin());
+                       saveFaceImgSub.setBoxMaxX(facePredictionResultDto.getBox().getXMax());
+                       saveFaceImgSub.setBoxMaxY(facePredictionResultDto.getBox().getYMax());
+                       saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
+                   }
+               }
+           }, "save img ").start();
+       }
 //        log.info("storage send -storage-->>>>> " + storageFeignClient.findFaces(9, 0.9, "d", true));
 //        String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
 //
@@ -227,6 +231,7 @@ public class RecognizeController {
 //        }
 //        log.info("save img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         // 拦截并保存图片和信息
+        log.info("save face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         return facesRecognitionResponseDto;
 //        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
     }

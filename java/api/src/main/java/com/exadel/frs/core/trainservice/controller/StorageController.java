@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +50,7 @@ public class StorageController
 //    private final SaveFaceImgSubService saveFaceImgSubService;
 //    private final SaveFaceImgService saveFaceImgService;
     private final SaveFaceImgMapper saveFaceImgMapper;
-
+    private final Environment env;
     /*
    @ApiParam(value = SUBJECT_DESC)
             @Valid
@@ -106,7 +107,7 @@ public class StorageController
 //        log.info(saveFaceImgProjections.toString());
 //        return null;
         return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(apiKey, start_timestamp, end_timestamp, device_id, gender, subjectName,  pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
-                "http://127.0.0.1/");
+                env.getProperty("environment.storage.url"));
 //        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));

@@ -174,6 +174,10 @@ public class SecurityValidationFilter implements Filter {
         {
             return STORAGER;
         }
+        else if (url.contains(API_V1 + "/video_storage"))
+        {
+            return STORAGER;
+        }
 
         throw new IncorrectModelTypeException(url.substring(API_V1.length()));
     }

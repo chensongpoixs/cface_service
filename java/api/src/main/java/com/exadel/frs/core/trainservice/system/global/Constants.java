@@ -93,5 +93,18 @@ public class Constants {
 
 
     public static String API_HTTP_URL = "http://127.0.0.1/";
+
+
+
+
+    public static final String API_STORAGE_TIMESTAMP_DES = "video img save timestamp";
+    public static final String API_STORAGE_TIMESTAMP  = "timestamp";
+    public static final String API_STORAGE_DEVICEID_DES = "device_id";
+    public static final String API_STORAGE_DEVICEID = "device_id";
+
+
+    public static final String VIDEO_STORAGE_COUNT_DEFAULT_VALUE = "1";
+
+
 //}
 }
