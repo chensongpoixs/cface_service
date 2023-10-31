@@ -187,11 +187,46 @@ public class SubjectService {
         );
 
         return saveCalculatedEmbedding(
-                file.getBytes(),
+//                file.getBytes(),
+                file,
                 subjectName,
                 modelKey,
                 findFacesResponse
         );
+    }
+
+    private Pair<Subject, Embedding> saveCalculatedEmbedding(  MultipartFile file,
+                                                             String subjectName,
+                                                             String modelKey,
+                                                             FindFacesResponse findFacesResponse) throws IOException{
+
+        // if we are here => at least one face exists
+        List<FindFacesResult> result = findFacesResponse.getResult();
+
+        if (result.size() > MAX_FACES_TO_SAVE) {
+            throw new TooManyFacesException();
+        }
+
+        Double[] embedding = result.stream().findFirst().orElseThrow().getEmbedding();
+        double[] normalized = classifier.normalizeOne(Arrays.stream(embedding).mapToDouble(d -> d).toArray());
+
+        EmbeddingInfo embeddingToSave = null;
+
+            embeddingToSave = new EmbeddingInfo(
+                    findFacesResponse.getPluginsVersions().getCalculator(),
+                    normalized,
+                    file.getBytes()
+            );
+
+
+        final Pair<Subject, Embedding> pair = subjectDao.addEmbedding(file, modelKey, subjectName, embeddingToSave);
+
+        embeddingCacheProvider.ifPresent(
+                modelKey,
+                subjectCollection -> subjectCollection.addEmbedding(pair.getRight())
+        );
+
+        return pair;
     }
 
     private Pair<Subject, Embedding> saveCalculatedEmbedding(byte[] content,

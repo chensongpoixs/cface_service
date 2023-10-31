@@ -83,6 +83,9 @@ databaseChangeLog:
               - column:
                   name: img_id
                   type: uuid
+              - column:
+                  name: face_img_url
+                  type: varchar(1024)
         - addNotNullConstraint:
             tableName: embedding
             columnName: calculator

@@ -11,22 +11,31 @@ import com.exadel.frs.commonservice.repository.ImgRepository;
 import com.exadel.frs.commonservice.repository.SubjectRepository;
 import com.exadel.frs.commonservice.system.global.ImageProperties;
 import com.exadel.frs.core.trainservice.dto.EmbeddingInfo;
+import com.exadel.frs.core.trainservice.util.MultipartFileToFileUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SubjectDao {
 
     private final SubjectRepository subjectRepository;
     private final EmbeddingRepository embeddingRepository;
     private final ImgRepository imgRepository;
     private final ImageProperties imageProperties;
+
+
+    private final Environment env;
 
     public Collection<String> getSubjectNames(final String apiKey) {
         return subjectRepository.getSubjectNames(apiKey);
@@ -171,6 +180,41 @@ public class SubjectDao {
         return Pair.of(subject, embedding);
     }
 
+    @Transactional
+    public Pair<Subject, Embedding> addEmbedding(MultipartFile file, final String apiKey,
+                                                 final String subjectName,
+                                                 final @Nullable EmbeddingInfo embeddingInfo) {
+
+        var subject = subjectRepository
+                .findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName)  // subject already exists
+                .orElseGet(() -> saveSubject(apiKey, subjectName));         // add new subject
+
+        Embedding embedding = null;
+        if (embeddingInfo != null) {
+            embedding = saveEmbeddingInfo(file, subject, embeddingInfo);
+        }
+
+        return Pair.of(subject, embedding);
+    }
+
+
+
+
+
+    /*
+     Date day = new Date();
+                   SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
+                   String file_prefix =    "/"+ sdf.format(day) +"/" + apiKey + "/";
+                   SimpleDateFormat  file_prefixDate = new SimpleDateFormat("yyyyMMddHHmmss");
+//            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
+                   String master_file_name = file_prefixDate.format(day) + "_" +  UUID.randomUUID().toString() /*+ ".jpg"*/;
+
+    //            String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
+    //String maser_new_jpg =  MultipartFileToFileUtils.saveMultipartFile(file, path, file_prefix, master_file_name);
+
+
+
+
     private Subject saveSubject(String apiKey, String subjectName) {
         var subject = new Subject()
                 .setApiKey(apiKey)
@@ -189,6 +233,37 @@ public class SubjectDao {
             img.setContent(embeddingInfo.getSource());
             imgRepository.save(img);
             embedding.setImg(img);
+        }
+
+        return embeddingRepository.save(embedding);
+    }
+
+
+    private Embedding saveEmbeddingInfo(MultipartFile file, Subject subject, EmbeddingInfo embeddingInfo) {
+        var embedding = new Embedding();
+        embedding.setSubject(subject);
+        embedding.setEmbedding(embeddingInfo.getEmbedding());
+        embedding.setCalculator(embeddingInfo.getCalculator());
+        if (embeddingInfo.getSource() != null && imageProperties.isSaveImagesToDB()) {
+            Img img = new Img();
+            img.setContent(embeddingInfo.getSource());
+            imgRepository.save(img);
+            embedding.setImg(img);
+        }
+
+        {
+            String path = env.getProperty("environment.storage.path") ;
+            log.info("storage path = " + path);
+            Date day = new Date();
+            SimpleDateFormat sdf= new SimpleDateFormat("yyyyMMdd");
+            String file_prefix =    "/face/"+ sdf.format(day) + "/";
+            SimpleDateFormat  file_prefixDate = new SimpleDateFormat("yyyyMMddHHmmss");
+//            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
+            String master_file_name = file_prefixDate.format(day) + "_" +  UUID.randomUUID().toString() /*+ ".jpg"*/;
+
+//            String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
+            String maser_new_jpg =  MultipartFileToFileUtils.saveMultipartFile(file, path, file_prefix, master_file_name);
+            embedding.setFaceImgUrl(maser_new_jpg);
         }
 
         return embeddingRepository.save(embedding);
