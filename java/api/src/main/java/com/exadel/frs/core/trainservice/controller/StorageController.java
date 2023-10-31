@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +76,7 @@ public class StorageController
             @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
             @Valid
             @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
-            final int device_id, //API_STORAGE_FACE_GENDER_DES
+            final String device_id, //API_STORAGE_FACE_GENDER_DES
             @ApiParam(value = API_STORAGE_FACE_GENDER_DES )
             @Valid
             @RequestParam( defaultValue = "0", name = API_STORAGE_FACE_GENDER, required = false )
@@ -82,31 +85,44 @@ public class StorageController
             @Valid
             @RequestParam( name = API_STORAGE_FACE_SUBJECTNAME, required = false )
             final String subjectName, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = API_STORAGE_TIMESTAMP_SORT_DES )
+            @Valid
+            @RequestParam(defaultValue = "0", name = API_STORAGE_TIMESTAMP_SORT, required = false )
+            final int ASCDESC, //API_STORAGE_FACE_GENDER_DES
+
+
             final Pageable pageable
     )
     {
 
-//        log.info("==============================================>");
-//        try {
-////            List<SaveFaceImgProjection> saveFaceImgs =  saveFaceImgService.listSaveFaceImgs( );
-////            log.info(saveFaceImgs.toString());
-//////            saveFaceImgs.stream().map(Objects::toString).forEach(System.out::println);
-//////            Optional<SaveFaceImg> p = saveFaceImgService.findById(timestamp);
-//////            if (!p.isEmpty())
-//////            {
-//////                log.info(p.get().toString());
-//////            }
-//        }
-//        catch (final Exception exception)
-//        {
-//            log.info(exception.toString());
-//        }
+        List<Integer>   devicdids = new ArrayList<>();
+        String str = "";
+        if (device_id != "-1" && device_id.length() >0)
+        {
+            for (int i = 0; i < device_id.length(); ++i)
+            {
+                if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                {
+                    str +=device_id.charAt(i);
+                }
+                else if (device_id.charAt(i) == ',' || device_id.length() ==  (i) )
+                {
+                    // TODO@chensong Java的接口定义需要这样玩的哈
+                    devicdids.add(Integer.parseInt(str));
+                    devicdids.add(Integer.parseInt(str));
 
-//        List<SaveFaceImgProjection> saveFaceImgProjections =  saveFaceImgSubService.listSaveFaceSubImgs();
-//        System.out.println(saveFaceImgProjections.toArray().toString());
-//        log.info(saveFaceImgProjections.toString());
-//        return null;
-        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(apiKey, start_timestamp, end_timestamp, device_id, gender, subjectName,  pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+                    str = "";
+                }
+            }
+        }
+
+        for(Integer v : devicdids)
+        {
+            log.info("----> devieid = " + v);
+        }
+
+//            log.info( device_id.toString());
+        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(apiKey, start_timestamp, end_timestamp, devicdids, gender, subjectName,  ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
                 env.getProperty("environment.storage.url"));
 //        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));

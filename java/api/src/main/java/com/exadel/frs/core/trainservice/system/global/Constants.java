@@ -78,7 +78,7 @@ public class Constants {
 
 
 
-    public static  final String API_STORAGE_FACE_DEVICEID_DES = "Capture device ID";
+    public static  final String API_STORAGE_FACE_DEVICEID_DES = "Capture device ID 全部设备: -1,  1设备和2设备 : 1,2 ";
     public static  final String API_STORAGE_FACE_DEVICEID = "device_id";
 
 
@@ -106,5 +106,11 @@ public class Constants {
     public static final String VIDEO_STORAGE_COUNT_DEFAULT_VALUE = "1";
 
 
+
+
+
+    public static final String API_STORAGE_TIMESTAMP_SORT_DES = "timestamp sort  0: 升序 1: 降序";
+
+    public static final String API_STORAGE_TIMESTAMP_SORT = "ascdesc";
 //}
 }

@@ -14,7 +14,7 @@ public interface SaveFaceImgSubService
 
 
     Page<SaveFaceImgProjection>  listSaveFaceSubImgByApiKey(String apiKey, long startTimestamp, long endTimestamp, Pageable pageable);
-    Page<SaveFaceImgProjection>  listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, int deviceId, int gender, String subjectName, Pageable pageable);
+    Page<SaveFaceImgProjection>  listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int gender, String subjectName, int ASCDESC,   Pageable pageable);
 
     int removeSaveFaceSubimgByApiAkyAndId(String apiKey, long id);
 }

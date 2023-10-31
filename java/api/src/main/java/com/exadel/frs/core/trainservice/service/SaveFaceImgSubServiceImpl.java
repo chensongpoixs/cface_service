@@ -34,14 +34,33 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
     }
 
     @Override
-    public Page<SaveFaceImgProjection> listSaveFaceSubImgByApiKey(String apiKey, long startTimestamp, long endTimestamp, Pageable pageable) {
+    public Page<SaveFaceImgProjection> listSaveFaceSubImgByApiKey(String apiKey, long startTimestamp, long endTimestamp,  Pageable pageable) {
 
-        return  saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestamp(apiKey, (int) startTimestamp,  (int) endTimestamp, pageable);
+        return  saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestamp(apiKey, (int) startTimestamp,  (int) endTimestamp,   pageable);
     }
 
     @Override
-    public Page<SaveFaceImgProjection> listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, int deviceId, int gender, String subjectName, Pageable pageable) {
-        return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceIdAndGenderAndSubjectName(apiKey, (int) startTimestamp, (int) endTimestamp, deviceId, gender,  subjectName, pageable);
+    public Page<SaveFaceImgProjection> listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int gender, String subjectName,  int ASCDESC, Pageable pageable) {
+//        if (sort> 0)
+//        {
+//            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceIdAndGenderAndSubjectNameOrder(apiKey, (int) startTimestamp, (int) endTimestamp, deviceId, gender,  subjectName,  pageable);
+//        }
+        // TODO@chensong 20231031 写法太露啦
+        if (ASCDESC> 0 )
+        {
+            if ( deviceIds.size()> 0)
+            {
+                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, gender,  subjectName,  pageable);
+
+            }
+            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp,  gender,  subjectName,  pageable);
+
+        }
+        else if (deviceIds.size()> 0)
+        {
+              return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, gender,  subjectName,  pageable);
+        }
+        return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, gender,  subjectName,  pageable);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class SaveFaceImgSub
 
 
     @Basic
-    @Column(name = "sub_img_url", nullable = true, precision = 0)
+    @Column(name = "sub_img_url")
     private String subImgUrl;
 
 

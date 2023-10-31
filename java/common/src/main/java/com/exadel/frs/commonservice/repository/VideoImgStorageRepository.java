@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface VideoImgStorageRepository extends JpaRepository<VideoImgStorageTable, Long>
 {
@@ -20,10 +22,22 @@ public interface VideoImgStorageRepository extends JpaRepository<VideoImgStorage
                   from
                         VideoImgStorageTable   a
                   where
-                        (cast(:deviceId as string) is '-1' or a.deviceId = :deviceId)
+                          a.deviceId in (:deviceIds)
                   and
                         a.timestamp between :startTimestamp and :endTimestamp  
                   """ )
-    Page<VideoImgStorageProjection> findByVideoImgStorageAndIdBetweenTimestamp(@Param("deviceId") Integer deviceId , @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, Pageable pageable);
+    Page<VideoImgStorageProjection> findByVideoImgStorageAndIdBetweenTimestamp(@Param("deviceId") List deviceIds , @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, Pageable pageable);
+
+
+
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.VideoImgStorageProjection(a.id, a.deviceId, a.timestamp , a.imgUrl)
+                  from
+                        VideoImgStorageTable   a
+                  where
+                        a.timestamp between :startTimestamp and :endTimestamp  
+                  """ )
+    Page<VideoImgStorageProjection> findByVideoImgStorageBetweenTimestamp( @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, Pageable pageable);
 
 }

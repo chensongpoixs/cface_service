@@ -27,10 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.exadel.frs.commonservice.system.global.Constants.DET_PROB_THRESHOLD;
 import static com.exadel.frs.core.trainservice.system.global.Constants.*;
@@ -135,14 +132,38 @@ public class VideoImgStorageController
             @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
             @Valid
             @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
-            final int device_id, //API_STORAGE_FACE_GENDER_DES
+            final String device_id, //API_STORAGE_FACE_GENDER_DES
             final Pageable pageable
     )
     {
         String url = env.getProperty("environment.storage.url");
         log.info("storage path = " + url);
+        List<Integer>   devicdids = new ArrayList<>();
+        String str = "";
+        if (device_id != "-1" && device_id.length() >0)
+        {
+            for (int i = 0; i < device_id.length(); ++i)
+            {
+                if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                {
+                    str +=device_id.charAt(i);
+                }
+                else if (device_id.charAt(i) == ',' || device_id.length() ==  (i) )
+                {
+                    // TODO@chensong Java的接口定义需要这样玩的哈
+                    devicdids.add(Integer.parseInt(str));
+                    devicdids.add(Integer.parseInt(str));
 
-        return new VideoImgStorage(videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  device_id, start_timestamp, end_timestamp,   pageable).map(videoImgStorageMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+                    str = "";
+                }
+            }
+        }
+
+        for(Integer v : devicdids)
+        {
+            log.info("----> devieid = " + v);
+        }
+        return new VideoImgStorage(videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  devicdids, start_timestamp, end_timestamp,   pageable).map(videoImgStorageMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
                 url);
 //        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));

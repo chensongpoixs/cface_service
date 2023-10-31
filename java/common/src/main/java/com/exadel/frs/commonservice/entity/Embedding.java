@@ -47,4 +47,8 @@ public class Embedding {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "img_id", referencedColumnName = "id")
     private Img img;
+
+
+    @Column(name = "face_img_url", nullable = false)
+    private String faceImgUrl;
 }
