@@ -78,6 +78,8 @@ environment:
       url: ${STORAGE_URL:http://127.0.0.1:9300}
   storage:
       path: E:/Work/face/images
+      url: http://127.0.0.1/chensong
+  
 image:
   types:
     - tif
