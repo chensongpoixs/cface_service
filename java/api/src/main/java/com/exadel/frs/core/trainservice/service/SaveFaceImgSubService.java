@@ -1,6 +1,7 @@
 package com.exadel.frs.core.trainservice.service;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
+import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +18,5 @@ public interface SaveFaceImgSubService
     Page<SaveFaceImgProjection>  listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int gender, String subjectName, int ASCDESC,   Pageable pageable);
 
     int removeSaveFaceSubimgByApiAkyAndId(String apiKey, long id);
+    List<DownloadDataProjection> listDownloadDataFaceSubImgById(List ids);
 }

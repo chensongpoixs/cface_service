@@ -133,6 +133,7 @@ public class SecurityValidationFilter implements Filter {
                     {
                         log.info(" recognize --> "  );
                         modelStatisticCacheProvider.incrementRequestCount(validationResult.getModelId());
+                        log.info("==========>");
                     }
                 }
 

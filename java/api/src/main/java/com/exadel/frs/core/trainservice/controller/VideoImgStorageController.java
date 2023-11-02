@@ -50,7 +50,7 @@ public class VideoImgStorageController
 
 
 
-    @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/vido_save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public int save(
             @ApiParam(value = API_KEY_DESC, required = true)
             @RequestHeader(X_FRS_API_KEY_HEADER)
@@ -115,7 +115,7 @@ public class VideoImgStorageController
 
 
 
-    @GetMapping("/search")
+    @GetMapping("/video_search")
     public VideoImgStorage listStorageVideoImg
             (
             @ApiParam(value = API_KEY_DESC, required = true)
@@ -148,13 +148,26 @@ public class VideoImgStorageController
                 {
                     str +=device_id.charAt(i);
                 }
-                else if (device_id.charAt(i) == ',' || device_id.length() ==  (i) )
+                else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i)*/ )
                 {
                     // TODO@chensong Java的接口定义需要这样玩的哈
-                    devicdids.add(Integer.parseInt(str));
-                    devicdids.add(Integer.parseInt(str));
+                    if (str != "")
+                    {
+                        devicdids.add(Integer.parseInt(str));
+                        devicdids.add(Integer.parseInt(str));
 
-                    str = "";
+                        str = "";
+                    }
+                }
+                  if (device_id.length() ==  (i+1) )
+                {
+                    if (str != "")
+                    {
+                        devicdids.add(Integer.parseInt(str));
+                        devicdids.add(Integer.parseInt(str));
+
+                        str = "";
+                    }
                 }
             }
         }

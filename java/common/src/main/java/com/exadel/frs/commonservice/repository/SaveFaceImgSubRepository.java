@@ -2,6 +2,7 @@ package com.exadel.frs.commonservice.repository;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
+import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -167,6 +168,23 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
 //                        a.saveFaceImg.timestamp desc
 //                  """ )
 //    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceIdAndGenderAndSubjectNameOrder( String apiKey , Integer startTimestamp,  Integer endTimestamp,   Integer deviceId, Integer gender, String subjectName,    Pageable pageable);
+
+
+
+    /**
+     * 查询设备id的数据
+     */
+
+    @Query("""
+            select
+                    new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
+            from
+                        SaveFaceImgSub   a
+            where
+                a.id in  (:ids)
+            """ )
+
+    List<DownloadDataProjection> findBySaveFaceImgSubInIds(@Param("ids")List ids);
 
     @Modifying
     @Query("delete from SaveFaceImgSub a where a.id = :Id")

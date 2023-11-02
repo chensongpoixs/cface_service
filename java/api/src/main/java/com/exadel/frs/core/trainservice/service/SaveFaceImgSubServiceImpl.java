@@ -1,6 +1,7 @@
 package com.exadel.frs.core.trainservice.service;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
+import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.commonservice.repository.SaveFaceImgRepository;
 import com.exadel.frs.commonservice.repository.SaveFaceImgSubRepository;
@@ -66,5 +67,12 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
     @Override
     public int removeSaveFaceSubimgByApiAkyAndId(String apiKey, long id) {
         return  saveFaceImgSubRepository.deleteById(id);
+    }
+
+    @Override
+    public List<DownloadDataProjection> listDownloadDataFaceSubImgById(List ids)
+    {
+        return saveFaceImgSubRepository.findBySaveFaceImgSubInIds(ids);
+//        return null;
     }
 }

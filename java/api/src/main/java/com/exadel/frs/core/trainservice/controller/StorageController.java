@@ -1,6 +1,9 @@
 package com.exadel.frs.core.trainservice.controller;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
+import com.exadel.frs.commonservice.exel.ExelRow;
+import com.exadel.frs.commonservice.exel.ExelTable;
+import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
@@ -9,6 +12,8 @@ import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.StorageSaveFaceImgServiceImpl;
+import com.exadel.frs.core.trainservice.util.FileBase64;
+import com.exadel.frs.core.trainservice.util.ZipFile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +30,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static com.exadel.frs.core.trainservice.system.global.Constants.*;
 
@@ -105,13 +111,26 @@ public class StorageController
                 {
                     str +=device_id.charAt(i);
                 }
-                else if (device_id.charAt(i) == ',' || device_id.length() ==  (i) )
+                else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
                 {
                     // TODO@chensong Java的接口定义需要这样玩的哈
-                    devicdids.add(Integer.parseInt(str));
-                    devicdids.add(Integer.parseInt(str));
+                    if (str != "")
+                    {
+                        devicdids.add(Integer.parseInt(str));
+                        devicdids.add(Integer.parseInt(str));
 
-                    str = "";
+                        str = "";
+                    }
+                }
+                  if (device_id.length() ==  (i+1) )
+                {
+                    if (str != "")
+                    {
+                        devicdids.add(Integer.parseInt(str));
+                        devicdids.add(Integer.parseInt(str));
+
+                        str = "";
+                    }
                 }
             }
         }
@@ -129,7 +148,168 @@ public class StorageController
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
     }
 
+    @GetMapping("/download")
+    public ReslutDownload Download(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "img id" , required = true)
+            @Valid
+            @RequestParam(name = "id" )
+            final String ids)
+    {
 
+        List<Long>   imgids = new ArrayList< >();
+        String str = "";
+        if (ids != "-1" && ids.length() >0)
+        {
+            for (int i = 0; i < ids.length(); ++i)
+            {
+                log.info("[i = " + i + "],[ char = " + ids.charAt(i) + "][ size = " + ids.length() + "]");
+                if (ids.charAt(i) < ('9' +1) && ids.charAt(i) > ('0' -1))
+                {
+                    str +=ids.charAt(i);
+                }
+                else if (ids.charAt(i) == ',' )
+                {
+                    // TODO@chensong Java的接口定义需要这样玩的哈
+                    if (str != "")
+                    {
+                        imgids.add(Long.parseLong(str));
+                        imgids.add(Long.parseLong(str));
+
+                        str = "";
+                    }
+                }
+                  if (ids.length() ==  (i+1) )
+                {
+                    if (str != "")
+                    {
+                        imgids.add(Long.parseLong(str));
+                        imgids.add(Long.parseLong(str));
+
+                        str = "";
+                    }
+                }
+            }
+        }
+        int result = 0;
+//        List< DownloadDataProjection> downloadDatalist = null;
+        for (Long v : imgids)
+        {
+            log.info("imgid = " + v);
+        }
+        if (imgids.size()> 0)
+        {
+            List< DownloadDataProjection> downloadDatalist = saveFaceImgSubService.listDownloadDataFaceSubImgById(imgids);
+//            return new ReslutDownload(downloadDatalist.toString(), result);
+
+            if (null != downloadDatalist && downloadDatalist.size() > 0)
+            {
+
+                String imgprofixpath = env.getProperty("environment.storage.path");
+                str = "";
+                ExelTable exelTable = new ExelTable();
+
+                for (DownloadDataProjection downloadDataProjection : downloadDatalist)
+                {
+                    ExelRow exelRow = new ExelRow();
+                    exelRow.setCreateTimestamp(downloadDataProjection.timestamp());
+                    exelRow.setDeviceIdAddress(String.valueOf(downloadDataProjection.deviceId()));
+                    exelRow.setUserName(downloadDataProjection.userName());
+                    exelRow.setGender(String.valueOf(downloadDataProjection.gender()));
+                    exelRow.setSimilarity(downloadDataProjection.similarity());
+                    exelRow.setCaptureImg(FileBase64.FileBase64ToString(imgprofixpath + downloadDataProjection.captureImgUrl()));
+                    exelRow.setFaceImg(Base64.getEncoder().encodeToString(downloadDataProjection.faceImg()));
+                    exelTable.add(exelRow);
+//                    log.info("[img base64 = " + FileBase64.FileBase64ToString(imgprofixpath + downloadDataProjection.captureImgUrl()) + "]");
+//                    str += "[username = " + downloadDataProjection.userName() + "][ captureImgUrl = " + downloadDataProjection.captureImgUrl() + "]";
+
+
+//                    log.info( "[username = " + downloadDataProjection.userName() + "][ captureImgUrl = " + downloadDataProjection.captureImgUrl() + "]");
+                }
+                Date date = new Date();
+                SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
+                String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
+
+
+
+                String uuid = UUID.randomUUID().toString()   ;
+
+
+                String xlsfilepath = uuid + ".xls";
+
+
+                zipPath += uuid+   ".zip";
+                String absolutePath = null;
+                File zipdir = new File(env.getProperty("environment.storage.path") + zipPath);
+                if (!zipdir.exists()) {
+                    try {
+                        absolutePath = zipdir.getCanonicalPath();
+
+                        /*判断路径中的文件夹是否存在，如果不存在，先创建文件夹*/
+                        String dirPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+                        File dir = new File(dirPath);
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+
+                    } catch (IOException e) {
+                        log.info("IOException" + String.valueOf(e));
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable.ExelTableToString()))
+                {
+                    log.info("zip img failed !!!");
+                }
+//                File file = new File("chensong.xls");
+//                if (!file.exists())
+//                {
+//                    try {
+//                        file.createNewFile();
+//                    } catch (IOException e) {
+//                        log.info(String.valueOf(e));
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+
+//                FileWriter fileWriter = null;
+//                try {
+//                      fileWriter = new FileWriter(file.getName(), true);
+//                } catch (IOException e) {
+//                    log.info(String.valueOf(e));
+//                    throw new RuntimeException(e);
+//                }
+//
+//                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+//                try {
+//                    bufferedWriter.write(exelTable.ExelTableToString());
+//                } catch (IOException e) {
+//                    log.info(String.valueOf(e));
+//                    throw new RuntimeException(e);
+//                }
+//                try {
+//                    bufferedWriter.close();
+//                } catch (IOException e) {
+//                    log.info(String.valueOf(e));
+//                    throw new RuntimeException(e);
+//                }
+//                ;
+                return new ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
+            }
+        }
+        result = 500;
+
+
+//        str = downloadDatalist.toString();
+
+        return new ReslutDownload(str, result);
+
+
+
+    }
 
 
     @WriteEndpoint
@@ -183,6 +363,21 @@ public class StorageController
 //
 //        return null;
 //    }
+
+
+    @RequiredArgsConstructor
+    private static final class ReslutDownload {
+        private final String url;
+
+        private final int result;
+        @JsonProperty("url")
+        private String getUrl () {return url;}
+
+
+        @JsonProperty("result")
+        private int getResult () {return result;}
+
+    }
     @RequiredArgsConstructor
     private static final class Subtable {
         private final int count;
