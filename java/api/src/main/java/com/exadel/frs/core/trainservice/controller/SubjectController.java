@@ -1,5 +1,6 @@
 package com.exadel.frs.core.trainservice.controller;
 
+import static com.exadel.frs.commonservice.system.global.Constants.DET_PROB_THRESHOLD;
 import static com.exadel.frs.core.trainservice.system.global.Constants.*;
 //import static com.exadel.frs.core.trainservice.system.global.Constants.FACE_TIMESTAMP;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -7,9 +8,13 @@ import static org.springframework.http.HttpStatus.CREATED;
 import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
+import com.exadel.frs.commonservice.entity.Subject;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
+import com.exadel.frs.commonservice.projection.SubjectProjection;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
 import com.exadel.frs.core.trainservice.dto.SubjectDto;
+import com.exadel.frs.core.trainservice.dto.SubjectSubIdDto;
+import com.exadel.frs.core.trainservice.mapper.Subjectmapper;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgService;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.SubjectService;
@@ -21,6 +26,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +43,10 @@ public class SubjectController {
 
     private final SaveFaceImgService saveFaceImgService;
     private final SaveFaceImgSubService saveFaceImgSubService;
+
+    private final Subjectmapper subjectmapper;
+
+    private final Environment env;
     @PostMapping
     @ResponseStatus(CREATED)
     public SubjectDto createSubject(
@@ -47,8 +57,8 @@ public class SubjectController {
             @RequestBody
             final SubjectDto subjectDto
     ) {
-        var subject = subjectService.createSubject(apiKey, subjectDto.getSubjectName());
-        return new SubjectDto((subject.getSubjectName()));
+        var subject = subjectService.createSubject(apiKey, subjectDto.getSubjectName(), subjectDto.getSubId());
+        return new SubjectDto( (subject.getSubjectName()) , subject.getSubId());
     }
 
     @GetMapping
@@ -57,7 +67,7 @@ public class SubjectController {
             @RequestHeader(X_FRS_API_KEY_HEADER)
             final String apiKey
     ) {
-     if (true)
+     if (false)
      {
          long  seed = 1000;
          Random random = new Random(seed);
@@ -192,6 +202,43 @@ public class SubjectController {
         );
     }
 
+
+
+    @GetMapping("/listsubjectsubId")
+    public SubjectSubs listSubjectsSubId(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = SUBJECT_SUB_ID_DESC, required = true)
+            @Validated
+            @RequestParam(value = "sub_id" )
+            final int subId,
+            Pageable pageable
+            )
+    {
+
+       // Page<SubjectProjection> subjects =  subjectService.findByApikeySubId(apiKey, subId, pageable);
+
+//        return null;
+        return new SubjectSubs(subjectService.findByApikeySubId(apiKey, subId, pageable). map(subjectmapper::toResponseDto), env.getProperty("environment.storage.url"));
+    }
+    @DeleteMapping("/deletesubjectsubId")
+    public int deleteSubjectsSubId(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = SUBJECT_SUB_ID_DESC, required = true)
+//            @JsonProperty("subid")
+//            @NotBlank(message = "Subject subId cannot be empty")
+//            @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
+            @RequestParam(value = "sub_id" )
+            final int subId
+    )
+    {
+        return subjectService.deleteByApiKeyAndSubId(apiKey, subId);
+    }
+
+
 //    @GetMapping("/search")
 //    public  StorageImgs listStorageImg(
 //            @ApiParam(value = API_KEY_DESC, required = true)
@@ -231,38 +278,39 @@ public class SubjectController {
 //    }
 
 
-//    @RequiredArgsConstructor
-//    private static final class StorageImgs {
+    @RequiredArgsConstructor
+    private static final class SubjectSubs {
+
+        private final Page<SubjectSubIdDto> source;
+
+//        public StorageImg(Page<StorageImgProjection> listStorageImgs) {
 //
-//        private final Page<StorageImgDto> source;
-//
-////        public StorageImg(Page<StorageImgProjection> listStorageImgs) {
-////
-////        }
-//
-//        // As of backward compatibility we are not allowed to rename property 'faces' --> 'embedding'
-//        public List<StorageImgDto> getFaces() {
-//            return source.getContent();
 //        }
-//
-//        @JsonProperty("total_pages")
-//        public int getTotalPages() {
-//            return source.getTotalPages();
-//        }
-//
-//        @JsonProperty("total_elements")
-//        public long getTotalElements() {
-//            return source.getTotalElements();
-//        }
-//
-//        @JsonProperty("page_number")
-//        public int getNumber() {
-//            return source.getNumber();
-//        }
-//
-//        @JsonProperty("page_size")
-//        public int getSize() {
-//            return source.getSize();
-//        }
-//    }
+        private final String url;
+        // As of backward compatibility we are not allowed to rename property 'faces' --> 'embedding'
+        public List<SubjectSubIdDto> getFaces() {
+            return source.getContent();
+        }
+
+        public String getUrl()   { return url;}
+        @JsonProperty("total_pages")
+        public int getTotalPages() {
+            return source.getTotalPages();
+        }
+
+        @JsonProperty("total_elements")
+        public long getTotalElements() {
+            return source.getTotalElements();
+        }
+
+        @JsonProperty("page_number")
+        public int getNumber() {
+            return source.getNumber();
+        }
+
+        @JsonProperty("page_size")
+        public int getSize() {
+            return source.getSize();
+        }
+    }
 }

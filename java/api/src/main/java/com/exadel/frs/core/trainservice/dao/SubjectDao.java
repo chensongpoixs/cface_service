@@ -6,6 +6,7 @@ import com.exadel.frs.commonservice.entity.Subject;
 import com.exadel.frs.commonservice.exception.EmbeddingNotFoundException;
 import com.exadel.frs.commonservice.exception.SubjectAlreadyExistsException;
 import com.exadel.frs.commonservice.exception.SubjectNotFoundException;
+import com.exadel.frs.commonservice.projection.SubjectProjection;
 import com.exadel.frs.commonservice.repository.EmbeddingRepository;
 import com.exadel.frs.commonservice.repository.ImgRepository;
 import com.exadel.frs.commonservice.repository.SubjectRepository;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -154,13 +157,22 @@ public class SubjectDao {
         return subjectRepository.deleteByApiKey(apiKey);
     }
 
-    public Subject createSubject(final String apiKey, final String subjectName) {
+    public Subject createSubject(final String apiKey, final String subjectName, long subId) {
         final Optional<Subject> subjectOptional = subjectRepository.findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName);
         if (subjectOptional.isPresent()) {
             throw new SubjectAlreadyExistsException();
         }
 
-        return saveSubject(apiKey, subjectName);
+        return saveSubject(apiKey, subjectName, subId);
+    }
+
+    public int deleteByApiKeyAndSubId(final String apiKey, int subId)
+    {
+        return subjectRepository.deleteByApiKeyAndSubId(apiKey, subId);
+    }
+    public Page<SubjectProjection> findByApikeyAndSubId(final String apiKey, int subId, Pageable pageable)
+    {
+        return subjectRepository.findByApiKeyAndSubId(apiKey, subId, pageable);
     }
 
     @Transactional
@@ -170,7 +182,7 @@ public class SubjectDao {
 
         var subject = subjectRepository
             .findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName)  // subject already exists
-            .orElseGet(() -> saveSubject(apiKey, subjectName));         // add new subject
+            .orElseGet(() -> saveSubject(apiKey, subjectName, 0));         // add new subject
 
         Embedding embedding = null;
         if (embeddingInfo != null) {
@@ -187,7 +199,7 @@ public class SubjectDao {
 
         var subject = subjectRepository
                 .findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName)  // subject already exists
-                .orElseGet(() -> saveSubject(apiKey, subjectName));         // add new subject
+                .orElseGet(() -> saveSubject(apiKey, subjectName, 0));         // add new subject
 
         Embedding embedding = null;
         if (embeddingInfo != null) {
@@ -215,10 +227,11 @@ public class SubjectDao {
 
 
 
-    private Subject saveSubject(String apiKey, String subjectName) {
+    private Subject saveSubject(String apiKey, String subjectName, long subId) {
         var subject = new Subject()
                 .setApiKey(apiKey)
-                .setSubjectName(subjectName);
+                .setSubjectName(subjectName)
+                .setSubId((int) subId);
 
         return subjectRepository.save(subject);
     }

@@ -25,8 +25,6 @@
 //
 //@Configuration
 //@RequiredArgsConstructor
-//@EnableAsync
-//@Primary
 //public class FeignAsyncClientsConfig
 //{
 //    @Value("${app.feign.storage.connect-timeout}")

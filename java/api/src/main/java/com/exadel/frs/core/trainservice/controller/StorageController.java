@@ -5,6 +5,7 @@ import com.exadel.frs.commonservice.exel.ExelRow;
 import com.exadel.frs.commonservice.exel.ExelTable;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
+//import com.exadel.frs.commonservice.sdk.storage.feign.StorageFeignClient;
 import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
 import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
@@ -60,6 +61,8 @@ public class StorageController
 //    private final SaveFaceImgService saveFaceImgService;
     private final SaveFaceImgMapper saveFaceImgMapper;
     private final Environment env;
+
+//    private final StorageFeignClient storageFeignClient;
     /*
    @ApiParam(value = SUBJECT_DESC)
             @Valid
@@ -134,7 +137,7 @@ public class StorageController
                 }
             }
         }
-
+//        storageFeignClient.getInfo();
         for(Integer v : devicdids)
         {
             log.info("----> devieid = " + v);
@@ -193,6 +196,8 @@ public class StorageController
                 }
             }
         }
+
+
         int result = 0;
 //        List< DownloadDataProjection> downloadDatalist = null;
         for (Long v : imgids)

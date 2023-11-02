@@ -6,6 +6,7 @@ import com.exadel.frs.commonservice.entity.Subject;
 import com.exadel.frs.commonservice.exception.EmbeddingNotFoundException;
 import com.exadel.frs.commonservice.exception.TooManyFacesException;
 import com.exadel.frs.commonservice.exception.WrongEmbeddingCountException;
+import com.exadel.frs.commonservice.projection.SubjectProjection;
 import com.exadel.frs.commonservice.sdk.faces.FacesApiClient;
 import com.exadel.frs.commonservice.sdk.faces.feign.dto.FindFacesResponse;
 import com.exadel.frs.commonservice.sdk.faces.feign.dto.FindFacesResult;
@@ -36,6 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,9 +61,9 @@ public class SubjectService {
         return subjectDao.getSubjectNames(apiKey);
     }
 
-    public Subject createSubject(final String apiKey, final String subjectName) {
+    public Subject createSubject(final String apiKey, final String subjectName , long subId) {
         // subject is empty (without embeddings) no need to update cache
-        return subjectDao.createSubject(apiKey, subjectName);
+        return subjectDao.createSubject(apiKey, subjectName, subId);
     }
 
     public int deleteSubjectsByApiKey(final String apiKey) {
@@ -70,6 +73,17 @@ public class SubjectService {
 
         return deletedCount;
     }
+
+    public Page<SubjectProjection> findByApikeySubId(final String apiKey, int subId, Pageable pageable)
+    {
+        return subjectDao.findByApikeyAndSubId(apiKey, subId, pageable);
+    }
+
+    public int deleteByApiKeyAndSubId(final String apiKey, int subId)
+    {
+        return subjectDao.deleteByApiKeyAndSubId(apiKey, subId);
+    }
+
 
     public int removeAllSubjectEmbeddings(final String apiKey, final String subjectName) {
         int removed;

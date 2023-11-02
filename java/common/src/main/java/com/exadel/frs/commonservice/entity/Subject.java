@@ -28,4 +28,8 @@ public class Subject {
     // Could be guid, UUID, user first + last name - up to cutomers
     @Column(name = "subject_name")
     private String subjectName;
+
+
+    @Column(name = "sub_id")
+    private int subId;
 }

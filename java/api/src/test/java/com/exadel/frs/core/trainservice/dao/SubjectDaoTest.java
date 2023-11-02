@@ -55,14 +55,14 @@ class SubjectDaoTest extends EmbeddedPostgreSQLTest {
 
         assertThrows(
                 SubjectAlreadyExistsException.class,
-                () -> subjectDao.createSubject(model.getApiKey(), subjectName)
+                () -> subjectDao.createSubject(model.getApiKey(), subjectName, 1)
         );
     }
 
     @Test
     void testCreateSubjectByName() {
         var model = dbHelper.insertModel();
-        var subject = subjectDao.createSubject(model.getApiKey(), "subject");
+        var subject = subjectDao.createSubject(model.getApiKey(), "subject", 1);
 
         assertThat(subject).isNotNull();
         assertThat(subject.getId()).isNotNull();
