@@ -1,4 +1,4 @@
-package com.exadel.frs.commonservice.exel;
+package com.exadel.frs.core.trainservice.exel;//package com.exadel.frs.commonservice.exel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.exadel.frs.commonservice.exel.ExelConstants.*;
+import static com.exadel.frs.core.trainservice.exel.ExelConstants.*;
+
+//import static com.exadel.frs.commonservice.exel.ExelConstants.*;
 
 @Entity
 @Data

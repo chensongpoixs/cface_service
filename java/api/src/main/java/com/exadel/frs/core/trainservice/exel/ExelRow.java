@@ -1,4 +1,4 @@
-package com.exadel.frs.commonservice.exel;
+package com.exadel.frs.core.trainservice.exel;//package com.exadel.frs.commonservice.exel;
 
 
 import lombok.AllArgsConstructor;

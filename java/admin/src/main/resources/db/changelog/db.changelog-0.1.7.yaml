@@ -25,13 +25,16 @@ databaseChangeLog:
               - column:
                   name: subject_name
                   type: varchar(255)
+              - column:
+                  name: sub_id
+                  type: bigint
         - addPrimaryKey:
             columnNames: id
             constraintName: pk_subject
             tableName: subject
         - addUniqueConstraint:
-            columnNames: api_key, subject_name
-            constraintName: api_key_subject_name_uindex
+            columnNames: api_key, subject_name, sub_id
+            constraintName: api_key_subject_name_sub_id_uindex
             tableName: subject
         - addForeignKeyConstraint:
             baseColumnNames: api_key

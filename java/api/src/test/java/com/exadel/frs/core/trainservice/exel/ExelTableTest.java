@@ -1,7 +1,7 @@
 package com.exadel.frs.core.trainservice.exel;
 
-import com.exadel.frs.commonservice.exel.ExelRow;
-import com.exadel.frs.commonservice.exel.ExelTable;
+//exelimport com.exadel.frs.commonservice.exel.ExelRow;
+//import com.exadel.frs.commonservice.exel.ExelTable;
 import org.junit.jupiter.api.Test;
 
 public class ExelTableTest

@@ -1,13 +1,15 @@
 package com.exadel.frs.core.trainservice.controller;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
-import com.exadel.frs.commonservice.exel.ExelRow;
-import com.exadel.frs.commonservice.exel.ExelTable;
+//import com.exadel.frs.commonservice.exel.exelExelRow;
+//import com.exadel.frs.commonservice.exel.ExelTable;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 //import com.exadel.frs.commonservice.sdk.storage.feign.StorageFeignClient;
 import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
+import com.exadel.frs.core.trainservice.exel.ExelRow;
+import com.exadel.frs.core.trainservice.exel.ExelTable;
 import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
 //import com.exadel.frs.core.trainservice.mapper.StorageFaceImgMapper;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
