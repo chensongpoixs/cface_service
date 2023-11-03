@@ -86,6 +86,7 @@ public class SecurityValidationFilter implements Filter {
     ) throws IOException, ServletException {
         val httpRequest = (HttpServletRequest) servletRequest;
         val httpResponse = (HttpServletResponse) servletResponse;
+        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Origin", "*");
         log.info("==============================================doFilter==============================================");
         String requestURI = httpRequest.getRequestURI();
         if (!requestURI.matches("^/(swagger|webjars|v2|api/v1/migrate|api/v1/consistence/status|api/v1/static|api/v1/config).*$")) {
@@ -140,6 +141,7 @@ public class SecurityValidationFilter implements Filter {
             } else {
                 log.info("not  find apikey failed !!!");
                 val objectResponseEntity = handler.handleMissingRequestHeader(X_FRS_API_KEY_HEADER);
+
                 buildException(httpResponse, objectResponseEntity);
 
                 return;
