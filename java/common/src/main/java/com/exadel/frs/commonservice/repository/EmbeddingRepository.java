@@ -7,6 +7,8 @@ import com.exadel.frs.commonservice.entity.Subject;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
+
+import com.exadel.frs.commonservice.projection.SubjectEmbeddingProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -20,7 +22,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
     // Note: consumer should consume in transaction
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection(e.id, e.embedding, s.subjectName)
+                new com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection(e.id, e.embedding, s.subjectName, e.faceImgUrl)
             from
                 Embedding e
             left join
@@ -56,7 +58,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.subjectName)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.subjectName, e.faceImgUrl)
             from
                 Embedding e
             where
@@ -66,7 +68,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.subjectName)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.subjectName, e.faceImgUrl)
             from
                 Embedding e
             where
@@ -104,4 +106,27 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
             """)
     Long countBySubjectApiKeyNotEqAndCalculatorNotEq(@Param("apiKey") String apiKey,
                                                      @Param("calculator") String calculator);
+
+
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.SubjectEmbeddingProjection(e.subject.id, e.subject.subjectName, e.subject.subId, e.faceImgUrl)
+            from
+                Embedding e
+            where
+                e.subject.apiKey = :apiKey
+            """)
+    Page<SubjectEmbeddingProjection> findBySubjectApiKeySub(String apiKey,  Pageable pageable);
+
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.SubjectEmbeddingProjection(e.subject.id, e.subject.subjectName, e.subject.subId, e.faceImgUrl)
+            from
+                Embedding e
+            where
+                e.subject.apiKey = :apiKey
+            and
+                 e.subject.subId = :subId
+            """)
+    Page<SubjectEmbeddingProjection> findBySubjectApiKeyAndSubId(String apiKey, int subId, Pageable pageable);
 }

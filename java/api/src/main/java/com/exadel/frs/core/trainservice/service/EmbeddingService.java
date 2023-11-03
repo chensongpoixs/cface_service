@@ -4,6 +4,7 @@ import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.projection.EmbeddingProjection;
 import com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection;
 import com.exadel.frs.commonservice.entity.Img;
+import com.exadel.frs.commonservice.projection.SubjectEmbeddingProjection;
 import com.exadel.frs.commonservice.repository.EmbeddingRepository;
 import com.exadel.frs.commonservice.repository.ImgRepository;
 import com.exadel.frs.core.trainservice.system.global.Constants;
@@ -55,6 +56,13 @@ public class EmbeddingService {
     public Page<EmbeddingProjection> listEmbeddings(String apiKey, String subjectName, Pageable pageable) {
         return embeddingRepository.findBySubjectApiKeyAndSubjectName(apiKey, subjectName, pageable);
     }
+    public Page<SubjectEmbeddingProjection> listEmbeddings(String apiKey, Pageable pageable) {
+        return embeddingRepository.findBySubjectApiKeySub(apiKey, pageable);
+    }
+    public Page<SubjectEmbeddingProjection> listEmbeddings(String apiKey, int subId, Pageable pageable) {
+        return embeddingRepository.findBySubjectApiKeyAndSubId(apiKey,   subId, pageable);
+    }
+
 
     public boolean isDemoCollectionInconsistent() {
         return embeddingRepository.countBySubjectApiKeyAndCalculatorNotEq(

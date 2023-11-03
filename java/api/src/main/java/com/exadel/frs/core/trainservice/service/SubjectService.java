@@ -61,7 +61,7 @@ public class SubjectService {
         return subjectDao.getSubjectNames(apiKey);
     }
 
-    public Subject createSubject(final String apiKey, final String subjectName , long subId) {
+    public Subject createSubject(final String apiKey, final String subjectName , int subId) {
         // subject is empty (without embeddings) no need to update cache
         return subjectDao.createSubject(apiKey, subjectName, subId);
     }
@@ -77,6 +77,16 @@ public class SubjectService {
     public Page<SubjectProjection> findByApikeySubId(final String apiKey, int subId, Pageable pageable)
     {
         return subjectDao.findByApikeyAndSubId(apiKey, subId, pageable);
+    }
+
+
+    public Page<SubjectProjection> findByApikey(final String apiKey, Pageable pageable)
+    {
+        return subjectDao.findByApikey(apiKey, pageable);
+    }
+
+    public List<SubjectProjection> ListfindByApiKeySubId(final  String apiKey, int subId ) {
+        return subjectDao.findByApikeyAndSubId(apiKey, subId );
     }
 
     public int deleteByApiKeyAndSubId(final String apiKey, int subId)

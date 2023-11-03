@@ -1,1 +1,1 @@
-java -jar   E:\Work\face\face_service\CompreFace\java\admin\target\frs-crud-app-0.0.1-SNAPSHOT.jar   -Dspring.config.location=admin_application.yml
+java -jar   E:\Work\face\face_service\CompreFace\java\admin\target\frs-crud-app-0.0.1-SNAPSHOT.jar   -Dspring.config.location=application.yml

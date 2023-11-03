@@ -60,3 +60,19 @@ CREATE TABLE t_savefaceimg_subtable (
 	"box_max_x"    int4  NOT NULL,
 	"box_max_y"    int4  NOT NULL
 );
+
+
+
+
+
+
+
+
+
+-- landmarks,gender,age
+CREATE TABLE t_video_img_table (
+	"id" BIGSERIAL	PRIMARY KEY, 
+	"timestamp"  uuid NOT NULL,
+	"device_id"   int4  NOT NULL,
+	"img_url"  	varchar(1024)  NOT NULL
+);

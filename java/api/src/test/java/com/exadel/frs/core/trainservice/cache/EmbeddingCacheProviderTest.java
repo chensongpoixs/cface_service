@@ -55,9 +55,9 @@ class EmbeddingCacheProviderTest {
     @Test
     void getOrLoad() {
         var projections = new EnhancedEmbeddingProjection[]{
-                makeEnhancedEmbeddingProjection("A"),
-                makeEnhancedEmbeddingProjection("B"),
-                makeEnhancedEmbeddingProjection("C")
+                makeEnhancedEmbeddingProjection("A", ""),
+                makeEnhancedEmbeddingProjection("B", ""),
+                makeEnhancedEmbeddingProjection("C", "")
         };
 
         when(embeddingService.doWithEnhancedEmbeddingProjectionStream(eq(API_KEY), any()))

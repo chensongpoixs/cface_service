@@ -57,8 +57,8 @@ public class ItemsBuilder {
         return makeEmbedding(subject, null, null, img);
     }
 
-    public static EnhancedEmbeddingProjection makeEnhancedEmbeddingProjection(String subject) {
-        return new EnhancedEmbeddingProjection(UUID.randomUUID(), new double[]{1.1, 2.2, 3.3}, subject);
+    public static EnhancedEmbeddingProjection makeEnhancedEmbeddingProjection(String subject, String imgUrl) {
+        return new EnhancedEmbeddingProjection(UUID.randomUUID(), new double[]{1.1, 2.2, 3.3}, subject, imgUrl);
     }
 
     public static Img makeImg(byte[] content) {

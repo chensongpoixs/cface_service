@@ -183,8 +183,8 @@ class EmbeddingControllerTest extends EmbeddedPostgreSQLTest {
         when(embeddingService.listEmbeddings(eq(API_KEY), eq(null), any()))
                 .thenReturn(new PageImpl<>(
                         List.of(
-                                new EmbeddingProjection(UUID.randomUUID(), "name1"),
-                                new EmbeddingProjection(UUID.randomUUID(), "name2")
+                                new EmbeddingProjection(UUID.randomUUID(), "name1", ""),
+                                new EmbeddingProjection(UUID.randomUUID(), "name2", "")
                         ),
                         PageRequest.of(1, 10), // second page
                         12
@@ -206,7 +206,7 @@ class EmbeddingControllerTest extends EmbeddedPostgreSQLTest {
         var subjectName = "Johnny Depp";
         when(embeddingService.listEmbeddings(eq(API_KEY), eq(subjectName), any()))
                 .thenReturn(new PageImpl<>(
-                        List.of(new EmbeddingProjection(UUID.randomUUID(), subjectName)),
+                        List.of(new EmbeddingProjection(UUID.randomUUID(), subjectName, "")),
                         PageRequest.of(1, 10), // second page
                         12
                 ));

@@ -35,4 +35,8 @@ public class EmbeddingDto {
 
     @JsonProperty("subject")
     private String subjectName;
+
+
+    @JsonProperty("img_url")
+    private String imgUrl;
 }

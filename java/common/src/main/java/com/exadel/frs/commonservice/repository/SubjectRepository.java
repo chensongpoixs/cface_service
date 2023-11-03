@@ -23,6 +23,15 @@ public interface SubjectRepository extends PagingAndSortingRepository<Subject, U
 
     Optional<Subject> findByApiKeyAndSubjectNameIgnoreCase(String apiKey, String subjectName);
 
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.SubjectProjection(a.id, a.subjectName, a.subId)
+          from
+                Subject   a
+          where
+                a.apiKey = :apiKey 
+            """)
+    Page<SubjectProjection> findByApiKey(String apiKey , Pageable pageable);
 
     @Query("""
             select
@@ -35,6 +44,17 @@ public interface SubjectRepository extends PagingAndSortingRepository<Subject, U
                 a.subId = :subId  
             """)
     Page<SubjectProjection> findByApiKeyAndSubId(String apiKey, int subId, Pageable pageable);
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.SubjectProjection(a.id, a.subjectName, a.subId)
+          from
+                Subject   a
+          where
+                a.apiKey = :apiKey
+          and
+                a.subId = :subId  
+            """)
+    List<SubjectProjection> findByApiKeyAndSubId(String apiKey, int subId );
 
     @Modifying
     @Query("delete from Subject s where s.apiKey = :apiKey")
@@ -42,6 +62,15 @@ public interface SubjectRepository extends PagingAndSortingRepository<Subject, U
 
     Long countAllByApiKey(String apiKey);
 
-
-    int deleteByApiKeyAndSubId(String apiKey, int subId);
+    @Modifying
+    @Query("""
+                delete
+                from
+                    Subject s
+                where
+                    s.apiKey = :apiKey
+                and
+                    s.subId = :subId
+           """)
+    int deleteSubjectByApiKeyAndSubId(@Param("apiKey") String apiKey, @Param("subId")   int subId);
 }

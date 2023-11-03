@@ -158,6 +158,35 @@
             <artifactId>embedded-database-spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- 图片处理 -->
+<!--        <repository>-->
+<!--            <id>cedarsoft-thirdparty</id>-->
+<!--            <url>http://maven.cedarsoft.com/content/repositories/thirdparty/</url>-->
+<!--        </repository>-->
+        <!-- https://mvnrepository.com/artifact/org.im4java/im4java -->
+        <dependency>
+            <groupId>org.im4java</groupId>
+            <artifactId>im4java</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.openpnp/opencv -->
+        <dependency>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.6.0-0</version>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/opencv/opencv -->
+<!--        <dependency>-->
+<!--            <groupId>opencv</groupId>-->
+<!--            <artifactId>opencv</artifactId>-->
+<!--            <version>4.0.0-0</version>-->
+<!--        </dependency>-->
+
+
+
     </dependencies>
 
     <build>

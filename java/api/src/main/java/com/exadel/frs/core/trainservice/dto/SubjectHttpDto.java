@@ -1,4 +1,5 @@
 package com.exadel.frs.core.trainservice.dto;
+//package com.exadel.frs.core.trainservice.dto;
 
 import static com.exadel.frs.commonservice.system.global.RegExConstants.ALLOWED_SPECIAL_CHARACTERS;
 import static com.exadel.frs.core.trainservice.system.global.Constants.SUBJECT_DESC;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubjectDto {
+public class SubjectHttpDto {
 
 //    private UUID id;
 
@@ -31,12 +32,8 @@ public class SubjectDto {
     private String subjectName;
 
 
-//    @ApiParam(value = SUBJECT_SUB_ID_DESC, required = true)
-    @JsonProperty("subId")
-//    @NotBlank(message = "Subject subId cannot be empty")
-//    @Pattern(regexp = ALLOWED_SPECIAL_CHARACTERS, message = "The name cannot contain the following special characters: ';', '/', '\\'")
+    //    @ApiParam(value = SUBJECT_SUB_ID_DESC, required = true)
 
-    private int subId;
 
 //    private String imgUrl;
 }

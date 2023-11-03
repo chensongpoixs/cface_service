@@ -51,8 +51,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -80,6 +83,7 @@ public class EmbeddingController {
     private final ImageExtensionValidator imageValidator;
     private final EmbeddingMapper embeddingMapper;
     private final FacesMapper facesMapper;
+    private final Environment env;
 
     @WriteEndpoint
     @ResponseStatus(CREATED)
@@ -109,7 +113,7 @@ public class EmbeddingController {
                 apiKey
         );
 
-        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName);
+        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl());
     }
 
     @WriteEndpoint
@@ -140,7 +144,7 @@ public class EmbeddingController {
                 apiKey
         );
 
-        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName);
+        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl());
     }
 
     @ResponseBody
@@ -168,9 +172,18 @@ public class EmbeddingController {
             @Valid
             @RequestParam(name = SUBJECT, required = false)
             final String subjectName,
-            final Pageable pageable
+            @ApiParam(value = "page", required = true)
+            @Validated
+            @RequestParam(value = "page" )
+            final int page,
+            @ApiParam(value = "page_size", required = true)
+            @Validated
+            @RequestParam(value = "page_size" )
+            final int pageSize
     ) {
-        return new Faces(embeddingService.listEmbeddings(apiKey, subjectName, pageable).map(embeddingMapper::toResponseDto));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
+
+        return new Faces(embeddingService.listEmbeddings(apiKey, subjectName, pageable).map(embeddingMapper::toResponseDto), env.getProperty("environment.storage.url"));
     }
 
     @WriteEndpoint
@@ -203,7 +216,7 @@ public class EmbeddingController {
             final UUID embeddingId
     ) {
         var embedding = subjectService.removeSubjectEmbedding(apiKey, embeddingId);
-        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getSubjectName());
+        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl());
     }
 
     @WriteEndpoint
@@ -218,7 +231,7 @@ public class EmbeddingController {
     ) {
         List<Embedding> list = subjectService.removeSubjectEmbeddings(apiKey, embeddingIds);
         List<EmbeddingDto> dtoList = list.stream()
-                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getSubjectName()))
+                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl()))
                                          .toList();
         return dtoList;
     }
@@ -337,11 +350,13 @@ public class EmbeddingController {
 
         private final Page<EmbeddingDto> source;
 
+        private final String url;
         // As of backward compatibility we are not allowed to rename property 'faces' --> 'embedding'
         public List<EmbeddingDto> getFaces() {
             return source.getContent();
         }
 
+        public String getUrl() {return url;}
         @JsonProperty("total_pages")
         public int getTotalPages() {
             return source.getTotalPages();

@@ -44,6 +44,10 @@ databaseChangeLog:
             constraintName: fk_subject_model_api_key
             onDelete: CASCADE
             onUpdate: CASCADE
+#        - addDefaultValue:
+#            columnNames: sub_id
+#            defaultValue: '0'
+#            tableName: subject
   - changeSet:
       id: create-img-table
       author: sshimansky@exadel.com

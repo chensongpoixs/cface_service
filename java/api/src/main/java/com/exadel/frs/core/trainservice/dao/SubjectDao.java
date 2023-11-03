@@ -14,6 +14,7 @@ import com.exadel.frs.commonservice.system.global.ImageProperties;
 import com.exadel.frs.core.trainservice.dto.EmbeddingInfo;
 import com.exadel.frs.core.trainservice.util.MultipartFileToFileUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.env.Environment;
@@ -157,7 +158,7 @@ public class SubjectDao {
         return subjectRepository.deleteByApiKey(apiKey);
     }
 
-    public Subject createSubject(final String apiKey, final String subjectName, long subId) {
+    public Subject createSubject(final String apiKey, final String subjectName, int subId) {
         final Optional<Subject> subjectOptional = subjectRepository.findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName);
         if (subjectOptional.isPresent()) {
             throw new SubjectAlreadyExistsException();
@@ -165,14 +166,26 @@ public class SubjectDao {
 
         return saveSubject(apiKey, subjectName, subId);
     }
-
+    @Transactional
     public int deleteByApiKeyAndSubId(final String apiKey, int subId)
     {
-        return subjectRepository.deleteByApiKeyAndSubId(apiKey, subId);
+        return subjectRepository.deleteSubjectByApiKeyAndSubId  (apiKey, subId);
     }
     public Page<SubjectProjection> findByApikeyAndSubId(final String apiKey, int subId, Pageable pageable)
     {
         return subjectRepository.findByApiKeyAndSubId(apiKey, subId, pageable);
+    }
+
+
+    public Page<SubjectProjection> findByApikey(final String apiKey , Pageable pageable)
+    {
+        return subjectRepository.findByApiKey (apiKey,   pageable);
+    }
+
+
+    public List<SubjectProjection> findByApikeyAndSubId(final String apiKey, int subId )
+    {
+        return subjectRepository.findByApiKeyAndSubId(apiKey, subId  );
     }
 
     @Transactional
@@ -227,11 +240,11 @@ public class SubjectDao {
 
 
 
-    private Subject saveSubject(String apiKey, String subjectName, long subId) {
+    private Subject saveSubject(String apiKey, String subjectName, int subId) {
         var subject = new Subject()
                 .setApiKey(apiKey)
                 .setSubjectName(subjectName)
-                .setSubId((int) subId);
+                .setSubId(  subId);
 
         return subjectRepository.save(subject);
     }

@@ -36,7 +36,7 @@ spring:
       max-request-size: ${MAX_REQUEST_SIZE:10MB}
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${POSTGRES_URL:jdbc:postgresql://192.168.1.133:5432/postgres}
+    url: ${POSTGRES_URL:jdbc:postgresql://192.168.1.133:5432/test_auto_table3}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
     continue-on-error: true
@@ -96,7 +96,7 @@ swagger:
     version: 0.0.2-SNAPSHOT
 
 host:
-  frs: ${FRS_CRUD_HOST:http://localhost:8000}
+  frs: ${FRS_CRUD_HOST:http://localhost:8082}
   full:
     dns:
       auth:
@@ -139,4 +139,4 @@ statistic:
 environment:
   servers:
     PYTHON:
-      url: ${PYTHON_URL:http://compreface-core:3000}
+      url: ${PYTHON_URL:http://192.168.1.133:3020}

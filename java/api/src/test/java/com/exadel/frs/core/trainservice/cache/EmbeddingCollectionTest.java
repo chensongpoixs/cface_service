@@ -32,7 +32,7 @@ class EmbeddingCollectionTest {
     @Test
     void testRemoveFromEmpty() {
         var embeddingCollection = EmbeddingCollection.from(Stream.of());
-        final EmbeddingProjection removed = embeddingCollection.removeEmbedding(new EmbeddingProjection(UUID.randomUUID(), "subject_name"));
+        final EmbeddingProjection removed = embeddingCollection.removeEmbedding(new EmbeddingProjection(UUID.randomUUID(), "subject_name", ""));
 
         assertThat(removed).isNull();
     }
@@ -52,9 +52,9 @@ class EmbeddingCollectionTest {
 
     @Test
     void testCreate() {
-        var projection1 = makeEnhancedEmbeddingProjection("A");
-        var projection2 = makeEnhancedEmbeddingProjection("B");
-        var projection3 = makeEnhancedEmbeddingProjection("C");
+        var projection1 = makeEnhancedEmbeddingProjection("A", "");
+        var projection2 = makeEnhancedEmbeddingProjection("B", "");
+        var projection3 = makeEnhancedEmbeddingProjection("C", "");
         var projections = new EnhancedEmbeddingProjection[]{projection1, projection2, projection3};
         var embeddingCollection = EmbeddingCollection.from(Stream.of(projections));
 
@@ -70,9 +70,9 @@ class EmbeddingCollectionTest {
     @Test
     void testAdd() {
         var projections = new EnhancedEmbeddingProjection[]{
-                makeEnhancedEmbeddingProjection("A"),
-                makeEnhancedEmbeddingProjection("B"),
-                makeEnhancedEmbeddingProjection("C")
+                makeEnhancedEmbeddingProjection("A", ""),
+                makeEnhancedEmbeddingProjection("B", ""),
+                makeEnhancedEmbeddingProjection("C", "")
         };
         var embeddingCollection = EmbeddingCollection.from(Stream.of(projections));
         var newEmbedding = makeEmbedding("D", API_KEY);
@@ -86,9 +86,9 @@ class EmbeddingCollectionTest {
 
     @Test
     void testRemove() {
-        var projection1 = makeEnhancedEmbeddingProjection("A");
-        var projection2 = makeEnhancedEmbeddingProjection("B");
-        var projection3 = makeEnhancedEmbeddingProjection("C");
+        var projection1 = makeEnhancedEmbeddingProjection("A", "");
+        var projection2 = makeEnhancedEmbeddingProjection("B", "");
+        var projection3 = makeEnhancedEmbeddingProjection("C", "");
         var projections = new EnhancedEmbeddingProjection[]{projection1, projection2, projection3};
         var embeddingCollection = EmbeddingCollection.from(Stream.of(projections));
 

@@ -301,8 +301,8 @@ class SubjectServiceTest {
         var randomUUId = UUID.randomUUID();
         var file = new MockMultipartFile("anyname", new byte[]{0xA});
         var embeddingCollection = EmbeddingCollection.from(Stream.of(
-                makeEnhancedEmbeddingProjection("A"),
-                makeEnhancedEmbeddingProjection("B")));
+                makeEnhancedEmbeddingProjection("A", ""),
+                makeEnhancedEmbeddingProjection("B", "")));
 
         when(facesApiClient.findFacesWithCalculator(any(), any(), any(), any(), any()))
                 .thenReturn(findFacesResponse(2));
