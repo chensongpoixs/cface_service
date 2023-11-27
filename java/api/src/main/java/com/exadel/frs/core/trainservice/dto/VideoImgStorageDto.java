@@ -18,13 +18,11 @@ public class VideoImgStorageDto
     @JsonProperty("id") // subtable id
     private long id;
 
+    @JsonProperty("device_id")
+    private int device_id;
+
     @JsonProperty("timestamp")
     private int timestamp;
-
-    @JsonProperty("device_id")
-    private int deviceId;
-
-
 
     @JsonProperty("img_url")
     private String imgUrl;

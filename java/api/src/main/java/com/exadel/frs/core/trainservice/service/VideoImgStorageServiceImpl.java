@@ -41,14 +41,19 @@ public class VideoImgStorageServiceImpl
         return  videoImgStorageRepository.save(videoImgStorageTable);
     }
 
-    public Page<VideoImgStorageProjection> listStorageVideoImgAndDeiveIdAndTimestamp(List deivice_id, long startTimestamp, long endTimestamp, Pageable pageable) {
+    public Page<VideoImgStorageProjection> listStorageVideoImgAndDeiveIdAndTimestamp(List<Integer> devicdids, long startTimestamp, long endTimestamp, Pageable pageable) {
 
-        if (deivice_id.size()> 0)
+        if (devicdids.size()> 0)
         {
-            return  videoImgStorageRepository.findByVideoImgStorageAndIdBetweenTimestamp(deivice_id, (int) startTimestamp,  (int) endTimestamp, pageable);
+            return  videoImgStorageRepository.findByVideoImgStorageAndDeviceIdBetweenTimestamp(devicdids, (int) startTimestamp,  (int) endTimestamp, pageable);
 
         }
         return  videoImgStorageRepository.findByVideoImgStorageBetweenTimestamp( (int) startTimestamp,  (int) endTimestamp, pageable);
 
+    }
+
+    public Page<VideoImgStorageProjection> listStorageVideoImgAndDeiveId(List deivice_id,  Pageable pageable)
+    {
+        return videoImgStorageRepository.findByVideoImgStorage(pageable);
     }
 }

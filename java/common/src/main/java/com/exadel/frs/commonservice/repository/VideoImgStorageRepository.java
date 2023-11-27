@@ -22,11 +22,11 @@ public interface VideoImgStorageRepository extends JpaRepository<VideoImgStorage
                   from
                         VideoImgStorageTable   a
                   where
-                          a.deviceId in (:deviceIds)
+                          a.deviceId in ?1
                   and
-                        a.timestamp between :startTimestamp and :endTimestamp  
+                        a.timestamp between ?2 and ?3
                   """ )
-    Page<VideoImgStorageProjection> findByVideoImgStorageAndIdBetweenTimestamp(@Param("deviceId") List deviceIds , @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, Pageable pageable);
+    Page<VideoImgStorageProjection> findByVideoImgStorageAndDeviceIdBetweenTimestamp(  List<Integer> deviceIds ,  Integer startTimestamp,   Integer endTimestamp, Pageable pageable);
 
 
 
@@ -36,8 +36,15 @@ public interface VideoImgStorageRepository extends JpaRepository<VideoImgStorage
                   from
                         VideoImgStorageTable   a
                   where
-                        a.timestamp between :startTimestamp and :endTimestamp  
+                        a.timestamp between :startTimestamp and :endTimestamp
                   """ )
     Page<VideoImgStorageProjection> findByVideoImgStorageBetweenTimestamp( @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, Pageable pageable);
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.VideoImgStorageProjection(a.id, a.deviceId, a.timestamp , a.imgUrl)
+                  from
+                        VideoImgStorageTable   a
+                  """ )
+    Page<VideoImgStorageProjection> findByVideoImgStorage( Pageable pageable);
 
 }

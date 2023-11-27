@@ -18,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -133,40 +135,53 @@ public class VideoImgStorageController
             @Valid
             @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
             final String device_id, //API_STORAGE_FACE_GENDER_DES
-            final Pageable pageable
+            @ApiParam(value = "page", required = true)
+            @Validated
+            @RequestParam(value = "page" )
+            final int page,
+            @ApiParam(value = "page_size", required = true)
+            @Validated
+            @RequestParam(value = "page_size" )
+            final int pageSize
     )
     {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
         String url = env.getProperty("environment.storage.url");
-        log.info("storage path = " + url);
+        log.info("storage path = " + url + ", device_id = " + device_id);
+
         List<Integer>   devicdids = new ArrayList<>();
         String str = "";
-        if (device_id != "-1" && device_id.length() >0)
+        if (  device_id.length() >0)
         {
-            for (int i = 0; i < device_id.length(); ++i)
+            log.info("device_id.charAt(0) = " + device_id.charAt(0));
+            if (device_id.charAt(0) != '-')
             {
-                if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                for (int i = 0; i < device_id.length(); ++i)
                 {
-                    str +=device_id.charAt(i);
-                }
-                else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i)*/ )
-                {
-                    // TODO@chensong Java的接口定义需要这样玩的哈
-                    if (str != "")
+                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
                     {
-                        devicdids.add(Integer.parseInt(str));
-                        devicdids.add(Integer.parseInt(str));
-
-                        str = "";
+                        str +=device_id.charAt(i);
                     }
-                }
-                  if (device_id.length() ==  (i+1) )
-                {
-                    if (str != "")
+                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i)*/ )
                     {
-                        devicdids.add(Integer.parseInt(str));
-                        devicdids.add(Integer.parseInt(str));
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                        devicdids.add(Integer.parseInt(str));
 
-                        str = "";
+                            str = "";
+                        }
+                    }
+                    if (device_id.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                        devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
                     }
                 }
             }
@@ -176,8 +191,10 @@ public class VideoImgStorageController
         {
             log.info("----> devieid = " + v);
         }
-        return new VideoImgStorage(videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  devicdids, start_timestamp, end_timestamp,   pageable).map(videoImgStorageMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+        return new VideoImgStorage(videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  devicdids, start_timestamp, end_timestamp, pageable).map(videoImgStorageMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
                 url);
+//        return new VideoImgStorage(videoImgStorageService.listStorageVideoImgAndDeiveId(  devicdids,  pageable).map(videoImgStorageMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+//                url);
 //        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
