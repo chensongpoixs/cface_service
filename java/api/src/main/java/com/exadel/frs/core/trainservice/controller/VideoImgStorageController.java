@@ -5,13 +5,21 @@ import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
 import com.exadel.frs.commonservice.entity.VideoImgStorageTable;
+import com.exadel.frs.commonservice.projection.DownloadDataProjection;
+import com.exadel.frs.commonservice.projection.VideoImgStorageProjection;
 import com.exadel.frs.core.trainservice.dto.*;
+import com.exadel.frs.core.trainservice.exel.ExelRow;
+import com.exadel.frs.core.trainservice.exel.ExelTable;
+import com.exadel.frs.core.trainservice.exel.VideoExelRow;
+import com.exadel.frs.core.trainservice.exel.VideoExelTable;
 import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
 import com.exadel.frs.core.trainservice.mapper.VideoImgStorageMapper;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.VideoImgStorageServiceImpl;
+import com.exadel.frs.core.trainservice.util.FileBase64;
 import com.exadel.frs.core.trainservice.util.MultipartFileToFileUtils;
+import com.exadel.frs.core.trainservice.util.ZipFile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -92,7 +102,7 @@ public class VideoImgStorageController
 //            Date date = new Date();
 //            long timestamp = date.getTime();
 //            System.out.println("当前时间戳：" + timestamp);
-            new_timestamp = (int) day.getTime();
+            new_timestamp = (int) day.getTime() /( 1000 /** 1000*/);
         }
         videoImgStorageTable.setTimestamp(new_timestamp);
         videoImgStorageTable.setDeviceId(device_id);
@@ -237,5 +247,156 @@ public class VideoImgStorageController
         public int getSize() {
             return source.getSize();
         }
+    }
+
+
+
+    @GetMapping("/download")
+    public ReslutDownload Download(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "img id  (1,2,3,4,5)" , required = true)
+            @Valid
+            @RequestParam(defaultValue = "-1", name = "ids" )
+            final String ids)
+    {
+
+        List<Long>   imgids = new ArrayList< >();
+        String str = "";
+        if (   ids.length() >0)
+        {
+            if (ids.charAt(0) != '-')
+            {
+                for (int i = 0; i < ids.length(); ++i)
+                {
+                    log.info("[i = " + i + "],[ char = " + ids.charAt(i) + "][ size = " + ids.length() + "]");
+                    if (ids.charAt(i) < ('9' +1) && ids.charAt(i) > ('0' -1))
+                    {
+                        str +=ids.charAt(i);
+                    }
+                    else if (ids.charAt(i) == ',' )
+                    {
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            imgids.add(Long.parseLong(str));
+
+                            str = "";
+                        }
+                    }
+                    if (ids.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            imgids.add(Long.parseLong(str));
+
+                            str = "";
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+        int result = 0;
+//        List< DownloadDataProjection> downloadDatalist = null;
+        for (Long v : imgids)
+        {
+            log.info("imgid = " + v);
+        }
+//        if (imgids.size()> 0)
+        {
+            List<VideoImgStorageProjection> downloadDatalist = videoImgStorageService.findVideoImageAndDeviceIds(imgids);
+//            return new ReslutDownload(downloadDatalist.toString(), result);
+
+            if (null != downloadDatalist && downloadDatalist.size() > 0)
+            {
+
+                String imgprofixpath = env.getProperty("environment.storage.path");
+                str = "";
+                VideoExelTable exelTable = new VideoExelTable();
+
+                for (VideoImgStorageProjection videoImgStorageProjection : downloadDatalist)
+                {
+                    log.info("[id = "+ videoImgStorageProjection.id() +"][timestamp = "+ videoImgStorageProjection.timestamp()+"]");
+                    VideoExelRow   exelRow = new VideoExelRow();
+                    exelRow.setId(videoImgStorageProjection.id());
+                    exelRow.setTimestamp(videoImgStorageProjection.timestamp() * 1000);
+                    exelRow.setDeviceIdAddress(String.valueOf(videoImgStorageProjection.device_id()));
+                    exelRow.setVideImg(FileBase64.FileBase64ToString(imgprofixpath + videoImgStorageProjection.imgUrl()));
+//                    exelRow.setCreateTimestamp(downloadDataProjection.timestamp());
+//                    exelRow.setDeviceIdAddress(String.valueOf(downloadDataProjection.deviceId()));
+//                    exelRow.setUserName(downloadDataProjection.userName());
+//                    exelRow.setGender(String.valueOf(downloadDataProjection.gender()));
+//                    exelRow.setSimilarity(downloadDataProjection.similarity());
+//                    exelRow.setCaptureImg(FileBase64.FileBase64ToString(imgprofixpath + downloadDataProjection.captureImgUrl()));
+//                    exelRow.setFaceImg(Base64.getEncoder().encodeToString(downloadDataProjection.faceImg()));
+                    exelTable.add(exelRow);
+                }
+                Date date = new Date();
+                SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
+                String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
+
+
+
+                String uuid = UUID.randomUUID().toString()   ;
+
+
+                String xlsfilepath = uuid + ".xls";
+
+
+                zipPath += uuid+   ".zip";
+                String absolutePath = null;
+                File zipdir = new File(env.getProperty("environment.storage.path") + zipPath);
+                if (!zipdir.exists()) {
+                    try {
+                        absolutePath = zipdir.getCanonicalPath();
+
+                        /*判断路径中的文件夹是否存在，如果不存在，先创建文件夹*/
+                        String dirPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+                        File dir = new File(dirPath);
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+
+                    } catch (IOException e) {
+                        log.info("IOException" + String.valueOf(e));
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable.ExelTableToString()))
+                {
+                    log.info("zip img failed !!!");
+                }
+
+                return new  ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
+            }
+        }
+        result = 500;
+//
+//
+////        str = downloadDatalist.toString();
+//
+        return new  ReslutDownload(str, result);
+
+
+
+    }
+
+    @RequiredArgsConstructor
+    private static final class ReslutDownload {
+        private final String url;
+
+        private final int result;
+        @JsonProperty("url")
+        private String getUrl () {return url;}
+
+
+        @JsonProperty("result")
+        private int getResult () {return result;}
+
     }
 }

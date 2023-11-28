@@ -108,33 +108,36 @@ public class StorageController
 
         List<Integer>   devicdids = new ArrayList<>();
         String str = "";
-        if (device_id != "-1" && device_id.length() >0)
+        if (   device_id.length() >0)
         {
-            for (int i = 0; i < device_id.length(); ++i)
+            if (device_id.charAt(0) != '-')
             {
-                if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                for (int i = 0; i < device_id.length(); ++i)
                 {
-                    str +=device_id.charAt(i);
-                }
-                else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
-                {
-                    // TODO@chensong Java的接口定义需要这样玩的哈
-                    if (str != "")
+                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
                     {
-                        devicdids.add(Integer.parseInt(str));
-                        devicdids.add(Integer.parseInt(str));
-
-                        str = "";
+                        str +=device_id.charAt(i);
                     }
-                }
-                  if (device_id.length() ==  (i+1) )
-                {
-                    if (str != "")
+                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
                     {
-                        devicdids.add(Integer.parseInt(str));
-                        devicdids.add(Integer.parseInt(str));
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+                            devicdids.add(Integer.parseInt(str));
 
-                        str = "";
+                            str = "";
+                        }
+                    }
+                    if (device_id.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+                            devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
                     }
                 }
             }
@@ -166,34 +169,37 @@ public class StorageController
 
         List<Long>   imgids = new ArrayList< >();
         String str = "";
-        if (ids != "-1" && ids.length() >0)
+        if (  ids.length() >0)
         {
-            for (int i = 0; i < ids.length(); ++i)
+            if (ids.charAt(0) != '-')
             {
-                log.info("[i = " + i + "],[ char = " + ids.charAt(i) + "][ size = " + ids.length() + "]");
-                if (ids.charAt(i) < ('9' +1) && ids.charAt(i) > ('0' -1))
+                for (int i = 0; i < ids.length(); ++i)
                 {
-                    str +=ids.charAt(i);
-                }
-                else if (ids.charAt(i) == ',' )
-                {
-                    // TODO@chensong Java的接口定义需要这样玩的哈
-                    if (str != "")
+                    log.info("[i = " + i + "],[ char = " + ids.charAt(i) + "][ size = " + ids.length() + "]");
+                    if (ids.charAt(i) < ('9' +1) && ids.charAt(i) > ('0' -1))
                     {
-                        imgids.add(Long.parseLong(str));
-                        imgids.add(Long.parseLong(str));
-
-                        str = "";
+                        str +=ids.charAt(i);
                     }
-                }
-                  if (ids.length() ==  (i+1) )
-                {
-                    if (str != "")
+                    else if (ids.charAt(i) == ',' )
                     {
-                        imgids.add(Long.parseLong(str));
-                        imgids.add(Long.parseLong(str));
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            imgids.add(Long.parseLong(str));
+//                        imgids.add(Long.parseLong(str));
 
-                        str = "";
+                            str = "";
+                        }
+                    }
+                    if (ids.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            imgids.add(Long.parseLong(str));
+//                        imgids.add(Long.parseLong(str));
+
+                            str = "";
+                        }
                     }
                 }
             }
@@ -221,7 +227,7 @@ public class StorageController
                 for (DownloadDataProjection downloadDataProjection : downloadDatalist)
                 {
                     ExelRow exelRow = new ExelRow();
-                    exelRow.setCreateTimestamp(downloadDataProjection.timestamp());
+                    exelRow.setCreateTimestamp(downloadDataProjection.timestamp() * 1000);
                     exelRow.setDeviceIdAddress(String.valueOf(downloadDataProjection.deviceId()));
                     exelRow.setUserName(downloadDataProjection.userName());
                     exelRow.setGender(String.valueOf(downloadDataProjection.gender()));

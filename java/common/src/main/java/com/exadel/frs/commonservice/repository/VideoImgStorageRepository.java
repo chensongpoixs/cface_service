@@ -47,4 +47,22 @@ public interface VideoImgStorageRepository extends JpaRepository<VideoImgStorage
                   """ )
     Page<VideoImgStorageProjection> findByVideoImgStorage( Pageable pageable);
 
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.VideoImgStorageProjection(a.id, a.deviceId, a.timestamp , a.imgUrl)
+                  from
+                        VideoImgStorageTable   a
+                  where
+                       a.id in ?1 
+                  """ )
+    List<VideoImgStorageProjection> findVideoImageAndDeviceIds(List<Long> ids);
+
+
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.VideoImgStorageProjection(a.id, a.deviceId, a.timestamp , a.imgUrl)
+                  from
+                        VideoImgStorageTable   a
+                  """ )
+    List<VideoImgStorageProjection> findVideoImgAll(  );
 }

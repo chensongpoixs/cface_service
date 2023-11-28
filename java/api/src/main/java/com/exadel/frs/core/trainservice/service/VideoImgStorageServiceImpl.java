@@ -56,4 +56,19 @@ public class VideoImgStorageServiceImpl
     {
         return videoImgStorageRepository.findByVideoImgStorage(pageable);
     }
+
+
+    public List<VideoImgStorageProjection> findVideoImageAndDeviceIds(List<Long> ids)
+    {
+
+        if (ids.size() > 0)
+        {
+            return videoImgStorageRepository.findVideoImageAndDeviceIds(ids);
+        }
+//        return videoImgStorageRepository.findAll();
+        return videoImgStorageRepository.findVideoImgAll();
+    }
+
+
+
 }
