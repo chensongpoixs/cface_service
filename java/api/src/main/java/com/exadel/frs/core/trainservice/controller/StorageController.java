@@ -3,6 +3,9 @@ package com.exadel.frs.core.trainservice.controller;
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 //import com.exadel.frs.commonservice.exel.exelExelRow;
 //import com.exadel.frs.commonservice.exel.ExelTable;
+import com.exadel.frs.commonservice.httpclient.DeviceInfo;
+import com.exadel.frs.commonservice.httpclient.HttpDefault;
+import com.exadel.frs.commonservice.httpclient.Http_Client;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 //import com.exadel.frs.commonservice.sdk.storage.feign.StorageFeignClient;
@@ -223,12 +226,22 @@ public class StorageController
                 String imgprofixpath = env.getProperty("environment.storage.path");
                 str = "";
                 ExelTable exelTable = new ExelTable();
+                String DroneUrl = env.getProperty("environment.drone.url");
+                Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
 
                 for (DownloadDataProjection downloadDataProjection : downloadDatalist)
                 {
                     ExelRow exelRow = new ExelRow();
                     exelRow.setCreateTimestamp(downloadDataProjection.timestamp() * 1000);
-                    exelRow.setDeviceIdAddress(String.valueOf(downloadDataProjection.deviceId()));
+                    DeviceInfo deviceInfo = deviceInfoMap.get(downloadDataProjection.deviceId());
+                    if (null == deviceInfo)
+                    {
+                        exelRow.setDeviceIdAddress("未知设备");;
+                    }
+                    else
+                    {
+                        exelRow.setDeviceIdAddress(deviceInfo.getName());
+                    }
                     exelRow.setUserName(downloadDataProjection.userName());
                     exelRow.setGender(String.valueOf(downloadDataProjection.gender()));
                     exelRow.setSimilarity(downloadDataProjection.similarity());

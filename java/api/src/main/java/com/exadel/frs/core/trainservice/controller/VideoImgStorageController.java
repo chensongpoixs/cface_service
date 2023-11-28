@@ -5,6 +5,9 @@ import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
 import com.exadel.frs.commonservice.entity.VideoImgStorageTable;
+import com.exadel.frs.commonservice.httpclient.DeviceInfo;
+import com.exadel.frs.commonservice.httpclient.HttpDefault;
+import com.exadel.frs.commonservice.httpclient.Http_Client;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.VideoImgStorageProjection;
 import com.exadel.frs.core.trainservice.dto.*;
@@ -317,14 +320,24 @@ public class VideoImgStorageController
                 String imgprofixpath = env.getProperty("environment.storage.path");
                 str = "";
                 VideoExelTable exelTable = new VideoExelTable();
-
+                String DroneUrl = env.getProperty("environment.drone.url");
+                Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
                 for (VideoImgStorageProjection videoImgStorageProjection : downloadDatalist)
                 {
-                    log.info("[id = "+ videoImgStorageProjection.id() +"][timestamp = "+ videoImgStorageProjection.timestamp()+"]");
+//                    log.info("[id = "+ videoImgStorageProjection.id() +"][timestamp = "+ videoImgStorageProjection.timestamp()+"]");
                     VideoExelRow   exelRow = new VideoExelRow();
                     exelRow.setId(videoImgStorageProjection.id());
                     exelRow.setTimestamp(videoImgStorageProjection.timestamp() * 1000);
-                    exelRow.setDeviceIdAddress(String.valueOf(videoImgStorageProjection.device_id()));
+
+                    DeviceInfo deviceInfo =   deviceInfoMap.get(videoImgStorageProjection.device_id());
+                    if (null ==  deviceInfo )
+                    {
+                        exelRow.setDeviceIdAddress("未知设备");
+                    }
+                    else
+                    {
+                        exelRow.setDeviceIdAddress(deviceInfo.getName());
+                    }
                     exelRow.setVideImg(FileBase64.FileBase64ToString(imgprofixpath + videoImgStorageProjection.imgUrl()));
 //                    exelRow.setCreateTimestamp(downloadDataProjection.timestamp());
 //                    exelRow.setDeviceIdAddress(String.valueOf(downloadDataProjection.deviceId()));

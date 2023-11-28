@@ -65,6 +65,8 @@ environment:
       url: ${PYTHON_URL:http://192.168.1.133:3000}
     STORAGE:
       url: ${STORAGE_URL:http://127.0.0.1:9300}
+  drone:
+    url: ${DRONE_URL:http://192.168.1.133:5556}
 
 
 image:

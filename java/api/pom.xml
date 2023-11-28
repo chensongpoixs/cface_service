@@ -141,6 +141,23 @@
             <classifier>${nd4j.classifier}</classifier>
         </dependency>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+<!--            <classifier>${fastjson.version }</classifier>-->
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.json</groupId>-->
+<!--            <artifactId>json</artifactId>-->
+<!--&lt;!&ndash;            <classifier>${json.version}</classifier>&ndash;&gt;-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+<!--            <classifier>${httpclient.version}</classifier>-->
+            <!--            <version>4.5.10</version>-->
+        </dependency>
+        <dependency>
             <groupId>com.impossibl.pgjdbc-ng</groupId>
             <artifactId>pgjdbc-ng</artifactId>
         </dependency>
