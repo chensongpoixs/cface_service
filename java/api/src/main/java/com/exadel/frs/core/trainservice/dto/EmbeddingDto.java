@@ -39,4 +39,7 @@ public class EmbeddingDto {
 
     @JsonProperty("img_url")
     private String imgUrl;
+
+    @JsonProperty("sub_id")
+    private int subId;
 }

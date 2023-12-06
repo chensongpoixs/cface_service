@@ -50,6 +50,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -113,7 +114,7 @@ public class EmbeddingController {
                 apiKey
         );
 
-        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl());
+        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
     }
 
     @WriteEndpoint
@@ -144,7 +145,9 @@ public class EmbeddingController {
                 apiKey
         );
 
-        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl());
+//        int subId = pair.getLeft().getSubId();
+//        val subId1 = subId;
+        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
     }
 
     @ResponseBody
@@ -216,7 +219,7 @@ public class EmbeddingController {
             final UUID embeddingId
     ) {
         var embedding = subjectService.removeSubjectEmbedding(apiKey, embeddingId);
-        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl());
+        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl(), embedding.getSubject().getSubId());
     }
 
     @WriteEndpoint
@@ -231,7 +234,7 @@ public class EmbeddingController {
     ) {
         List<Embedding> list = subjectService.removeSubjectEmbeddings(apiKey, embeddingIds);
         List<EmbeddingDto> dtoList = list.stream()
-                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl()))
+                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl(), c.getSubject().getSubId()))
                                          .toList();
         return dtoList;
     }

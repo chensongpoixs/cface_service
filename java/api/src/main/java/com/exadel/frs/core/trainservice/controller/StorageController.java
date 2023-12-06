@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -103,12 +104,20 @@ public class StorageController
             @Valid
             @RequestParam(defaultValue = "0", name = API_STORAGE_TIMESTAMP_SORT, required = false )
             final int ASCDESC, //API_STORAGE_FACE_GENDER_DES
-
-
-            final Pageable pageable
+//
+//
+//            final Pageable pageable
+            @ApiParam(value = "page", required = true)
+            @Validated
+            @RequestParam(value = "page" )
+            final int page,
+            @ApiParam(value = "page_size", required = true)
+            @Validated
+            @RequestParam(value = "page_size" )
+            final int pageSize
     )
     {
-
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
         List<Integer>   devicdids = new ArrayList<>();
         String str = "";
         if (   device_id.length() >0)
@@ -127,7 +136,7 @@ public class StorageController
                         if (str != "")
                         {
                             devicdids.add(Integer.parseInt(str));
-                            devicdids.add(Integer.parseInt(str));
+//                            devicdids.add(Integer.parseInt(str));
 
                             str = "";
                         }
@@ -137,7 +146,7 @@ public class StorageController
                         if (str != "")
                         {
                             devicdids.add(Integer.parseInt(str));
-                            devicdids.add(Integer.parseInt(str));
+//                            devicdids.add(Integer.parseInt(str));
 
                             str = "";
                         }

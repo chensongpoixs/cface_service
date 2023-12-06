@@ -51,7 +51,7 @@ public class Constants {
     public static final String IMAGE_ID_DESC = "Image Id from collection to compare with face.";
     public static final String IMAGE_IDS_DESC = "List of image Ids from collection to compare with face";
     public static final String SUBJECT_DESC = "Person's name to whom the face belongs to.";
-    public static final String SUBJECT_SUB_ID_DESC = "Person's sub id .";
+    public static final String SUBJECT_SUB_ID_DESC = "人员类型";
     public static final String SUBJECT = "subject";
     public static final String IMAGE_ID = "image_id";
     public static final String SOURCE_IMAGE_DESC = "File to be verified";

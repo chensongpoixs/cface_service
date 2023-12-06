@@ -86,8 +86,50 @@ public class SecurityValidationFilter implements Filter {
     ) throws IOException, ServletException {
         val httpRequest = (HttpServletRequest) servletRequest;
         val httpResponse = (HttpServletResponse) servletResponse;
-        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Origin", "*");
-        log.info("==============================================doFilter==============================================");
+//        httpRequest.g
+
+//        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
+//        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Credentials", "true");
+//        Access-Control-Allow-Headers: X-Custom-Header
+//        Access-Control-Allow-Credentials: true
+        log.info("==============================================doFilter==============================================" + httpRequest.getMethod().toLowerCase());
+        String header_Origin = "*";
+        if (httpRequest.getHeader("Origin") != null)
+        {
+            if (httpRequest.getHeader("Origin").charAt( httpRequest.getHeader("Origin").length()-1) != '/')
+            {
+                header_Origin = httpRequest.getHeader("Origin");
+            }
+            else
+            {
+                header_Origin = httpRequest.getHeader("Origin").substring(0, httpRequest.getHeader("Origin").length()-1);
+            }
+        }
+        log.info("header_Origin = ==== " + header_Origin);
+        httpResponse.setHeader("Access-Control-Allow-Origin", header_Origin);
+        if (httpRequest.getMethod().toLowerCase().equals( "options"))
+        {
+            log.info("===================options============");
+            httpResponse.setStatus(204);
+            httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+            httpResponse.setHeader("Access-Control-Request-Headers", "Content-Type");
+//            httpResponse.setHeader("Access-Control-Request-Headers", "Content-Type, Access-token, x-api-key, x-token");
+            httpResponse.setHeader("Access-Control-Allow-Headers", "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,x-api-key,x-token");
+            httpResponse.setHeader("Access-Control-Max-Age", "1728000"); // ,Authorization,X-Auth-Token
+
+//            httpResponse.setHeader("Access-Control-Allow-Origin", "http://192.168.1.66:8080");
+           httpResponse.setHeader("Content-Length", "0");
+            httpResponse.setHeader("Content-Type", "text/plain; charset=UTF-8");
+
+            //            val objectResponseEntity = handler.handleDefinedExceptions(new BadFormatModelKeyException());
+//            buildException(httpResponse, objectResponseEntity);
+
+//            response.setStatus(responseEntity.getStatusCode().value());
+//            httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//            httpResponse.getWriter().append(objectMapper.writeValueAsString(responseEntity.getBody()));
+            return;
+        }
+//        httpResponse.setHeader("Access-Control-Allow-Origin", "http://192.168.1.66:8080");
         String requestURI = httpRequest.getRequestURI();
         if (!requestURI.matches("^/(swagger|webjars|v2|api/v1/migrate|api/v1/consistence/status|api/v1/static|api/v1/config).*$")) {
             val headersMap =
@@ -98,7 +140,7 @@ public class SecurityValidationFilter implements Filter {
                             ));
 
             var apiKey = headersMap.getOrDefault(X_FRS_API_KEY_HEADER, emptyList());
-
+//            apiKey = "";
             if (!apiKey.isEmpty()) {
                 val key = apiKey.get(0);
                 try {
@@ -110,7 +152,7 @@ public class SecurityValidationFilter implements Filter {
                 }
                 catch (Exception e)
                 {
-                    log.info(" api key failed !!! ");
+                    log.info(" api key failed !!! " + apiKey);
                     val objectResponseEntity = handler.handleDefinedExceptions(new BadFormatModelKeyException());
                     buildException(httpResponse, objectResponseEntity);
 

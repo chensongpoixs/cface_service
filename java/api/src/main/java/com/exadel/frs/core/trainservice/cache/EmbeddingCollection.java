@@ -79,7 +79,7 @@ public class EmbeddingCollection {
                 .toList();
 
         projections.forEach(projection -> projection2Index.put(
-                projection.withNewSubjectName(newSubjectName),
+                projection.withNewSubjectName(newSubjectName, projection.subId()),
                 projection2Index.remove(projection)
         ));
     }

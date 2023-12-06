@@ -3,13 +3,14 @@ package com.exadel.frs.commonservice.projection;
 import com.exadel.frs.commonservice.entity.Embedding;
 import java.util.UUID;
 
-public record EmbeddingProjection(UUID embeddingId, String subjectName, String imgUrl) {
+public record EmbeddingProjection(UUID embeddingId, String subjectName, String imgUrl, int subId) {
 
     public static EmbeddingProjection from(Embedding embedding) {
         return new EmbeddingProjection(
                 embedding.getId(),
                 embedding.getSubject().getSubjectName()
                 , embedding.getFaceImgUrl()
+                , embedding.getSubject().getSubId()
         );
     }
 
@@ -17,15 +18,17 @@ public record EmbeddingProjection(UUID embeddingId, String subjectName, String i
         return new EmbeddingProjection(
                 projection.embeddingId(),
                 projection.subjectName(),
-                projection.imgUrl()
+                projection.imgUrl(),
+                projection.subId()
         );
     }
 
-    public EmbeddingProjection withNewSubjectName(String newSubjectName) {
+    public EmbeddingProjection withNewSubjectName(String newSubjectName, int subId) {
         return new EmbeddingProjection(
                 this.embeddingId(),
                 newSubjectName,
-                this.imgUrl
+                this.imgUrl,
+                subId
         );
     }
 }

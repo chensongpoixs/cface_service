@@ -25,6 +25,7 @@ public class MultipartFileToFileUtils
 
         File toFile = null;
         if (file.equals("") || file.getSize() <= 0) {
+            log.info("saveMultipartFile===================");
             return null;
         } else {
 //            Date day = new Date();
@@ -60,11 +61,13 @@ public class MultipartFileToFileUtils
 
             } catch (IOException e) {
                 e.printStackTrace();
+                log.info(e.getMessage());
             }
             return path_profix + new_file_name + fileFormat;
 //            return absolutePath;
         }
 
+//        log.info("============+++++");
     }
 
     //获取流文件
@@ -99,6 +102,18 @@ public class MultipartFileToFileUtils
 
 
 
+    public static int diff_rect(int image, int sub_image)
+    {
+        if (sub_image < 0)
+        {
+            return 0;
+        }
+        if (sub_image > image)
+        {
+            return image;
+        }
+        return sub_image;
+    }
 
     public static boolean  buildSubImage(String img_file_path, String sub_img_file_path, int x, int y, int w, int h)
     {
@@ -107,13 +122,26 @@ public class MultipartFileToFileUtils
 //            File input = new File(img_file_path);
             BufferedImage originalImage = ImageIO.read(new File(img_file_path));
 
+            originalImage.getWidth();
+            originalImage.getHeight();
+
+           // double v = x - ((w - x) / 10 * 8);
+            int diff_x = ((w  ) / 10 * 8);
+            int diff_y = ((h  ) / 10 * 8);
+            int image_x = diff_rect(originalImage.getWidth(),x - diff_x);
+            int image_y = diff_rect(originalImage.getHeight(),y - diff_y);
+            int image_w = diff_rect(originalImage.getWidth() - image_x , w + (diff_x * 2));
+            int image_h = diff_rect(originalImage.getHeight() -image_y ,h + (diff_y * 3));
+
             // Assume the subtracted area is at (100, 100) with width 200 and height 200
 //            int x = 100;
 //            int y = 100;
 //            int width = 200;
 //            int height = 200;
             // 定义要裁剪的矩形区域
-            Rectangle cropRect = new Rectangle(x, y, w, h);
+            Rectangle cropRect = new Rectangle(image_x, image_y, image_w, image_h);
+            log.info(" save sub img " +x +", "+ y +","+ w +"," + h +"cropRect = " + cropRect.toString() + ", img url = " + sub_img_file_path + ", OK !!!");
+
             // 获取裁剪后的图像
             BufferedImage croppedImage = originalImage.getSubimage(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
             File dir = new File(sub_img_file_path);
@@ -132,7 +160,7 @@ public class MultipartFileToFileUtils
 //            // Write the subtracted image to a file
 //            File output = new File(sub_img_file_path);
 //            ImageIO.write(subtraction, "jpg", output);
-            log.info(" save sub img " +x +", "+ y +","+ w +"," + h +", img url = " + sub_img_file_path + ", OK !!!");
+            log.info(" save sub img " +x +", "+ y +","+ w +"," + h +"cropRect = " + cropRect.toString() + ", img url = " + sub_img_file_path + ", OK !!!");
         } catch (IOException e) {
             log.error( e.getMessage());
             log.info("======================================================================");

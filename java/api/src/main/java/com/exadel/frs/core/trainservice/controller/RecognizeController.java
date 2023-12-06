@@ -91,7 +91,7 @@ public class RecognizeController {
             @RequestParam(value = DET_PROB_THRESHOLD, required = false)
             final Double detProbThreshold,
             @ApiParam(value = FACE_PLUGINS_DESC)
-            @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "")
+            @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "landmarks, gender, age")
             final String facePlugins,
             @ApiParam(value = STATUS_DESC)
             @RequestParam(value = STATUS, required = false, defaultValue = STATUS_DEFAULT_VALUE)
@@ -153,6 +153,7 @@ public class RecognizeController {
                    String maser_new_jpg =  MultipartFileToFileUtils.saveMultipartFile(file, path, file_prefix, master_file_name);
                    saveFaceImg.setImgUrl(maser_new_jpg);
                    saveFaceImg.setDeviceId(device_id);
+                   log.info("maser_new_jpg = "+maser_new_jpg+",savefaceimg = " + saveFaceImg.toString());
                    SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
                    for(FacePredictionResultDto facePredictionResultDto  :facesRecognitionResponseDto.getResult())
                    {
@@ -184,6 +185,7 @@ public class RecognizeController {
                        saveFaceImgSub.setBoxMinY(facePredictionResultDto.getBox().getYMin());
                        saveFaceImgSub.setBoxMaxX(facePredictionResultDto.getBox().getXMax());
                        saveFaceImgSub.setBoxMaxY(facePredictionResultDto.getBox().getYMax());
+                       log.info("saveface img sub = " + saveFaceImgSub.toString());
                        saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
                    }
                }
@@ -249,7 +251,7 @@ public class RecognizeController {
             @RequestParam(value = DET_PROB_THRESHOLD, required = false)
             final Double detProbThreshold,
             @ApiParam(value = FACE_PLUGINS_DESC)
-            @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "")
+            @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "landmarks, gender, age")
             final String facePlugins,
             @ApiParam(value = STATUS_DESC)
             @RequestParam(value = STATUS, required = false, defaultValue = STATUS_DEFAULT_VALUE)
