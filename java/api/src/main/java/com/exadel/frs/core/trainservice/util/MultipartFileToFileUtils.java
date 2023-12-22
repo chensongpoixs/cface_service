@@ -115,7 +115,7 @@ public class MultipartFileToFileUtils
         return sub_image;
     }
 
-    public static boolean  buildSubImage(String img_file_path, String sub_img_file_path, int x, int y, int w, int h)
+    public static boolean  buildSubImage(String img_file_path, String sub_img_file_path, int x, int y, int w, int h, String format)
     {
         try {
             // 读取原始图像
@@ -140,8 +140,8 @@ public class MultipartFileToFileUtils
 //            int height = 200;
             // 定义要裁剪的矩形区域
             Rectangle cropRect = new Rectangle(image_x, image_y, image_w, image_h);
-            log.info(" save sub img " +x +", "+ y +","+ w +"," + h +"cropRect = " + cropRect.toString() + ", img url = " + sub_img_file_path + ", OK !!!");
-
+           // log.info(" save sub img " +x +", "+ y +","+ w +"," + h +"cropRect = " + cropRect.toString() + ", img url = " + sub_img_file_path + ", OK !!!");
+    log.info("format ===>>>>>>>>>>>" + format);
             // 获取裁剪后的图像
             BufferedImage croppedImage = originalImage.getSubimage(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
             File dir = new File(sub_img_file_path);
@@ -149,7 +149,8 @@ public class MultipartFileToFileUtils
                 dir.mkdirs();
             }
             // 将裁剪后的图像写入到文件
-            ImageIO.write(croppedImage, "jpg", dir);
+
+            ImageIO.write(croppedImage, format.substring(1, format.length()), dir);
             // Create a new BufferedImage that represents the subtracted area
 //            BufferedImage subtraction = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 //            Graphics2D g = subtraction.createGraphics();

@@ -92,7 +92,7 @@ public class SecurityValidationFilter implements Filter {
 //        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Credentials", "true");
 //        Access-Control-Allow-Headers: X-Custom-Header
 //        Access-Control-Allow-Credentials: true
-        log.info("==============================================doFilter==============================================" + httpRequest.getMethod().toLowerCase());
+//        log.info("==============================================doFilter==============================================" + httpRequest.getMethod().toLowerCase());
         String header_Origin = "*";
         if (httpRequest.getHeader("Origin") != null)
         {
@@ -105,11 +105,11 @@ public class SecurityValidationFilter implements Filter {
                 header_Origin = httpRequest.getHeader("Origin").substring(0, httpRequest.getHeader("Origin").length()-1);
             }
         }
-        log.info("header_Origin = ==== " + header_Origin);
+//        log.info("header_Origin = ==== " + header_Origin);
         httpResponse.setHeader("Access-Control-Allow-Origin", header_Origin);
         if (httpRequest.getMethod().toLowerCase().equals( "options"))
         {
-            log.info("===================options============");
+//            log.info("===================options============");
             httpResponse.setStatus(204);
             httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
             httpResponse.setHeader("Access-Control-Request-Headers", "Content-Type");
@@ -174,9 +174,9 @@ public class SecurityValidationFilter implements Filter {
                     }
                     if (requestURI.matches("^/(api/v1/recognition/recognize|api/v1/detection/detect|api/v1/verification/verify).*$"))
                     {
-                        log.info(" recognize --> "  );
+//                        log.info(" recognize --> "  );
                         modelStatisticCacheProvider.incrementRequestCount(validationResult.getModelId());
-                        log.info("==========>");
+//                        log.info("==========>");
                     }
                 }
 

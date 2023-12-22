@@ -111,6 +111,9 @@ public class RecognizeController {
             final int device_id
 
     ) {
+
+
+
         ProcessImageParams processImageParams = ProcessImageParams
                 .builder()
                 .apiKey(apiKey)
@@ -124,7 +127,6 @@ public class RecognizeController {
                 .build();
         long cur_ms =  System.currentTimeMillis();
         FacesRecognitionResponseDto facesRecognitionResponseDto = (FacesRecognitionResponseDto)recognitionService.processImage(processImageParams);
-        log.info("face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
 
 
 
@@ -133,7 +135,7 @@ public class RecognizeController {
            new Thread(() ->
            {
                String path = env.getProperty("environment.storage.path");
-               log.info("storage path = " + path);
+//               log.info("storage path = " + path);
                if (facesRecognitionResponseDto.getResult().size() > 0)
                {
                    SaveFaceImg saveFaceImg = new SaveFaceImg();
@@ -148,12 +150,15 @@ public class RecognizeController {
                    SimpleDateFormat  file_prefixDate = new SimpleDateFormat("yyyyMMddHHmmss");
 //            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
                    String master_file_name = file_prefixDate.format(day) + "_" +  UUID.randomUUID().toString() /*+ ".jpg"*/;
-
+                   /*获取文件原名称*/
+                   String originalFilename = file.getOriginalFilename();
+                   /*获取文件格式*/
+                   String fileFormat = originalFilename.substring(originalFilename.lastIndexOf("."));
 //            String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
                    String maser_new_jpg =  MultipartFileToFileUtils.saveMultipartFile(file, path, file_prefix, master_file_name);
                    saveFaceImg.setImgUrl(maser_new_jpg);
                    saveFaceImg.setDeviceId(device_id);
-                   log.info("maser_new_jpg = "+maser_new_jpg+",savefaceimg = " + saveFaceImg.toString());
+//                   log.info("maser_new_jpg = "+maser_new_jpg+",savefaceimg = " + saveFaceImg.toString());
                    SaveFaceImg newsaveface =   saveFaceImgService.AddSaveFace(saveFaceImg);
                    for(FacePredictionResultDto facePredictionResultDto  :facesRecognitionResponseDto.getResult())
                    {
@@ -175,11 +180,23 @@ public class RecognizeController {
                        }
 
                        saveFaceImgSub.setEmbeddingId(embedding);
-                       String subImgName = "/"+UUID.randomUUID().toString() + ".jpg";
+                       String subImgName = "/"+UUID.randomUUID().toString() + fileFormat;
+                       log.info("subimage = " + subImgName);
                        MultipartFileToFileUtils.buildSubImage(path + maser_new_jpg , path + file_prefix +master_file_name +subImgName
                                , facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMin()
-                               , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin());
+                               , facePredictionResultDto.getBox().getXMax() - facePredictionResultDto.getBox().getXMin(), facePredictionResultDto.getBox().getYMax()- facePredictionResultDto.getBox().getYMin(), fileFormat);
 
+//                       facePredictionResultDto.getSubjects();
+//                       for (FaceSimilarityDto temp_fce :temp_face)
+//                       {
+//                           t
+////                           temp_fce.getImgUrl();
+////                           saveFaceImgSub.setSimilarity(temp_fce.getSimilarity());
+////                           embedding.setId(UUID.fromString(temp_fce.getEmbeddingId()));
+////                saveFaceImgSub.setEmbeddingId(temp_fce.getEmbeddingId());
+//
+//                           break;
+//                       }
                        saveFaceImgSub.setSubImgUrl(file_prefix +master_file_name + subImgName);
                        saveFaceImgSub.setBoxMinX(facePredictionResultDto.getBox().getXMin());
                        saveFaceImgSub.setBoxMinY(facePredictionResultDto.getBox().getYMin());
@@ -233,7 +250,7 @@ public class RecognizeController {
 //        }
 //        log.info("save img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         // 拦截并保存图片和信息
-        log.info("save face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
+//        log.info("save face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         return facesRecognitionResponseDto;
 //        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
     }
