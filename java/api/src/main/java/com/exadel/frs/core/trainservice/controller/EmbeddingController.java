@@ -38,10 +38,7 @@ import com.exadel.frs.core.trainservice.validation.ImageExtensionValidator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -157,7 +154,7 @@ public class EmbeddingController {
             String fileName = m.getOriginalFilename().substring(0,  m.getOriginalFilename().lastIndexOf("."));
             ZipFaceDto zipFaceDto = new ZipFaceDto();
             zipFaceDto.setResult(0);
-            zipFaceDto.setSubjectName(fileName);
+            zipFaceDto.setSubjectName(m.getOriginalFilename());
             if (fileFormat.equals("jpg") || fileFormat.equals("png"))
             {
                 try {
@@ -274,8 +271,23 @@ public class EmbeddingController {
             final int pageSize
     ) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
+        List<GroupDto> groupDtoList = new ArrayList<>();
+        Map<Integer, Integer> hash = new HashMap<>();
+        Page<EmbeddingDto> embeddingDtos = embeddingService.listEmbeddings(apiKey, subjectName, pageable).map(embeddingMapper::toResponseDto);
 
-        return new Faces(embeddingService.listEmbeddings(apiKey, subjectName, pageable).map(embeddingMapper::toResponseDto), env.getProperty("environment.storage.url"));
+        List<EmbeddingDto> subjectSubIdDtos1 = embeddingDtos.getContent();
+        for (EmbeddingDto su : subjectSubIdDtos1)
+        {
+            //++hash[su.getSubId()];
+
+            hash.put(su.getSubId(), (hash.get(su.getSubId()) == null)? 1:  hash.get(su.getSubId()) +1);
+        }
+        for (Integer key : hash.keySet())
+        {
+            GroupDto groupDto = new GroupDto(key, (hash.get(key) != null? hash.get(key): 0));
+            groupDtoList.add(groupDto);
+        }
+        return new Faces(embeddingDtos,groupDtoList , env.getProperty("environment.storage.url"));
     }
 
     @WriteEndpoint
@@ -442,6 +454,7 @@ public class EmbeddingController {
 
         private final Page<EmbeddingDto> source;
 
+        private final List<GroupDto>   groupDtos;
         private final String url;
         // As of backward compatibility we are not allowed to rename property 'faces' --> 'embedding'
         public List<EmbeddingDto> getFaces() {
@@ -449,6 +462,11 @@ public class EmbeddingController {
         }
 
         public String getUrl() {return url;}
+
+        @JsonProperty("group_infos")
+        public List<GroupDto> GetGroupInfos() {
+            return groupDtos;
+        }
         @JsonProperty("total_pages")
         public int getTotalPages() {
             return source.getTotalPages();

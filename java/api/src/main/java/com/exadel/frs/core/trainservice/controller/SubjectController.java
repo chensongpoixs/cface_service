@@ -106,7 +106,7 @@ public class SubjectController {
             GroupDto groupDto = new GroupDto(key, (hash.get(key) != null? hash.get(key): 0));
             groupDtoList.add(groupDto);
         }
-        log.info("_++_+_"+groupDtoList.toString());
+//        log.info("_++_+_"+groupDtoList.toString());
         return new SubjectSubs(subjectSubIdDtos, groupDtoList);
 //        return new SubjectSubs(subjectService.findByApikey(apiKey, pageable). map(subjectmapper::toResponseDto));
     }
