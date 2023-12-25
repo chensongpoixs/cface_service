@@ -250,7 +250,7 @@ public class RecognizeController {
 //        }
 //        log.info("save img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         // 拦截并保存图片和信息
-//        log.info("save face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
+        log.info("save face img = " + (System.currentTimeMillis() - cur_ms) + " ms");
         return facesRecognitionResponseDto;
 //        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
     }

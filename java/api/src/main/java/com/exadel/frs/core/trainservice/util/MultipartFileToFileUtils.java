@@ -1,6 +1,8 @@
 package com.exadel.frs.core.trainservice.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.nd4j.common.io.Assert;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -9,13 +11,68 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Slf4j
 public class MultipartFileToFileUtils
 {
+
+
+    public static java.util.List<MultipartFile> UnZip(MultipartFile multipartFiles){
+        String originalFilename = multipartFiles.getOriginalFilename();
+        //是否是zip文件类型
+        if (!originalFilename.endsWith(".zip")){
+            throw new RuntimeException(originalFilename+"文件格式错误！请上传.zip格式文件");
+        }
+        //解压
+        List<MultipartFile> multipartFileList = new ArrayList<>();
+        ZipInputStream zipInputStream = null;
+        BufferedInputStream bufferedInputStream = null;
+        String zipEntryFile;
+        try {
+            zipInputStream = new ZipInputStream(multipartFiles.getInputStream());
+            bufferedInputStream = new BufferedInputStream(zipInputStream);
+            ZipEntry zipEntry;
+            while ((zipEntry = zipInputStream.getNextEntry())!=null){
+                zipEntryFile = zipEntry.getName();
+                //文件名称为空
+                Assert.notNull(zipEntryFile,"压缩文件中子文件的名字格式不正确");
+//                String originalFilename = zipEntryFile.getOriginalFilename();
+                /*获取文件格式*/
+                String fileFormat = zipEntryFile.substring(zipEntryFile.lastIndexOf("."));
+                //每个文件的流
+                byte[] bytes = new byte[(int)zipEntry.getSize()];
+                bufferedInputStream.read(bytes,0,(int)zipEntry.getSize());
+                InputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+                MultipartFile multipartFile = new MockMultipartFile(zipEntryFile,zipEntryFile,/*"JPG"*/ fileFormat.substring(1, fileFormat.length()),byteArrayInputStream);
+//                MockMultipartFile();
+                multipartFileList.add(multipartFile);
+                byteArrayInputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if (bufferedInputStream!=null){
+                try {
+                    bufferedInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (zipInputStream!=null){
+                try {
+                    zipInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return multipartFileList;
+    }
+
     /**
      * @param file
      * @param targetDirPath 存储MultipartFile文件的目标文件夹
@@ -150,7 +207,8 @@ public class MultipartFileToFileUtils
             }
             // 将裁剪后的图像写入到文件
 
-            ImageIO.write(croppedImage, format.substring(1, format.length()), dir);
+            ImageIO.write(croppedImage,   format.substring(1, format.length()), dir);
+
             // Create a new BufferedImage that represents the subtracted area
 //            BufferedImage subtraction = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 //            Graphics2D g = subtraction.createGraphics();

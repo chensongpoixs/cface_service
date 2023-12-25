@@ -26,22 +26,19 @@ import static org.springframework.http.HttpStatus.CREATED;
 import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.entity.Img;
 import com.exadel.frs.commonservice.entity.Subject;
+import com.exadel.frs.commonservice.projection.EmbeddingProjection;
 import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
-import com.exadel.frs.core.trainservice.dto.Base64File;
-import com.exadel.frs.core.trainservice.dto.EmbeddingDto;
-import com.exadel.frs.core.trainservice.dto.EmbeddingsRecognitionRequest;
-import com.exadel.frs.core.trainservice.dto.EmbeddingsVerificationProcessResponse;
-import com.exadel.frs.core.trainservice.dto.ProcessEmbeddingsParams;
-import com.exadel.frs.core.trainservice.dto.ProcessImageParams;
-import com.exadel.frs.core.trainservice.dto.VerificationResult;
+import com.exadel.frs.core.trainservice.dto.*;
 import com.exadel.frs.core.trainservice.mapper.EmbeddingMapper;
 import com.exadel.frs.core.trainservice.mapper.FacesMapper;
 import com.exadel.frs.core.trainservice.service.EmbeddingService;
 import com.exadel.frs.core.trainservice.service.SubjectService;
+import com.exadel.frs.core.trainservice.util.MultipartFileToFileUtils;
 import com.exadel.frs.core.trainservice.validation.ImageExtensionValidator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,8 +47,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.juli.logging.Log;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -77,6 +77,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(API_V1 + "/recognition")
 @RequiredArgsConstructor
+@Slf4j
 public class EmbeddingController {
 
     private final EmbeddingService embeddingService;
@@ -116,6 +117,94 @@ public class EmbeddingController {
 
         return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
     }
+
+    @PostMapping("/facezip")
+    public ZipResultDto facezip(
+            @ApiParam(value = "xxx.zip", required = true)
+            @RequestParam
+            final MultipartFile file,
+            @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
+            @RequestParam(value = DET_PROB_THRESHOLD, required = false)
+            final Double detProbThreshold,
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "分组id", required = true)
+             @RequestHeader("sub_id")
+            final int sub_id
+    ) throws IOException {
+//        imageValidator.validate(file);
+
+        ZipResultDto zipResultDto = new ZipResultDto();
+        log.info("======================================");
+        List<MultipartFile> files = null;
+        try {
+            files  =  MultipartFileToFileUtils.UnZip(file);
+        }
+        catch (Exception e)
+        {
+            zipResultDto.setResult(500);
+            return zipResultDto;
+//            return null ;
+        }
+
+
+        List<ZipFaceDto> zipFaceDtoList = new ArrayList<ZipFaceDto>();
+
+        for (MultipartFile m : files)
+        {
+            String fileFormat = m.getOriginalFilename().substring( m.getOriginalFilename().lastIndexOf(".") +1);
+            String fileName = m.getOriginalFilename().substring(0,  m.getOriginalFilename().lastIndexOf("."));
+            ZipFaceDto zipFaceDto = new ZipFaceDto();
+            zipFaceDto.setResult(0);
+            zipFaceDto.setSubjectName(fileName);
+            if (fileFormat.equals("jpg") || fileFormat.equals("png"))
+            {
+                try {
+                    Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
+
+ ;//getContent
+                    if (embeddingService.listEmbeddings(apiKey, fileName, pageable).getContent().isEmpty())
+                    {
+                        log.info("filename = ===" + fileName);
+                        subjectService.createSubject(apiKey, fileName, sub_id);
+                        final Pair<Subject, Embedding> pair = subjectService.saveCalculatedEmbedding(
+                                m,
+                                fileName,
+                                detProbThreshold,
+                                apiKey
+                        );
+                    }
+                    else
+                    {
+                        zipFaceDto.setResult(2);
+                    }
+//                EmbeddingDto embeddingDto =  new EmbeddingDto(pair.getRight().getId().toString(), fileName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
+//                embeddingDtos.add(embeddingDto);
+
+
+                }catch (IOException e) {
+                    zipFaceDto.setResult(1);
+//                EmbeddingDto embeddingDto =  new EmbeddingDto();
+//                embeddingDto.setSubjectName(fileName);
+//                embeddingDtos.add(embeddingDto);
+                    log.info (e.getMessage());
+                }
+            }
+            else
+            {
+                zipFaceDto.setResult(3);
+            }
+            zipFaceDtoList.add(zipFaceDto);
+        }
+
+
+        zipResultDto.setZipFaceDtos(zipFaceDtoList);
+
+        return zipResultDto;
+    }
+
+
 
     @WriteEndpoint
     @ResponseStatus(CREATED)

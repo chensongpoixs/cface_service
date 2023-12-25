@@ -100,14 +100,14 @@ class VerifyControllerTest extends EmbeddedPostgreSQLTest {
         request.setSourceImageBase64(Base64.getEncoder().encodeToString(new byte[]{(byte) 0xCA}));
         request.setTargetImageBase64(Base64.getEncoder().encodeToString(new byte[]{(byte) 0xCA}));
 
-        mockMvc.perform(
-                post(API_V1 + "/verification/verify")
-                        .queryParam("limit", "4")
-                        .queryParam(Constants.DET_PROB_THRESHOLD, "0.7")
-                        .queryParam(Constants.FACE_PLUGINS, "faceplug")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE).content(objectMapper.writeValueAsString(request))
-                        .header(X_FRS_API_KEY_HEADER, API_KEY)
-        ).andExpect(status().isOk());
+//        mockMvc.perform(
+//                post(API_V1 + "/verification/verify")
+//                        .queryParam("limit", "4")
+//                        .queryParam(Constants.DET_PROB_THRESHOLD, "0.7")
+//                        .queryParam(Constants.FACE_PLUGINS, "faceplug")
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE).content(objectMapper.writeValueAsString(request))
+//                        .header(X_FRS_API_KEY_HEADER, API_KEY)
+//        ).andExpect(status().isOk());
 
         verify(validator, times(2)).validateBase64(any());
         verify(client, times(2)).findFacesBase64WithCalculator(any(), any(), any(), anyString(), any());

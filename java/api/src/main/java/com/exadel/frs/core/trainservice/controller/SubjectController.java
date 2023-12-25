@@ -11,10 +11,7 @@ import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
 import com.exadel.frs.commonservice.entity.Subject;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.commonservice.projection.SubjectProjection;
-import com.exadel.frs.core.trainservice.dto.StorageImgDto;
-import com.exadel.frs.core.trainservice.dto.SubjectDto;
-import com.exadel.frs.core.trainservice.dto.SubjectHttpDto;
-import com.exadel.frs.core.trainservice.dto.SubjectSubIdDto;
+import com.exadel.frs.core.trainservice.dto.*;
 import com.exadel.frs.core.trainservice.mapper.SubjectEmbeddingMapper;
 import com.exadel.frs.core.trainservice.mapper.Subjectmapper;
 import com.exadel.frs.core.trainservice.service.EmbeddingService;
@@ -92,7 +89,26 @@ public class SubjectController {
 //                "subjects",
 //                subjectService.getSubjectsNames(apiKey)
 //        );
-        return new SubjectSubs(subjectService.findByApikey(apiKey, pageable). map(subjectmapper::toResponseDto));
+
+        List<GroupDto> groupDtoList = new ArrayList<>();
+        Map<Integer, Integer> hash = new HashMap<>();
+        Page<SubjectSubIdDto>  subjectSubIdDtos =  subjectService.findByApikey(apiKey,   pageable). map(subjectmapper::toResponseDto);
+
+        List<SubjectSubIdDto> subjectSubIdDtos1 = subjectSubIdDtos.getContent();
+        for (SubjectSubIdDto su : subjectSubIdDtos1)
+        {
+            //++hash[su.getSubId()];
+
+            hash.put(su.getSubId(), (hash.get(su.getSubId()) == null)? 1:  hash.get(su.getSubId()) +1);
+        }
+        for (Integer key : hash.keySet())
+        {
+            GroupDto groupDto = new GroupDto(key, (hash.get(key) != null? hash.get(key): 0));
+            groupDtoList.add(groupDto);
+        }
+        log.info("_++_+_"+groupDtoList.toString());
+        return new SubjectSubs(subjectSubIdDtos, groupDtoList);
+//        return new SubjectSubs(subjectService.findByApikey(apiKey, pageable). map(subjectmapper::toResponseDto));
     }
 
     @PutMapping("/{subject}")
@@ -174,7 +190,22 @@ public class SubjectController {
        // Page<SubjectProjection> subjects =  subjectService.findByApikeySubId(apiKey, subId, pageable);
 
 //        return null;
-        return new SubjectSubs(subjectService.findByApikeySubId(apiKey, subId, pageable). map(subjectmapper::toResponseDto));
+        List<GroupDto> groupDtoList = new ArrayList<>();
+        Map<Integer, Integer> hash = new HashMap<>();
+        Page<SubjectSubIdDto>  subjectSubIdDtos =  subjectService.findByApikeySubId(apiKey, subId, pageable). map(subjectmapper::toResponseDto);
+        List<SubjectSubIdDto> subjectSubIdDtos1 = subjectSubIdDtos.getContent();
+        for (SubjectSubIdDto su : subjectSubIdDtos1)
+        {
+            //++hash[su.getSubId()];
+
+            hash.put(su.getSubId(), hash.get(su.getSubId()) +1);
+        }
+        for (Integer key : hash.keySet())
+        {
+            GroupDto groupDto = new GroupDto(key, hash.get(key));
+            groupDtoList.add(groupDto);
+        }
+        return new SubjectSubs(subjectSubIdDtos, groupDtoList);
     }
     @DeleteMapping("/deletesubjectsubId")
     public int deleteSubjectsSubId(
@@ -215,6 +246,9 @@ public class SubjectController {
 
         private final Page<SubjectSubIdDto> source;
 
+        private final List<GroupDto>  groupDtos;
+
+
 //        public StorageImg(Page<StorageImgProjection> listStorageImgs) {
 //
 //        }
@@ -225,6 +259,8 @@ public class SubjectController {
         }
 
 //        public String getUrl()   { return url;}
+        @JsonProperty("group_info")
+        public List<GroupDto> getGroupDtos() {return groupDtos;}
         @JsonProperty("total_pages")
         public int getTotalPages() {
             return source.getTotalPages();
