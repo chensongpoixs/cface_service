@@ -22,7 +22,21 @@ public class CaptureImgImpl
     @Transactional
     public Page<CaputreImgProjection> AllListFaceSubImg(String apiKey, int startTimestamp, int endTimestamp, List deviceIds, int ASCDESC, Pageable pageable)
     {
-        return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc(apiKey, startTimestamp, endTimestamp, pageable);
+        if (deviceIds.size()> 0)
+        {
+            if (ASCDESC != 0)
+            {
+                return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc(apiKey, startTimestamp, endTimestamp, deviceIds, pageable);
+            }
+            return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc(apiKey, startTimestamp, endTimestamp, deviceIds, pageable);
+
+        }
+        if (ASCDESC != 0)
+        {
+            return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc(apiKey, startTimestamp, endTimestamp, pageable);
+
+        }
+        return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc(apiKey, startTimestamp, endTimestamp, pageable);
     }
 
 }
