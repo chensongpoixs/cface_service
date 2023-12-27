@@ -28,7 +28,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class TrainServiceApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
+
+        System.out.println("charset = "+System.getProperty("file.encoding"));
         SpringApplication.run(TrainServiceApplication.class, args);
     }
 }

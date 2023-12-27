@@ -1,6 +1,7 @@
 package com.exadel.frs.core.trainservice.service;
 
 import com.exadel.frs.commonservice.entity.SaveFaceImg;
+import com.exadel.frs.commonservice.projection.CaputreImgProjection;
 import com.exadel.frs.commonservice.projection.EmbeddingProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.commonservice.projection.StorageImgProjection;
@@ -45,6 +46,14 @@ public class SaveFaceImgServiceImpl implements SaveFaceImgService
     public List<SaveFaceImg> listSaveFaceImgs(String apiKey) {
 
         return saveFaceImgRepository.findAll();
+    }
+
+    @Override
+    public   Page<CaputreImgProjection> AllListFaceSubImg(String apiKey, long startTimestamp, long endTimestamp, List deviceIds, int ASCDESC, Pageable pageable) {
+
+//        saveFaceImgRepository.f
+
+        return null;//saveFaceImgRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc(apiKey, startTimestamp, endTimestamp, deviceIds, pageable);
     }
 
     @Override

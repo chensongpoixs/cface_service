@@ -1,27 +1,8 @@
 package com.exadel.frs.core.trainservice.controller;
 
 import static com.exadel.frs.commonservice.system.global.Constants.DET_PROB_THRESHOLD;
-import static com.exadel.frs.core.trainservice.system.global.Constants.API_KEY_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.API_V1;
-import static com.exadel.frs.core.trainservice.system.global.Constants.CACHE_CONTROL_HEADER_VALUE;
-import static com.exadel.frs.core.trainservice.system.global.Constants.DET_PROB_THRESHOLD_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.FACE_PLUGINS;
-import static com.exadel.frs.core.trainservice.system.global.Constants.FACE_PLUGINS_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.IMAGE_ID;
-import static com.exadel.frs.core.trainservice.system.global.Constants.IMAGE_IDS_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.IMAGE_ID_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.IMAGE_WITH_ONE_FACE_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.LIMIT_DEFAULT_VALUE;
-import static com.exadel.frs.core.trainservice.system.global.Constants.LIMIT_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.LIMIT_MIN_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.NUMBER_VALUE_EXAMPLE;
-import static com.exadel.frs.core.trainservice.system.global.Constants.STATUS;
-import static com.exadel.frs.core.trainservice.system.global.Constants.STATUS_DEFAULT_VALUE;
-import static com.exadel.frs.core.trainservice.system.global.Constants.STATUS_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.SUBJECT;
-import static com.exadel.frs.core.trainservice.system.global.Constants.SUBJECT_DESC;
-import static com.exadel.frs.core.trainservice.system.global.Constants.SUBJECT_NAME_IS_EMPTY;
-import static com.exadel.frs.core.trainservice.system.global.Constants.X_FRS_API_KEY_HEADER;
+import static com.exadel.frs.core.trainservice.system.global.Constants.*;
+import static com.exadel.frs.core.trainservice.system.global.Constants.API_STORAGE_TIMESTAMP_SORT;
 import static org.springframework.http.HttpStatus.CREATED;
 import com.exadel.frs.commonservice.entity.Embedding;
 import com.exadel.frs.commonservice.entity.Img;
@@ -112,22 +93,24 @@ public class EmbeddingController {
                 apiKey
         );
 
-        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
+        return new EmbeddingDto(pair.getRight().getId().toString(), pair.getLeft().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
     }
-
+    @WriteEndpoint
+    @ResponseStatus(CREATED)
     @PostMapping("/facezip")
     public ZipResultDto facezip(
-            @ApiParam(value = "xxx.zip", required = true)
-            @RequestParam
-            final MultipartFile file,
+
             @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
             @RequestParam(value = DET_PROB_THRESHOLD, required = false)
             final Double detProbThreshold,
             @ApiParam(value = API_KEY_DESC, required = true)
             @RequestHeader(X_FRS_API_KEY_HEADER)
             final String apiKey,
-            @ApiParam(value = "分组id", required = true)
-             @RequestHeader("sub_id")
+            @ApiParam(value = "xxx.zip", required = true)
+            @RequestParam
+            final MultipartFile file,
+            @ApiParam(value = "sub_id", required = true)
+            @RequestParam
             final int sub_id
     ) throws IOException {
 //        imageValidator.validate(file);
@@ -161,9 +144,9 @@ public class EmbeddingController {
                     Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
 
  ;//getContent
-                    if (embeddingService.listEmbeddings(apiKey, fileName, pageable).getContent().isEmpty())
+                    if (embeddingService.listEmbeddings(apiKey, fileName, 0, pageable).getContent().isEmpty())
                     {
-                        log.info("filename = ===" + fileName);
+                        log.info("filename = ===" + m.getOriginalFilename());
                         subjectService.createSubject(apiKey, fileName, sub_id);
                         final Pair<Subject, Embedding> pair = subjectService.saveCalculatedEmbedding(
                                 m,
@@ -233,7 +216,7 @@ public class EmbeddingController {
 
 //        int subId = pair.getLeft().getSubId();
 //        val subId1 = subId;
-        return new EmbeddingDto(pair.getRight().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
+        return new EmbeddingDto(pair.getRight().getId().toString(), pair.getLeft().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
     }
 
     @ResponseBody
@@ -261,6 +244,14 @@ public class EmbeddingController {
             @Valid
             @RequestParam(name = SUBJECT, required = false)
             final String subjectName,
+            @ApiParam(value = "sub_id")
+            @Validated
+            @RequestParam(value = "sub_id" , required = true)
+            final int sub_id,
+            @ApiParam(value = "subject 字段  0: 升序 1: 降序" )
+            @Valid
+            @RequestParam(defaultValue = "0", name = "ascdesc", required = false )
+            final int ASCDESC, //API_STORAGE_FACE_GENDER_DES
             @ApiParam(value = "page", required = true)
             @Validated
             @RequestParam(value = "page" )
@@ -273,7 +264,17 @@ public class EmbeddingController {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
         List<GroupDto> groupDtoList = new ArrayList<>();
         Map<Integer, Integer> hash = new HashMap<>();
-        Page<EmbeddingDto> embeddingDtos = embeddingService.listEmbeddings(apiKey, subjectName, pageable).map(embeddingMapper::toResponseDto);
+        Page<EmbeddingDto> embeddingDtos = null;
+        if (sub_id < 0)
+        {
+            embeddingDtos= embeddingService.listEmbeddings(apiKey, subjectName, ASCDESC, PageRequest.of(page, pageSize, Sort.unsorted())).map(embeddingMapper::toResponseDto);
+
+        }
+        else
+        {
+            embeddingDtos= embeddingService.allEmbeddingsSubId(apiKey, subjectName, sub_id, ASCDESC, pageable).map(embeddingMapper::toResponseDto);
+
+        }
 
         List<EmbeddingDto> subjectSubIdDtos1 = embeddingDtos.getContent();
         for (EmbeddingDto su : subjectSubIdDtos1)
@@ -320,7 +321,7 @@ public class EmbeddingController {
             final UUID embeddingId
     ) {
         var embedding = subjectService.removeSubjectEmbedding(apiKey, embeddingId);
-        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl(), embedding.getSubject().getSubId());
+        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getId().toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl(), embedding.getSubject().getSubId());
     }
 
     @WriteEndpoint
@@ -335,7 +336,7 @@ public class EmbeddingController {
     ) {
         List<Embedding> list = subjectService.removeSubjectEmbeddings(apiKey, embeddingIds);
         List<EmbeddingDto> dtoList = list.stream()
-                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl(), c.getSubject().getSubId()))
+                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl(), c.getSubject().getSubId()))
                                          .toList();
         return dtoList;
     }

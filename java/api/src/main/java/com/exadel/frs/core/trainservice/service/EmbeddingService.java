@@ -53,8 +53,22 @@ public class EmbeddingService {
         return imgRepository.getImgByEmbeddingId(apiKey, embeddingId);
     }
 
-    public Page<EmbeddingProjection> listEmbeddings(String apiKey, String subjectName, Pageable pageable) {
-        return embeddingRepository.findBySubjectApiKeyAndSubjectName(apiKey, subjectName, pageable);
+    public Page<EmbeddingProjection> listEmbeddings(String apiKey, String subjectName , int ASCDESC,  Pageable pageable)
+    {
+        if (ASCDESC != 0)
+        {
+            return embeddingRepository.findBySubjectApiKeyAndSubjectNameAsc(apiKey, subjectName, pageable);
+        }
+        return embeddingRepository.findBySubjectApiKeyAndSubjectNameDesc(apiKey, subjectName, pageable);
+    }
+
+    public Page<EmbeddingProjection> allEmbeddingsSubId(String apiKey, String subjectName , int subId,int ASCDESC, Pageable pageable)
+    {
+        if (ASCDESC != 0)
+        {
+            return embeddingRepository.findBySubjectApiKeyAndSubjectNameAndSubIdAsc(apiKey, subjectName,subId, pageable);
+        }
+        return embeddingRepository.findBySubjectApiKeyAndSubjectNameAndSubIdDesc(apiKey, subjectName,subId, pageable);
     }
     public Page<SubjectEmbeddingProjection> listEmbeddings(String apiKey, Pageable pageable) {
         return embeddingRepository.findBySubjectApiKeySub(apiKey, pageable);

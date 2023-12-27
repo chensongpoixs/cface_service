@@ -22,7 +22,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
     // Note: consumer should consume in transaction
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection(e.id, e.embedding, s.subjectName, e.faceImgUrl, s.subId)
+                new com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection(e.id, e.embedding, s.id, s.subjectName, e.faceImgUrl, s.subId)
             from
                 Embedding e
             left join
@@ -58,7 +58,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
             from
                 Embedding e
             where
@@ -68,15 +68,65 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
             from
                 Embedding e
             where
                 e.subject.apiKey = :apiKey
             and
                 (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+            order by
+                 e.subject.subjectName asc
             """)
-    Page<EmbeddingProjection> findBySubjectApiKeyAndSubjectName(String apiKey, String subjectName, Pageable pageable);
+    Page<EmbeddingProjection> findBySubjectApiKeyAndSubjectNameAsc(String apiKey, String subjectName, Pageable pageable);
+
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+            from
+                Embedding e
+            where
+                e.subject.apiKey = :apiKey
+            and
+                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+            order by
+                 e.subject.subjectName desc
+            """)
+    Page<EmbeddingProjection> findBySubjectApiKeyAndSubjectNameDesc(String apiKey, String subjectName, Pageable pageable);
+
+
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+            from
+                Embedding e
+            where
+                e.subject.apiKey = :apiKey
+            and
+                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+            and
+                e.subject.subId = :sub_id
+            order by
+                e.subject.subjectName asc
+            """)
+    Page<EmbeddingProjection> findBySubjectApiKeyAndSubjectNameAndSubIdAsc(String apiKey, String subjectName, int sub_id, Pageable pageable);
+
+
+    @Query("""
+            select
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+            from
+                Embedding e
+            where
+                e.subject.apiKey = :apiKey
+            and
+                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+            and
+                e.subject.subId = :sub_id
+            order by
+                e.subject.subjectName desc
+            """)
+    Page<EmbeddingProjection> findBySubjectApiKeyAndSubjectNameAndSubIdDesc(String apiKey, String subjectName, int sub_id, Pageable pageable);
 
     @Query("select distinct(e.calculator) from Embedding e")
     List<String> getUniqueCalculators();
@@ -129,4 +179,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
                  e.subject.subId = :subId
             """)
     Page<SubjectEmbeddingProjection> findBySubjectApiKeyAndSubId(String apiKey, int subId, Pageable pageable);
+
+
+
 }

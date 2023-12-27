@@ -7,17 +7,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ZipResultDto
+public class CaputreDto
 {
-    @JsonProperty("code") // subtable id
-    private int result;
+    @JsonProperty("id")
+    private long id;
 
-    @JsonProperty("ZipFaceDto")
-    private List<ZipFaceDto> zipFaceDtos;
+    @JsonProperty("timestamp")
+    private long timestamp;
+
+    @JsonProperty("img_url")
+    private String imgUrl;
+    @JsonProperty("device_id")
+    private int device_id;
 }

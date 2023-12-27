@@ -255,70 +255,70 @@ public class RecognizeController {
 //        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
     }
 
-    @PostMapping(value = "/recognition/recognize", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public FacesRecognitionResponseDto recognizeBase64(
-            @ApiParam(value = API_KEY_DESC, required = true)
-            @RequestHeader(X_FRS_API_KEY_HEADER)
-            final String apiKey,
-            @ApiParam(value = LIMIT_DESC, example = NUMBER_VALUE_EXAMPLE)
-            @RequestParam(defaultValue = LIMIT_DEFAULT_VALUE, required = false)
-            @Min(value = 0, message = LIMIT_MIN_DESC)
-            final Integer limit,
-            @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
-            @RequestParam(value = DET_PROB_THRESHOLD, required = false)
-            final Double detProbThreshold,
-            @ApiParam(value = FACE_PLUGINS_DESC)
-            @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "landmarks, gender, age")
-            final String facePlugins,
-            @ApiParam(value = STATUS_DESC)
-            @RequestParam(value = STATUS, required = false, defaultValue = STATUS_DEFAULT_VALUE)
-            final Boolean status,
-            @ApiParam(value = DETECT_FACES_DESC)
-            @RequestParam(value = DETECT_FACES, required = false, defaultValue = DETECT_FACES_DEFAULT_VALUE)
-            final Boolean detectFaces,
-            @ApiParam(value = PREDICTION_COUNT_DESC, example = NUMBER_VALUE_EXAMPLE)
-            @RequestParam(value = PREDICTION_COUNT_REQUEST_PARAM, required = false, defaultValue = PREDICTION_COUNT_DEFAULT_VALUE)
-            @Min(value = 1, message = PREDICTION_COUNT_MIN_DESC)
-            final Integer predictionCount,
-            @RequestBody
-            @Valid
-            final Base64File request
-    ) {
-        ProcessImageParams processImageParams = ProcessImageParams
-                .builder()
-                .apiKey(apiKey)
-                .imageBase64(request.getContent())
-                .limit(limit)
-                .detProbThreshold(detProbThreshold)
-                .facePlugins(facePlugins)
-                .status(status)
-                .detectFaces(detectFaces)
-                .additionalParams(Collections.singletonMap(PREDICTION_COUNT, predictionCount))
-                .build();
+//    @PostMapping(value = "/recognition/recognize", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public FacesRecognitionResponseDto recognizeBase64(
+//            @ApiParam(value = API_KEY_DESC, required = true)
+//            @RequestHeader(X_FRS_API_KEY_HEADER)
+//            final String apiKey,
+//            @ApiParam(value = LIMIT_DESC, example = NUMBER_VALUE_EXAMPLE)
+//            @RequestParam(defaultValue = LIMIT_DEFAULT_VALUE, required = false)
+//            @Min(value = 0, message = LIMIT_MIN_DESC)
+//            final Integer limit,
+//            @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
+//            @RequestParam(value = DET_PROB_THRESHOLD, required = false)
+//            final Double detProbThreshold,
+//            @ApiParam(value = FACE_PLUGINS_DESC)
+//            @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "landmarks, gender, age")
+//            final String facePlugins,
+//            @ApiParam(value = STATUS_DESC)
+//            @RequestParam(value = STATUS, required = false, defaultValue = STATUS_DEFAULT_VALUE)
+//            final Boolean status,
+//            @ApiParam(value = DETECT_FACES_DESC)
+//            @RequestParam(value = DETECT_FACES, required = false, defaultValue = DETECT_FACES_DEFAULT_VALUE)
+//            final Boolean detectFaces,
+//            @ApiParam(value = PREDICTION_COUNT_DESC, example = NUMBER_VALUE_EXAMPLE)
+//            @RequestParam(value = PREDICTION_COUNT_REQUEST_PARAM, required = false, defaultValue = PREDICTION_COUNT_DEFAULT_VALUE)
+//            @Min(value = 1, message = PREDICTION_COUNT_MIN_DESC)
+//            final Integer predictionCount,
+//            @RequestBody
+//            @Valid
+//            final Base64File request
+//    ) {
+//        ProcessImageParams processImageParams = ProcessImageParams
+//                .builder()
+//                .apiKey(apiKey)
+//                .imageBase64(request.getContent())
+//                .limit(limit)
+//                .detProbThreshold(detProbThreshold)
+//                .facePlugins(facePlugins)
+//                .status(status)
+//                .detectFaces(detectFaces)
+//                .additionalParams(Collections.singletonMap(PREDICTION_COUNT, predictionCount))
+//                .build();
+//
+//        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
+//    }
 
-        return (FacesRecognitionResponseDto) recognitionService.processImage(processImageParams);
-    }
-
-    @PostMapping(value = "/recognition/embeddings/recognize", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public EmbeddingsRecognitionProcessResponse recognizeEmbeddings(
-            @ApiParam(value = API_KEY_DESC, required = true)
-            @RequestHeader(X_FRS_API_KEY_HEADER)
-            final String apiKey,
-            @ApiParam(value = PREDICTION_COUNT_DESC, example = NUMBER_VALUE_EXAMPLE)
-            @RequestParam(value = PREDICTION_COUNT_REQUEST_PARAM, required = false, defaultValue = PREDICTION_COUNT_DEFAULT_VALUE)
-            @Min(value = 1, message = PREDICTION_COUNT_MIN_DESC)
-            final Integer predictionCount,
-            @RequestBody
-            @Valid
-            final EmbeddingsRecognitionRequest recognitionRequest
-    ) {
-        ProcessEmbeddingsParams processParams =
-                ProcessEmbeddingsParams.builder()
-                                       .apiKey(apiKey)
-                                       .embeddings(recognitionRequest.getEmbeddings())
-                                       .additionalParams(Collections.singletonMap(PREDICTION_COUNT, predictionCount))
-                                       .build();
-
-        return (EmbeddingsRecognitionProcessResponse) recognitionService.processEmbeddings(processParams);
-    }
+//    @PostMapping(value = "/recognition/embeddings/recognize", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public EmbeddingsRecognitionProcessResponse recognizeEmbeddings(
+//            @ApiParam(value = API_KEY_DESC, required = true)
+//            @RequestHeader(X_FRS_API_KEY_HEADER)
+//            final String apiKey,
+//            @ApiParam(value = PREDICTION_COUNT_DESC, example = NUMBER_VALUE_EXAMPLE)
+//            @RequestParam(value = PREDICTION_COUNT_REQUEST_PARAM, required = false, defaultValue = PREDICTION_COUNT_DEFAULT_VALUE)
+//            @Min(value = 1, message = PREDICTION_COUNT_MIN_DESC)
+//            final Integer predictionCount,
+//            @RequestBody
+//            @Valid
+//            final EmbeddingsRecognitionRequest recognitionRequest
+//    ) {
+//        ProcessEmbeddingsParams processParams =
+//                ProcessEmbeddingsParams.builder()
+//                                       .apiKey(apiKey)
+//                                       .embeddings(recognitionRequest.getEmbeddings())
+//                                       .additionalParams(Collections.singletonMap(PREDICTION_COUNT, predictionCount))
+//                                       .build();
+//
+//        return (EmbeddingsRecognitionProcessResponse) recognitionService.processEmbeddings(processParams);
+//    }
 }

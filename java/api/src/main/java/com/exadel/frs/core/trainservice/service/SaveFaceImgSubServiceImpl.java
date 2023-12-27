@@ -3,7 +3,6 @@ package com.exadel.frs.core.trainservice.service;
 import com.exadel.frs.commonservice.entity.SaveFaceImgSub;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
-import com.exadel.frs.commonservice.repository.SaveFaceImgRepository;
 import com.exadel.frs.commonservice.repository.SaveFaceImgSubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +69,40 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
     }
 
     @Override
-    public List<DownloadDataProjection> listDownloadDataFaceSubImgById(List ids)
+    public Page<DownloadDataProjection> AllDownloadDataFaceSubImg(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int gender, String subjectName,  int ASCDESC, Pageable pageable)
+    {
+        if (ASCDESC> 0 )
+        {
+            if ( deviceIds.size()> 0)
+            {
+                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, gender,  subjectName,  pageable);
+
+            }
+            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp,  gender,  subjectName,  pageable);
+
+        }
+        else if (deviceIds.size()> 0)
+        {
+            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, gender,  subjectName,  pageable);
+        }
+        return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, gender,  subjectName,  pageable);
+
+//        return null;
+    }
+
+    @Override
+    public List<DownloadDataProjection> listDownloadDataFaceSubImgById(List ids) {
+        return saveFaceImgSubRepository.findBySaveFaceImgSubInIds(ids);
+    }
+
+
+    @Override
+    public List<DownloadDataProjection> AllDownloadDataFaceSubImgById(List ids)
     {
         return saveFaceImgSubRepository.findBySaveFaceImgSubInIds(ids);
 //        return null;
     }
+
+
+
 }

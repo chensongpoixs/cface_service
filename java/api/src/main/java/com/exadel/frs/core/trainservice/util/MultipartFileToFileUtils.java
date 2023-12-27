@@ -1,7 +1,9 @@
 package com.exadel.frs.core.trainservice.util;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.model.FileHeader;
 import org.nd4j.common.io.Assert;
+import org.nd4j.common.io.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -20,6 +24,51 @@ import java.util.zip.ZipInputStream;
 public class MultipartFileToFileUtils
 {
 
+    public static  String getIsoToUtf8(String str)
+    {
+//        if (StringUtils.isBlank(str))
+//        {
+//            return "";
+//        }
+
+        String newStr = "";
+        newStr = new String(str.getBytes(StandardCharsets.US_ASCII));
+        return newStr;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String getEncoding(String path) throws Exception {
+        String encoding = "GBK";
+        net.lingala.zip4j.core.ZipFile zipFile = new net.lingala.zip4j.core.ZipFile(path);
+        zipFile.setFileNameCharset(encoding);
+        List<FileHeader> list = zipFile.getFileHeaders();
+        for (int i = 0; i < list.size(); i++) {
+            FileHeader fileHeader = list.get(i);
+            String fileName = fileHeader.getFileName();
+            if (isMessyCode(fileName)) {
+                encoding = "UTF-8";
+                break;
+            }
+        }
+        return encoding;
+    }
+
+    private static boolean isMessyCode(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            // 当从Unicode编码向某个字符集转换时，如果在该字符集中没有对应的编码，则得到0x3f（即问号字符?）
+            // 从其他字符集向Unicode编码转换时，如果这个二进制数在该字符集中没有标识任何的字符，则得到的结果是0xfffd
+            if ((int) c == 0xfffd) {
+                // 存在乱码
+                return true;
+            }
+        }
+        return false;
+    }
+    public static String decodeZipEntryName(String entryName) {
+        // 尝试使用 UTF-8 解码
+        return new String(entryName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+    }
 
     public static java.util.List<MultipartFile> UnZip(MultipartFile multipartFiles){
         String originalFilename = multipartFiles.getOriginalFilename();
@@ -33,11 +82,18 @@ public class MultipartFileToFileUtils
         BufferedInputStream bufferedInputStream = null;
         String zipEntryFile;
         try {
-            zipInputStream = new ZipInputStream(multipartFiles.getInputStream());
+//            System.setProperties("sun.zip.encoding", System.getProperty("sun.jnu.encoding"));
+//            String encoding;
+//            encoding = getEncoding(originalFilename);
+            zipInputStream = new ZipInputStream(multipartFiles.getInputStream(), Charset.forName("GBK")/*, Charset.forName("UTF-8")*//*, Charset.forName(encoding)*/);
             bufferedInputStream = new BufferedInputStream(zipInputStream);
             ZipEntry zipEntry;
-            while ((zipEntry = zipInputStream.getNextEntry())!=null){
-                zipEntryFile = zipEntry.getName();
+            while ((zipEntry = zipInputStream.getNextEntry())!=null)
+            {
+//                String entryName = zipEntry.getName();
+//                zipEntryFile = new String(entryName.getBytes("UTF-8"), "UTF-8");
+
+                zipEntryFile =  /*decodeZipEntryName*/(zipEntry.getName()) ;
                 //文件名称为空
                 Assert.notNull(zipEntryFile,"压缩文件中子文件的名字格式不正确");
 //                String originalFilename = zipEntryFile.getOriginalFilename();
@@ -47,14 +103,26 @@ public class MultipartFileToFileUtils
                 byte[] bytes = new byte[(int)zipEntry.getSize()];
                 bufferedInputStream.read(bytes,0,(int)zipEntry.getSize());
                 InputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-                MultipartFile multipartFile = new MockMultipartFile(zipEntryFile,zipEntryFile,/*"JPG"*/ fileFormat.substring(1, fileFormat.length()),byteArrayInputStream);
+                MultipartFile multipartFile = new MockMultipartFile((zipEntryFile), (zipEntryFile),/*"JPG"*/ fileFormat.substring(1, fileFormat.length()),byteArrayInputStream);
+//                System.out.println(str);
+//                String str1 = new String(zipEntryFile.getBytes("ISO-8859-1"), "utf-8");
+//                log.info("str1 = " + str1);
+//                String str2 = new String(zipEntryFile.getBytes("gb2312"), "utf-8");
+//                System.out.println(str2);
+//                log.info("str2 = " + str2);
+//                String str3 = new String(zipEntryFile.getBytes("gbk"), "utf-8");
+//                System.out.println(str3);
+//                log.info("str3 = " + str3);
+                log.info("+++++++++++++++++"+ multipartFile.getOriginalFilename());
 //                MockMultipartFile();
                 multipartFileList.add(multipartFile);
                 byteArrayInputStream.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
             if (bufferedInputStream!=null){
                 try {
                     bufferedInputStream.close();

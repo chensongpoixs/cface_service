@@ -33,6 +33,9 @@ public class EmbeddingDto {
     @JsonProperty("image_id")
     private String embeddingId;
 
+    @JsonProperty("subject_id")
+    private String subjectId;
+
     @JsonProperty("subject")
     private String subjectName;
 

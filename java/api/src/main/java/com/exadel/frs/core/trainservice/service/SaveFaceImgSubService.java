@@ -18,5 +18,10 @@ public interface SaveFaceImgSubService
     Page<SaveFaceImgProjection>  listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int gender, String subjectName, int ASCDESC,   Pageable pageable);
 
     int removeSaveFaceSubimgByApiAkyAndId(String apiKey, long id);
+
+
+    public Page<DownloadDataProjection> AllDownloadDataFaceSubImg(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int gender, String subjectName,  int ASCDESC, Pageable pageable);
     List<DownloadDataProjection> listDownloadDataFaceSubImgById(List ids);
+
+    List<DownloadDataProjection> AllDownloadDataFaceSubImgById(List ids);
 }

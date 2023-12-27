@@ -32,7 +32,7 @@ class EmbeddingCollectionTest {
     @Test
     void testRemoveFromEmpty() {
         var embeddingCollection = EmbeddingCollection.from(Stream.of());
-        final EmbeddingProjection removed = embeddingCollection.removeEmbedding(new EmbeddingProjection(UUID.randomUUID(), "subject_name", "", 0));
+        final EmbeddingProjection removed = embeddingCollection.removeEmbedding(new EmbeddingProjection(UUID.randomUUID(), UUID.randomUUID(),"subject_name", "", 0));
 
         assertThat(removed).isNull();
     }

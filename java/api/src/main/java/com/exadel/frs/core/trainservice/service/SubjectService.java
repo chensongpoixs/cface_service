@@ -157,7 +157,7 @@ public class SubjectService {
     }
 
     public boolean updateSubjectName(final String apiKey, final String oldSubjectName, final String newSubjectName) {
-        if (StringUtils.isEmpty(newSubjectName) || newSubjectName.equals(oldSubjectName)) {
+        if (StringUtils.isEmpty(newSubjectName) /*|| newSubjectName.equals(oldSubjectName)*/) {
             // no need to update with empty or similar name
             return false;
         }

@@ -32,13 +32,13 @@ public class ExelTable
         p +=
                 "\n" +
                 "<tr>\n" +
-                "<td width=100>"+ExelRowCreateTimestamp+"</td>\n" +
+                "<td width=150>"+ExelRowCreateTimestamp+"</td>\n" +
                 "<td width=100>"+ ExelRowCaptureAddress +"</td>\n" +
                 "<td width=100>"+ ExelRowUserName +"</td>\n" +
                 "<td width=100>"+ ExelRowGender +"</td>\n" +
                 "<td width=100>"+ ExelRowSimilarity +"</td>\n" +
-                "<td width=100>"+ ExelRowCaptureImg +"</td>\n" +
-                "<td width=100>"+ ExelRowFaceImg +"</td>\n" +
+                "<td width=400>"+ ExelRowCaptureImg +"</td>\n" +
+                "<td width=400>"+ ExelRowFaceImg +"</td>\n" +
                 "</tr>";
 
         for(ExelRow row : exelRows)

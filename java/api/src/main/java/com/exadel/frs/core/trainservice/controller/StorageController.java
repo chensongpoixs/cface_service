@@ -6,15 +6,18 @@ import com.exadel.frs.commonservice.entity.SaveFaceImg;
 import com.exadel.frs.commonservice.httpclient.DeviceInfo;
 import com.exadel.frs.commonservice.httpclient.HttpDefault;
 import com.exadel.frs.commonservice.httpclient.Http_Client;
+import com.exadel.frs.commonservice.projection.CaputreImgProjection;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 //import com.exadel.frs.commonservice.sdk.storage.feign.StorageFeignClient;
 import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
+import com.exadel.frs.core.trainservice.dto.CaputreDto;
 import com.exadel.frs.core.trainservice.dto.StorageImgDto;
 import com.exadel.frs.core.trainservice.exel.ExelRow;
 import com.exadel.frs.core.trainservice.exel.ExelTable;
 import com.exadel.frs.core.trainservice.mapper.SaveFaceImgMapper;
 //import com.exadel.frs.core.trainservice.mapper.StorageFaceImgMapper;
+import com.exadel.frs.core.trainservice.service.CaptureImgImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.StorageSaveFaceImgServiceImpl;
@@ -62,6 +65,8 @@ public class StorageController
 
 //    private final StorageSaveFaceImgServiceImpl storageSaveFaceImgService;
     private final SaveFaceImgServiceImpl saveFaceImgService;
+
+    private final CaptureImgImpl captureImg;
     private final SaveFaceImgSubService saveFaceImgSubService;
 //    private final SaveFaceImgSubService saveFaceImgSubService;
 //    private final SaveFaceImgService saveFaceImgService;
@@ -168,6 +173,255 @@ public class StorageController
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
     }
 
+
+
+    @GetMapping("/search_capute")
+    public CaptureImgs listStorageCapture(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = API_STORAGE_START_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_START_TIMESTAMP )
+            final long start_timestamp,
+            @ApiParam(value = API_STORAGE_END_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_END_TIMESTAMP )
+            final long end_timestamp,
+            @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
+            @Valid
+            @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
+            final String device_id, //API_STORAGE_FACE_GENDER_DES
+
+            @ApiParam(value = API_STORAGE_TIMESTAMP_SORT_DES )
+            @Valid
+            @RequestParam(defaultValue = "0", name = API_STORAGE_TIMESTAMP_SORT, required = false )
+            final int ASCDESC, //API_STORAGE_FACE_GENDER_DES
+//
+//
+//            final Pageable pageable
+            @ApiParam(value = "page", required = true)
+            @Validated
+            @RequestParam(value = "page" )
+            final int page,
+            @ApiParam(value = "page_size", required = true)
+            @Validated
+            @RequestParam(value = "page_size" )
+            final int pageSize
+    )
+    {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
+        List<Integer>   devicdids = new ArrayList<>();
+        String str = "";
+        if (   device_id.length() >0)
+        {
+            if (device_id.charAt(0) != '-')
+            {
+                for (int i = 0; i < device_id.length(); ++i)
+                {
+                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                    {
+                        str +=device_id.charAt(i);
+                    }
+                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
+                    {
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                            devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
+                    }
+                    if (device_id.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                            devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
+                    }
+                }
+            }
+        }
+//        storageFeignClient.getInfo();
+        for(Integer v : devicdids)
+        {
+            log.info("----> devieid = " + v);
+        }
+
+//        Page<CaputreImgProjection>> saveFaceImgList =  saveFaceImgService.AllListFaceSubImg(apiKey, start_timestamp, end_timestamp, devicdids, ASCDESC, pageable);
+//            log.info( device_id.toString());
+        return new CaptureImgs(captureImg.AllListFaceSubImg(apiKey, (int) start_timestamp, (int) end_timestamp, devicdids,    ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+                env.getProperty("environment.storage.url"));
+//        return null;
+        //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
+//        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
+    }
+
+    @GetMapping("/alldownload")
+    public ReslutDownload alldownloadimg(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = API_STORAGE_START_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_START_TIMESTAMP )
+            final long start_timestamp,
+            @ApiParam(value = API_STORAGE_END_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_END_TIMESTAMP )
+            final long end_timestamp,
+            @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
+            @Valid
+            @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
+            final String device_id, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = API_STORAGE_FACE_GENDER_DES )
+            @Valid
+            @RequestParam( defaultValue = "0", name = API_STORAGE_FACE_GENDER, required = false )
+            final int gender, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = API_STORAGE_FACE_SUBJECTNAME_DES )
+            @Valid
+            @RequestParam( name = API_STORAGE_FACE_SUBJECTNAME, required = false )
+            final String subjectName, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = API_STORAGE_TIMESTAMP_SORT_DES )
+            @Valid
+            @RequestParam(defaultValue = "0", name = API_STORAGE_TIMESTAMP_SORT, required = false )
+            final int ASCDESC  //API_STORAGE_FACE_GENDER_DES
+
+//            @ApiParam(value = "page", required = true)
+//            @Validated
+//            @RequestParam(value = "page" )
+//            final int page,
+//            @ApiParam(value = "page_size", required = true)
+//            @Validated
+//            @RequestParam(value = "page_size" )
+//            final int pageSize
+    )
+    {
+
+        Pageable pageable = PageRequest.of(0, 100000, Sort.unsorted());
+        List<Integer>   devicdids = new ArrayList<>();
+        String str = "";
+        if (   device_id.length() >0)
+        {
+            if (device_id.charAt(0) != '-')
+            {
+                for (int i = 0; i < device_id.length(); ++i)
+                {
+                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                    {
+                        str +=device_id.charAt(i);
+                    }
+                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
+                    {
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                            devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
+                    }
+                    if (device_id.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                            devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
+                    }
+                }
+            }
+        }
+//        storageFeignClient.getInfo();
+        for(Integer v : devicdids)
+        {
+            log.info("----> devieid = " + v);
+        }
+
+        Page<DownloadDataProjection> downloadDataProjections =  saveFaceImgSubService.AllDownloadDataFaceSubImg(apiKey, start_timestamp, end_timestamp, devicdids, gender, subjectName,  ASCDESC, pageable);//.map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/);
+       List<DownloadDataProjection> downloadDataProjectionList =  downloadDataProjections.getContent();
+
+       int result = 0;
+        if (null != downloadDataProjectionList && downloadDataProjectionList.size() > 0)
+        {
+
+            String imgprofixpath = env.getProperty("environment.storage.path");
+            str = "";
+            ExelTable exelTable = new ExelTable();
+            String DroneUrl = env.getProperty("environment.drone.url");
+            Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
+
+            for (DownloadDataProjection downloadDataProjection : downloadDataProjectionList)
+            {
+                ExelRow exelRow = new ExelRow();
+                exelRow.setCreateTimestamp(downloadDataProjection.timestamp() * 1000);
+                DeviceInfo deviceInfo = deviceInfoMap.get(downloadDataProjection.deviceId());
+                if (null == deviceInfo)
+                {
+                    exelRow.setDeviceIdAddress("未知设备");;
+                }
+                else
+                {
+                    exelRow.setDeviceIdAddress(deviceInfo.getName());
+                }
+                exelRow.setUserName(downloadDataProjection.userName());
+                exelRow.setGender(String.valueOf(downloadDataProjection.gender()));
+                exelRow.setSimilarity(downloadDataProjection.similarity());
+                exelRow.setCaptureImg(FileBase64.FileBase64ToString(imgprofixpath + downloadDataProjection.captureImgUrl()));
+                exelRow.setFaceImg(Base64.getEncoder().encodeToString(downloadDataProjection.faceImg()));
+                exelTable.add(exelRow);
+            }
+            Date date = new Date();
+            SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
+            String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
+
+
+
+            String uuid = UUID.randomUUID().toString()   ;
+
+
+            String xlsfilepath = uuid + ".xls";
+
+
+            zipPath += uuid+   ".zip";
+            String absolutePath = null;
+            File zipdir = new File(env.getProperty("environment.storage.path") + zipPath);
+            if (!zipdir.exists()) {
+                try {
+                    absolutePath = zipdir.getCanonicalPath();
+
+                    /*判断路径中的文件夹是否存在，如果不存在，先创建文件夹*/
+                    String dirPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
+                    File dir = new File(dirPath);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+
+                } catch (IOException e) {
+                    log.info("IOException" + String.valueOf(e));
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable.ExelTableToString()))
+            {
+                log.info("zip img failed !!!");
+            }
+
+            return new ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
+        }
+        result = 500;
+
+        return new ReslutDownload(str, result);
+    }
     @GetMapping("/download")
     public ReslutDownload Download(
             @ApiParam(value = API_KEY_DESC, required = true)
@@ -422,6 +676,45 @@ public class StorageController
         private int getCount () {return count;}
 
     }
+
+    @RequiredArgsConstructor
+    private static final class CaptureImgs {
+
+        private final Page<CaputreDto> source;
+
+        private final String httpUrl;
+//        public StorageImg(Page<StorageImgProjection> listStorageImgs) {
+//
+//        }
+
+        // As of backward compatibility we are not allowed to rename property 'faces' --> 'embedding'
+        public List<CaputreDto> getFaces() {
+            return source.getContent();
+        }
+
+        @JsonProperty("http_url")
+        private String getHttpUrl () {return httpUrl;}
+        @JsonProperty("total_pages")
+        public int getTotalPages() {
+            return source.getTotalPages();
+        }
+
+        @JsonProperty("total_elements")
+        public long getTotalElements() {
+            return source.getTotalElements();
+        }
+
+        @JsonProperty("page_number")
+        public int getNumber() {
+            return source.getNumber();
+        }
+
+        @JsonProperty("page_size")
+        public int getSize() {
+            return source.getSize();
+        }
+    }
+
         @RequiredArgsConstructor
         private static final class StorageImgs {
 

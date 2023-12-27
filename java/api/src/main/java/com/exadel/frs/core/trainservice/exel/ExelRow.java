@@ -35,17 +35,15 @@ public class ExelRow
         Date date = new Date(createTimestamp);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return
-                "</tr>\n" +
-                        "\n" +
-                        "<tr>\n" +
-                        "<td width=100>"+dateFormat.format(date)+"</td>\n" +
+                        "<tr height=400>\n" +
+                        "<td width=150>"+dateFormat.format(date)+"</td>\n" +
                         "<td width=100>"+ deviceIdAddress +"</td>\n" +
                         "<td width=100>"+ userName +"</td>\n" +
                         "<td width=100>"+ gender +"</td>\n" +
                         "<td width=100>"+ similarity +"</td>\n" +
-                        "<td width=100>"+
+                        "<td width=400>"+
                         "<img src=\"data:image/jpeg;base64," + captureImg + "\"/></td> " +
-                        "<td width=100>"+
+                        "<td width=400>"+
                         "<img src=\"data:image/jpeg;base64," + faceImg + "\"/>" +
                         "</td>" +
                         "</tr>"
