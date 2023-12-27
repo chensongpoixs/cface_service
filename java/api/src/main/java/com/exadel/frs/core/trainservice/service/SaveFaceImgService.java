@@ -16,9 +16,10 @@ import java.util.Optional;
 public interface SaveFaceImgService
 {
       Optional<SaveFaceImg> findById(long id);
+      int deleteByApiKeyAndId(String api_key, long id);
       SaveFaceImg AddSaveFace(SaveFaceImg saveFaceImg);
       Page<SaveFaceImg> listSaveFaceImgs(String apiKey, String subjectName, Pageable pageable);
-      List<SaveFaceImg>  listSaveFaceImgs(String apiKey);
+//      List<SaveFaceImg>  listSaveFaceImgs(String apiKey);
       Page<CaputreImgProjection> AllListFaceSubImg(String apiKey, long startTimestamp, long endTimestamp, List  deviceIds, int ASCDESC, Pageable pageable);
       Page<SaveFaceImgProjection> listSaveFaceImgs(String apiKey,   Pageable pageable) ;
       List<SaveFaceImgProjection> listSaveFaceImgs( ) ;

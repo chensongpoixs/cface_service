@@ -8,11 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface CaputreRepository extends JpaRepository<CaputreImg, Long>
 {
+//    @Query("delete from SaveFaceImg a where a.api_key = :apiKey and a.id = :Id")
+//    int deleteByApiKeyAndId( String apiKey,  int Id);
+
 
     @Query(  """
                   select

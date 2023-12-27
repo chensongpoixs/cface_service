@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,14 @@ public class SaveFaceImgServiceImpl implements SaveFaceImgService
     }
 
     @Override
+    @Transactional
+    public int deleteByApiKeyAndId(String api_key, long id) {
+        return  saveFaceImgRepository.deleteByApiKeyAndId(api_key,   id);
+
+//        return 0;
+    }
+
+    @Override
     public SaveFaceImg AddSaveFace(SaveFaceImg saveFaceImg)
     {
         return  saveFaceImgRepository.save(saveFaceImg);
@@ -42,11 +51,11 @@ public class SaveFaceImgServiceImpl implements SaveFaceImgService
 //        return null;
     }
 
-    @Override
-    public List<SaveFaceImg> listSaveFaceImgs(String apiKey) {
-
-        return saveFaceImgRepository.findAll();
-    }
+//    @Override
+//    public List<SaveFaceImg> listSaveFaceImgs(String apiKey) {
+//
+//        return saveFaceImgRepository.findAll();
+//    }
 
     @Override
     public   Page<CaputreImgProjection> AllListFaceSubImg(String apiKey, long startTimestamp, long endTimestamp, List deviceIds, int ASCDESC, Pageable pageable) {

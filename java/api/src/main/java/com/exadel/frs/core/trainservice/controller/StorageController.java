@@ -175,6 +175,7 @@ public class StorageController
 
 
 
+
     @GetMapping("/search_capute")
     public CaptureImgs listStorageCapture(
             @ApiParam(value = API_KEY_DESC, required = true)
@@ -613,6 +614,22 @@ public class StorageController
             final long img_id
     ) {
          return new  Subtable(saveFaceImgSubService.removeSaveFaceSubimgByApiAkyAndId(apiKey, img_id));
+    }
+
+
+    @WriteEndpoint
+    @DeleteMapping("/delete_capture")
+    public Subtable DeleteCaptureImg(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "delete img id", required = true)
+            @Validated
+            @RequestParam(name = "id")
+            final long id
+    ) {
+        log.info("id = " + id);
+        return new  Subtable(saveFaceImgService.deleteByApiKeyAndId(apiKey, id));
     }
 
 

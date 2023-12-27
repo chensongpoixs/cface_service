@@ -38,5 +38,9 @@ public class CaptureImgImpl
         }
         return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc(apiKey, startTimestamp, endTimestamp, pageable);
     }
-
+//    @Transactional
+//    public int deleteById(String api_key, int id) {
+//        return  caputreRepository.deleteByApiKeyAndId(api_key, id);
+//
+//    }
 }
