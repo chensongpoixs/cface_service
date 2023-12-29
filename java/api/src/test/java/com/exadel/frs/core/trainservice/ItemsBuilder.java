@@ -58,7 +58,7 @@ public class ItemsBuilder {
     }
 
     public static EnhancedEmbeddingProjection makeEnhancedEmbeddingProjection(String subject, String imgUrl ) {
-        return new EnhancedEmbeddingProjection(UUID.randomUUID(), new double[]{1.1, 2.2, 3.3}, UUID.randomUUID(), subject, imgUrl, 0);
+        return new EnhancedEmbeddingProjection(UUID.randomUUID(), new double[]{1.1, 2.2, 3.3}, UUID.randomUUID(), subject, imgUrl, 0, System.currentTimeMillis()/1000);
     }
 
     public static Img makeImg(byte[] content) {

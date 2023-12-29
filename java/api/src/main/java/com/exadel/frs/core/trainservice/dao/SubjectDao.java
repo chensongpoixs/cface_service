@@ -244,7 +244,8 @@ public class SubjectDao {
         var subject = new Subject()
                 .setApiKey(apiKey)
                 .setSubjectName(subjectName)
-                .setSubId(  subId);
+                .setSubId(  subId)
+                .setCreateTime(System.currentTimeMillis()/1000);
 
         return subjectRepository.save(subject);
     }

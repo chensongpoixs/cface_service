@@ -32,4 +32,8 @@ public class Subject {
 
     @Column(name = "sub_id")
     private int subId;
+
+    @Column(name = "create_time")
+    private long createTime;
+
 }

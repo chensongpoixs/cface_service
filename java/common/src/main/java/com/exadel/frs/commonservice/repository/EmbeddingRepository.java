@@ -22,7 +22,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
     // Note: consumer should consume in transaction
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection(e.id, e.embedding, s.id, s.subjectName, e.faceImgUrl, s.subId)
+                new com.exadel.frs.commonservice.projection.EnhancedEmbeddingProjection(e.id, e.embedding, s.id, s.subjectName, e.faceImgUrl, s.subId, s.createTime)
             from
                 Embedding e
             left join
@@ -58,7 +58,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId, e.subject.createTime)
             from
                 Embedding e
             where
@@ -68,7 +68,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId, e.subject.createTime)
             from
                 Embedding e
             where
@@ -82,7 +82,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId, e.subject.createTime)
             from
                 Embedding e
             where
@@ -97,7 +97,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId, e.subject.createTime)
             from
                 Embedding e
             where
@@ -114,7 +114,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
 
     @Query("""
             select
-                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId)
+                new com.exadel.frs.commonservice.projection.EmbeddingProjection(e.id, e.subject.id, e.subject.subjectName, e.faceImgUrl, e.subject.subId, e.subject.createTime)
             from
                 Embedding e
             where

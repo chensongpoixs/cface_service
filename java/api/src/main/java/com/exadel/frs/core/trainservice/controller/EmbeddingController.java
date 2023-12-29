@@ -93,7 +93,7 @@ public class EmbeddingController {
                 apiKey
         );
 
-        return new EmbeddingDto(pair.getRight().getId().toString(), pair.getLeft().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
+        return new EmbeddingDto(pair.getRight().getId().toString(), pair.getLeft().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId(), pair.getLeft().getCreateTime());
     }
     @WriteEndpoint
     @ResponseStatus(CREATED)
@@ -186,38 +186,38 @@ public class EmbeddingController {
 
 
 
-    @WriteEndpoint
-    @ResponseStatus(CREATED)
-    @PostMapping(value = "/faces", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public EmbeddingDto addEmbeddingBase64(
-            @ApiParam(value = API_KEY_DESC, required = true)
-            @RequestHeader(X_FRS_API_KEY_HEADER)
-            final String apiKey,
-            @ApiParam(value = SUBJECT_DESC)
-            @Valid
-            @NotBlank(message = SUBJECT_NAME_IS_EMPTY)
-            @RequestParam(value = SUBJECT)
-            final String subjectName,
-            @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
-            @RequestParam(value = DET_PROB_THRESHOLD, required = false)
-            final Double detProbThreshold,
-            @Valid
-            @RequestBody
-            final Base64File request
-    ) {
-        imageValidator.validateBase64(request.getContent());
-
-        final Pair<Subject, Embedding> pair = subjectService.saveCalculatedEmbedding(
-                request.getContent(),
-                subjectName,
-                detProbThreshold,
-                apiKey
-        );
-
-//        int subId = pair.getLeft().getSubId();
-//        val subId1 = subId;
-        return new EmbeddingDto(pair.getRight().getId().toString(), pair.getLeft().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
-    }
+//    @WriteEndpoint
+//    @ResponseStatus(CREATED)
+//    @PostMapping(value = "/faces", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public EmbeddingDto addEmbeddingBase64(
+//            @ApiParam(value = API_KEY_DESC, required = true)
+//            @RequestHeader(X_FRS_API_KEY_HEADER)
+//            final String apiKey,
+//            @ApiParam(value = SUBJECT_DESC)
+//            @Valid
+//            @NotBlank(message = SUBJECT_NAME_IS_EMPTY)
+//            @RequestParam(value = SUBJECT)
+//            final String subjectName,
+//            @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
+//            @RequestParam(value = DET_PROB_THRESHOLD, required = false)
+//            final Double detProbThreshold,
+//            @Valid
+//            @RequestBody
+//            final Base64File request
+//    ) {
+//        imageValidator.validateBase64(request.getContent());
+//
+//        final Pair<Subject, Embedding> pair = subjectService.saveCalculatedEmbedding(
+//                request.getContent(),
+//                subjectName,
+//                detProbThreshold,
+//                apiKey
+//        );
+//
+////        int subId = pair.getLeft().getSubId();
+////        val subId1 = subId;
+//        return new EmbeddingDto(pair.getRight().getId().toString(), pair.getLeft().getId().toString(), subjectName, pair.getRight().getFaceImgUrl(), pair.getLeft().getSubId());
+//    }
 
     @ResponseBody
     @GetMapping(value = "/faces/{embeddingId}/img", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -248,7 +248,7 @@ public class EmbeddingController {
             @Validated
             @RequestParam(value = "sub_id" , required = true)
             final int sub_id,
-            @ApiParam(value = "subject 字段  0: 升序 1: 降序" )
+            @ApiParam(defaultValue = "-1", value = "subject 字段  0: 升序 1: 降序" )
             @Valid
             @RequestParam(defaultValue = "0", name = "ascdesc", required = false )
             final int ASCDESC, //API_STORAGE_FACE_GENDER_DES
@@ -321,7 +321,7 @@ public class EmbeddingController {
             final UUID embeddingId
     ) {
         var embedding = subjectService.removeSubjectEmbedding(apiKey, embeddingId);
-        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getId().toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl(), embedding.getSubject().getSubId());
+        return new EmbeddingDto(embeddingId.toString(), embedding.getSubject().getId().toString(), embedding.getSubject().getSubjectName(), embedding.getFaceImgUrl(), embedding.getSubject().getSubId(), embedding.getSubject().getCreateTime());
     }
 
     @WriteEndpoint
@@ -336,7 +336,7 @@ public class EmbeddingController {
     ) {
         List<Embedding> list = subjectService.removeSubjectEmbeddings(apiKey, embeddingIds);
         List<EmbeddingDto> dtoList = list.stream()
-                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl(), c.getSubject().getSubId()))
+                                         .map(c -> new EmbeddingDto(c.getId().toString(), c.getSubject().getId().toString(), c.getSubject().getSubjectName(), c.getFaceImgUrl(), c.getSubject().getSubId(), c.getSubject().getCreateTime()))
                                          .toList();
         return dtoList;
     }

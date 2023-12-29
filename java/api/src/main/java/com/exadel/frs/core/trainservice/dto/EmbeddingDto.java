@@ -45,4 +45,7 @@ public class EmbeddingDto {
 
     @JsonProperty("sub_id")
     private int subId;
+
+    @JsonProperty("create_time")
+    private long createTime;
 }
