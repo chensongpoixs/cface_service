@@ -10,6 +10,7 @@ import com.exadel.frs.commonservice.httpclient.HttpDefault;
 import com.exadel.frs.commonservice.httpclient.Http_Client;
 import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.VideoImgStorageProjection;
+import com.exadel.frs.core.trainservice.aspect.WriteEndpoint;
 import com.exadel.frs.core.trainservice.dto.*;
 import com.exadel.frs.core.trainservice.exel.ExelRow;
 import com.exadel.frs.core.trainservice.exel.ExelTable;
@@ -39,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -252,7 +254,19 @@ public class VideoImgStorageController
         }
     }
 
-
+    @WriteEndpoint
+    @DeleteMapping("/delete_video_img")
+    public VideoDto DeleteVideoImg(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "img id  (1 )" , required = true)
+            @Valid
+            @RequestParam( name = "id" , required = true)
+            final long id
+    ) {
+         return new VideoDto(videoImgStorageService.DeleteVideoImgId(id));
+    }
 
     @GetMapping("/download")
     public ReslutDownload Download(

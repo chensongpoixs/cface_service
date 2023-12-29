@@ -65,15 +65,6 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
     Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceId(@Param("apiKey") String apiKey , @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, @Param("deviceId") Integer deviceId,  Pageable pageable);
 
 
-    /*
-                      and
-                        (cast(:deviceId as int) is -1 or a.saveFaceImg.deviceId = :deviceId)
-                  and
-                         (cast(:gender as int) is 0 or a.gender = :gender)
-
-                         AndDeviceIdAndGender
-     */
-
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
@@ -148,6 +139,91 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                         a.saveFaceImg.timestamp desc
                   """ )
     Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, Integer gender, String subjectName,    Pageable pageable);
+
+
+    /////////////////////////////////GROUPID/////
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                  order by
+                        a.saveFaceImg.timestamp asc
+                  """ )
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,  List groupIds,  Integer gender, String subjectName,    Pageable pageable);
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.saveFaceImg.deviceId in  (:deviceIds)
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                  order by
+                        a.saveFaceImg.timestamp asc
+                  """ )
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List deviceIds,  List groupIds, Integer gender, String subjectName,    Pageable pageable);
+
+    //(cast(:deviceId as string) is '-1' or
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                  order by
+                        a.saveFaceImg.timestamp desc
+                  """ )
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,  List groupIds,    Integer gender, String subjectName,    Pageable pageable);
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.saveFaceImg.deviceId in  (:deviceIds)
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                  order by
+                        a.saveFaceImg.timestamp desc
+                  """ )
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
 
     //    @Query(  """
 //                  select
@@ -269,6 +345,92 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
 
 
 
+
+
+    /////////////GROUPID//////////
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                  order by
+                        a.saveFaceImg.timestamp asc
+                  """ )
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp, List groupIds,   Integer gender, String subjectName,    Pageable pageable);
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.saveFaceImg.deviceId in  (:deviceIds)
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                  order by
+                        a.saveFaceImg.timestamp asc
+                  """ )
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
+
+    //(cast(:deviceId as string) is '-1' or
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)                       
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                  order by
+                        a.saveFaceImg.timestamp desc
+                  """ )
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp, List groupIds,    Integer gender, String subjectName,    Pageable pageable);
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
+                  from
+                        SaveFaceImgSub   a
+                  where
+                        a.saveFaceImg.apiKey = :apiKey
+                  and
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
+                  and
+                         a.saveFaceImg.deviceId in  (:deviceIds)
+                  and
+                         a.embeddingId.subject.subId in  (:groupIds)
+                  and
+                        (cast(:gender as string) is '0' or a.gender = :gender)
+                  and
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                  order by
+                        a.saveFaceImg.timestamp desc
+                  """ )
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
+/////////////////////////////
     @Modifying
     @Query("delete from SaveFaceImgSub a where a.id = :Id")
     int deleteById(@Param("Id") long Id);

@@ -22,6 +22,7 @@ import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.StorageSaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.util.FileBase64;
+import com.exadel.frs.core.trainservice.util.StringUtilSub;
 import com.exadel.frs.core.trainservice.util.ZipFile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
@@ -97,6 +98,10 @@ public class StorageController
             @Valid
             @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
             final String device_id, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = "全部分组 : -1 ,  1分组 和2分组 : 1,2"  )
+            @Valid
+            @RequestParam(defaultValue = "-1", name = "groups", required = false )
+            final String groups, //API_STORAGE_FACE_GENDER_DES
             @ApiParam(value = API_STORAGE_FACE_GENDER_DES )
             @Valid
             @RequestParam( defaultValue = "0", name = API_STORAGE_FACE_GENDER, required = false )
@@ -123,50 +128,19 @@ public class StorageController
     )
     {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
-        List<Integer>   devicdids = new ArrayList<>();
-        String str = "";
-        if (   device_id.length() >0)
-        {
-            if (device_id.charAt(0) != '-')
-            {
-                for (int i = 0; i < device_id.length(); ++i)
-                {
-                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
-                    {
-                        str +=device_id.charAt(i);
-                    }
-                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
-                    {
-                        // TODO@chensong Java的接口定义需要这样玩的哈
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                            devicdids.add(Integer.parseInt(str));
-
-                            str = "";
-                        }
-                    }
-                    if (device_id.length() ==  (i+1) )
-                    {
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                            devicdids.add(Integer.parseInt(str));
-
-                            str = "";
-                        }
-                    }
-                }
-            }
-        }
-//        storageFeignClient.getInfo();
+        List<Integer>   devicdids = StringUtilSub.SplitArraySum(device_id);
+        List<Integer>   groupids = StringUtilSub.SplitArraySum(groups);
         for(Integer v : devicdids)
         {
             log.info("----> devieid = " + v);
         }
+        for(Integer v : groupids)
+        {
+            log.info("----> groupid = " + v);
+        }
 
 //            log.info( device_id.toString());
-        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndSubjectName(apiKey, start_timestamp, end_timestamp, devicdids, gender, subjectName,  ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+        return new StorageImgs(saveFaceImgSubService.listSaveFaceSubImgByApiKeyBeteenTimestampAndDeivceIdAndGroupIdsAndSubjectName  (apiKey, start_timestamp, end_timestamp, devicdids, groupids, gender, subjectName,  ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
                 env.getProperty("environment.storage.url"));
 //        return null;
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
@@ -212,42 +186,8 @@ public class StorageController
     )
     {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.unsorted());
-        List<Integer>   devicdids = new ArrayList<>();
-        String str = "";
-        if (   device_id.length() >0)
-        {
-            if (device_id.charAt(0) != '-')
-            {
-                for (int i = 0; i < device_id.length(); ++i)
-                {
-                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
-                    {
-                        str +=device_id.charAt(i);
-                    }
-                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
-                    {
-                        // TODO@chensong Java的接口定义需要这样玩的哈
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                            devicdids.add(Integer.parseInt(str));
+        List<Integer>   devicdids   = StringUtilSub.SplitArraySum(device_id);
 
-                            str = "";
-                        }
-                    }
-                    if (device_id.length() ==  (i+1) )
-                    {
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                            devicdids.add(Integer.parseInt(str));
-
-                            str = "";
-                        }
-                    }
-                }
-            }
-        }
 //        storageFeignClient.getInfo();
         for(Integer v : devicdids)
         {
@@ -280,6 +220,10 @@ public class StorageController
             @Valid
             @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
             final String device_id, //API_STORAGE_FACE_GENDER_DES
+            @ApiParam(value = "全部分组 : -1 ,  1分组 和2分组 : 1,2"  )
+            @Valid
+            @RequestParam(defaultValue = "-1", name = "groups", required = false )
+            final String groups, //API_STORAGE_FACE_GENDER_DES
             @ApiParam(value = API_STORAGE_FACE_GENDER_DES )
             @Valid
             @RequestParam( defaultValue = "0", name = API_STORAGE_FACE_GENDER, required = false )
@@ -305,57 +249,28 @@ public class StorageController
     {
 
         Pageable pageable = PageRequest.of(0, 100000, Sort.unsorted());
-        List<Integer>   devicdids = new ArrayList<>();
-        String str = "";
-        if (   device_id.length() >0)
-        {
-            if (device_id.charAt(0) != '-')
-            {
-                for (int i = 0; i < device_id.length(); ++i)
-                {
-                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
-                    {
-                        str +=device_id.charAt(i);
-                    }
-                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i) */)
-                    {
-                        // TODO@chensong Java的接口定义需要这样玩的哈
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                            devicdids.add(Integer.parseInt(str));
-
-                            str = "";
-                        }
-                    }
-                    if (device_id.length() ==  (i+1) )
-                    {
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                            devicdids.add(Integer.parseInt(str));
-
-                            str = "";
-                        }
-                    }
-                }
-            }
-        }
+        List<Integer>   devicdids = StringUtilSub.SplitArraySum(device_id);
+        List<Integer>   groupids = StringUtilSub.SplitArraySum(groups);
 //        storageFeignClient.getInfo();
         for(Integer v : devicdids)
         {
             log.info("----> devieid = " + v);
         }
+        for(Integer v : groupids)
+        {
+            log.info("----> groupid = " + v);
+        }
 
-        Page<DownloadDataProjection> downloadDataProjections =  saveFaceImgSubService.AllDownloadDataFaceSubImg(apiKey, start_timestamp, end_timestamp, devicdids, gender, subjectName,  ASCDESC, pageable);//.map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/);
+        Page<DownloadDataProjection> downloadDataProjections =  saveFaceImgSubService.AllDownloadDataFaceSubImgAndGrupID(apiKey, start_timestamp, end_timestamp, devicdids,groupids, gender, subjectName,  ASCDESC, pageable);//.map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/);
        List<DownloadDataProjection> downloadDataProjectionList =  downloadDataProjections.getContent();
 
+       String str = "";
        int result = 0;
         if (null != downloadDataProjectionList && downloadDataProjectionList.size() > 0)
         {
 
             String imgprofixpath = env.getProperty("environment.storage.path");
-            str = "";
+//
             ExelTable exelTable = new ExelTable();
             String DroneUrl = env.getProperty("environment.drone.url");
             Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
