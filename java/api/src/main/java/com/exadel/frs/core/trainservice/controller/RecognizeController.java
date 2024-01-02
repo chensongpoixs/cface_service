@@ -165,8 +165,20 @@ public class RecognizeController {
                        SaveFaceImgSub saveFaceImgSub = new SaveFaceImgSub();
                        saveFaceImgSub.setSaveFaceImg(newsaveface);
                        Embedding embedding = new Embedding();
+                       if (facePredictionResultDto.getGender().getValue().equals("male"))
+                       {
+                           saveFaceImgSub.setGender(1 );
+                       }
+                       else if (facePredictionResultDto.getGender().getValue().equals("female"))
+                       {
+                           saveFaceImgSub.setGender(2 );
+                       }
+                       else
+                       {
+                           saveFaceImgSub.setGender(0);
+                           log.warn("gender ---> " + facePredictionResultDto.getGender().getValue());
+                       }
 
-                       saveFaceImgSub.setGender(1 );
                        saveFaceImgSub.setMinAge(facePredictionResultDto.getAge().getLow());
                        saveFaceImgSub.setMaxAge(facePredictionResultDto.getAge().getHigh());
                        List<FaceSimilarityDto> temp_face = facePredictionResultDto.getSubjects();

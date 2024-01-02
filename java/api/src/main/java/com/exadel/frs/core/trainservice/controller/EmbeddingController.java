@@ -246,9 +246,9 @@ public class EmbeddingController {
             final String subjectName,
             @ApiParam(value = "sub_id")
             @Validated
-            @RequestParam(value = "sub_id" , required = true)
+            @RequestParam(defaultValue = "-1", value = "sub_id" , required = true)
             final int sub_id,
-            @ApiParam(defaultValue = "-1", value = "subject 字段  0: 升序 1: 降序" )
+            @ApiParam( value = "subject 字段  0: 升序 1: 降序" )
             @Valid
             @RequestParam(defaultValue = "0", name = "ascdesc", required = false )
             final int ASCDESC, //API_STORAGE_FACE_GENDER_DES
