@@ -40,7 +40,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp  
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestamp(@Param("apiKey") String apiKey , @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp,  Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestamp(@Param("apiKey") String apiKey , @Param("startTimestamp") Long startTimestamp, @Param("endTimestamp") Long endTimestamp,  Pageable pageable);
 
 
 
@@ -62,7 +62,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and 
                         a.saveFaceImg.deviceId = :deviceId
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceId(@Param("apiKey") String apiKey , @Param("startTimestamp") Integer startTimestamp, @Param("endTimestamp") Integer endTimestamp, @Param("deviceId") Integer deviceId,  Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndDeviceId(@Param("apiKey") String apiKey , @Param("startTimestamp") Long startTimestamp, @Param("endTimestamp") Long endTimestamp, @Param("deviceId") Integer deviceId,  Pageable pageable);
 
 
     @Query(  """
@@ -81,7 +81,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,   Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
@@ -100,7 +100,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List deviceIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List deviceIds, Integer gender, String subjectName,    Pageable pageable);
 
     //(cast(:deviceId as string) is '-1' or
     @Query(  """
@@ -119,7 +119,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,     Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,     Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
@@ -138,7 +138,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List  deviceIds, Integer gender, String subjectName,    Pageable pageable);
 
 
     /////////////////////////////////GROUPID/////
@@ -160,7 +160,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,  List groupIds,  Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,  List groupIds,  Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
@@ -181,7 +181,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List deviceIds,  List groupIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List deviceIds,  List groupIds, Integer gender, String subjectName,    Pageable pageable);
 
     //(cast(:deviceId as string) is '-1' or
     @Query(  """
@@ -202,7 +202,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,  List groupIds,    Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,  List groupIds,    Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.SaveFaceImgProjection(a.id, a.saveFaceImg.deviceId, a.saveFaceImg.timestamp , a.saveFaceImg.imgUrl, a.subImgUrl, a.embeddingId.id, a.embeddingId.subject.subjectName, a.gender, a.minAge, a.maxAge, a.similarity, a.boxMinX, a.boxMinY, a.boxMaxX, a.boxMaxY)
@@ -223,7 +223,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<SaveFaceImgProjection> findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List  deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
 
     //    @Query(  """
 //                  select
@@ -284,7 +284,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,   Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
@@ -303,7 +303,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List deviceIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List deviceIds, Integer gender, String subjectName,    Pageable pageable);
 
     //(cast(:deviceId as string) is '-1' or
     @Query(  """
@@ -322,7 +322,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,     Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,     Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
@@ -341,7 +341,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List  deviceIds, Integer gender, String subjectName,    Pageable pageable);
 
 
 
@@ -366,7 +366,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp, List groupIds,   Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp, List groupIds,   Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
@@ -387,7 +387,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameAsc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameAsc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
 
     //(cast(:deviceId as string) is '-1' or
     @Query(  """
@@ -408,7 +408,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp, List groupIds,    Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp, List groupIds,    Integer gender, String subjectName,    Pageable pageable);
     @Query(  """
                   select
                         new com.exadel.frs.commonservice.projection.DownloadDataProjection(a.saveFaceImg.timestamp ,a.saveFaceImg.deviceId, a.embeddingId.subject.subjectName, a.gender, a.similarity, a.subImgUrl,  a.embeddingId.img.content)
@@ -429,7 +429,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
-    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
+    Page<DownloadDataProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameDesc ( String apiKey , Long startTimestamp,  Long endTimestamp,   List  deviceIds, List groupIds, Integer gender, String subjectName,    Pageable pageable);
 /////////////////////////////
     @Modifying
     @Query("delete from SaveFaceImgSub a where a.id = :Id")

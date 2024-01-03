@@ -104,7 +104,7 @@ public class RecognizeController {
             @ApiParam(value = DETECT_FACE_TIMESTAMP )
             @RequestParam(defaultValue = PREDICTION_COUNT_DEFAULT_VALUE, name = FACE_TIMESTAMP, required = false)
             @Min(value = 1, message = DETECT_FACE_TIMESTAMP)
-            final int timestamp,
+            final long timestamp,
             @ApiParam(value = DETECT_DeviceID )
             @RequestParam(defaultValue = PREDICTION_COUNT_DEFAULT_VALUE, name = DETECT_DEVICE_ID, required = false)
 //            @Min(value = 1, message = DETECT_DeviceID)
@@ -132,8 +132,8 @@ public class RecognizeController {
 
        if (timestamp > 0)
        {
-           new Thread(() ->
-           {
+//           new Thread(() ->
+//           {
                String path = env.getProperty("environment.storage.path");
 //               log.info("storage path = " + path);
                if (facesRecognitionResponseDto.getResult().size() > 0)
@@ -218,7 +218,7 @@ public class RecognizeController {
                        saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
                    }
                }
-           }, "save img ").start();
+//           }, "save img ").start();
        }
 //        log.info("storage send -storage-->>>>> " + storageFeignClient.findFaces(9, 0.9, "d", true));
 //        String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";

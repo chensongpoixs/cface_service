@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class ExelRow
 {
-    private Integer createTimestamp;
+    private Long createTimestamp;
 
     private String  deviceIdAddress;
 

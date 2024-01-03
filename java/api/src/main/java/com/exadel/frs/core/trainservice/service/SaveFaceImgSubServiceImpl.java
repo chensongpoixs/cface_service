@@ -36,7 +36,7 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
     @Override
     public Page<SaveFaceImgProjection> listSaveFaceSubImgByApiKey(String apiKey, long startTimestamp, long endTimestamp,  Pageable pageable) {
 
-        return  saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestamp(apiKey, (int) startTimestamp,  (int) endTimestamp,   pageable);
+        return  saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestamp(apiKey, startTimestamp,    endTimestamp,   pageable);
     }
 
     @Override
@@ -50,37 +50,37 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
         {
             if ( deviceIds.size()> 0 &&groupIds.size() > 0)
             {
-                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
+                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameDesc (apiKey,   startTimestamp, endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
 
             }
             if (deviceIds.size()> 0)
             {
-                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds,  gender,  subjectName,  pageable);
+                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc (apiKey,   startTimestamp,   endTimestamp, deviceIds,  gender,  subjectName,  pageable);
 
             }
             if (groupIds.size()> 0)
             {
-                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, groupIds,  gender,  subjectName,  pageable);
+                return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameDesc (apiKey,  startTimestamp,   endTimestamp, groupIds,  gender,  subjectName,  pageable);
 
             }
-            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp,  gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc (apiKey,  startTimestamp,   endTimestamp,  gender,  subjectName,  pageable);
 
         }
         if (deviceIds.size()> 0&&groupIds.size() > 0)
         {
-              return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
+              return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupidAndGenderAndSubjectNameAsc (apiKey,   startTimestamp,   endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
         }
         if (deviceIds.size()> 0)
         {
-            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds,  gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc (apiKey,   startTimestamp,   endTimestamp, deviceIds,  gender,  subjectName,  pageable);
 
         }
         if (groupIds.size()> 0)
         {
-            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, groupIds,  gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameAsc (apiKey,   startTimestamp,  endTimestamp, groupIds,  gender,  subjectName,  pageable);
 
         }
-        return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, gender,  subjectName,  pageable);
+        return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey,  startTimestamp,  endTimestamp, gender,  subjectName,  pageable);
     }
 
     @Override
@@ -95,39 +95,39 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
         {
             if ( deviceIds.size()> 0 && groupIds.size() > 0)
             {
-                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
+                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameDesc (apiKey,   startTimestamp, endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
 
             }
             if (deviceIds.size() > 0)
             {
-                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, gender,  subjectName,  pageable);
+                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc (apiKey,  startTimestamp,   endTimestamp, deviceIds, gender,  subjectName,  pageable);
 
             }
             if (groupIds.size() > 0)
             {
-                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp, groupIds, gender,  subjectName,  pageable);
+                return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameDesc (apiKey,   startTimestamp,   endTimestamp, groupIds, gender,  subjectName,  pageable);
 
             }
-            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc (apiKey, (int) startTimestamp, (int) endTimestamp,  gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc (apiKey,  startTimestamp,   endTimestamp,  gender,  subjectName,  pageable);
 
         }
         if ( deviceIds.size()> 0 && groupIds.size() > 0)
         {
-            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGroupIdAndGenderAndSubjectNameAsc (apiKey,   startTimestamp,  endTimestamp, deviceIds, groupIds, gender,  subjectName,  pageable);
 
         }
         else if (deviceIds.size() > 0)
         {
-            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, deviceIds, gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameAsc (apiKey,   startTimestamp,  endTimestamp, deviceIds, gender,  subjectName,  pageable);
 
         }
         else if (groupIds.size() > 0)
         {
-            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, groupIds, gender,  subjectName,  pageable);
+            return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGroupIdAndGenderAndSubjectNameAsc (apiKey,  startTimestamp,  endTimestamp, groupIds, gender,  subjectName,  pageable);
 
         }
 
-        return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, gender,  subjectName,  pageable);
+        return saveFaceImgSubRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey,   startTimestamp,  endTimestamp, gender,  subjectName,  pageable);
 
 //        return null;
     }

@@ -37,14 +37,14 @@ public class ExelTableTest
     private String  faceImg;
          */
 
-        exelTable.add(new ExelRow(1698828338, "抓拍地点1", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
+        exelTable.add(new ExelRow(1698828338L, "抓拍地点1", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
 
-        exelTable.add(new ExelRow(1698828338, "抓拍地点2", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
+        exelTable.add(new ExelRow(1698828338L, "抓拍地点2", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
 
-        exelTable.add(new ExelRow(1698828338, "抓拍地点3", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
+        exelTable.add(new ExelRow(1698828338L, "抓拍地点3", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
 
-        exelTable.add(new ExelRow(1698828338, "抓拍地点4", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
-        exelTable.add(new ExelRow(1698828338, "抓拍地点5", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
+        exelTable.add(new ExelRow(1698828338L, "抓拍地点4", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
+        exelTable.add(new ExelRow(1698828338L, "抓拍地点5", "姓名", "性别", 89.23, "caputreimg", "faceimg" ));
 
 
         System.out.println(exelTable.ExelTableToString());
