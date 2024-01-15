@@ -1,0 +1,4 @@
+INSERT INTO "model" ("id", "name", "guid", "app_id", "api_key", "type", "created_date") VALUES (0, 'Demo', '00000000-0000-0000-0000-000000000001', 0, '00000000-0000-0000-0000-000000000002', 'R', '2023-11-03 11:39:37.779086');
+INSERT INTO "model" ("id", "name", "guid", "app_id", "api_key", "type", "created_date") VALUES (9223372036854775807, 'Detection_Demo', '00000000-0000-0000-0000-000000000003', 0, '00000000-0000-0000-0000-000000000003', 'D', '2023-11-03 11:39:37.779086');
+INSERT INTO "model" ("id", "name", "guid", "app_id", "api_key", "type", "created_date") VALUES (9223372036854775806, 'Verification_Demo', '00000000-0000-0000-0000-000000000004', 0, '00000000-0000-0000-0000-000000000004', 'V', '2023-11-03 11:39:37.779086');
+INSERT INTO "model" ("id", "name", "guid", "app_id", "api_key", "type", "created_date") VALUES (1, 'face', 'ae197a4c-4680-4d2b-a615-c8931e3a402e', 1, '0a16386c-2609-4e37-9883-a6ec18555d2a', 'R', NULL);
