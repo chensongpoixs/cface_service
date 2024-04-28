@@ -2,6 +2,7 @@ package com.exadel.frs.core.trainservice.service;
 
 import com.exadel.frs.commonservice.sdk.faces.FacesApiClient;
 import com.exadel.frs.commonservice.sdk.faces.feign.dto.FindFacesResponse;
+import com.exadel.frs.commonservice.sdk.faces.feign.dto.FindFacesResult;
 import com.exadel.frs.core.trainservice.dto.FacesDetectionResponseDto;
 import com.exadel.frs.core.trainservice.dto.ProcessImageParams;
 import com.exadel.frs.core.trainservice.mapper.FacesMapper;
@@ -9,6 +10,9 @@ import com.exadel.frs.core.trainservice.validation.ImageExtensionValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("detectionService")
 @RequiredArgsConstructor
@@ -34,7 +38,20 @@ public class FaceDetectionProcessServiceImpl implements FaceProcessService {
             findFacesResponse = facesApiClient.findFacesBase64(processImageParams.getImageBase64(), limit, detProbThreshold, facePlugins,true);
         }
 
-        FacesDetectionResponseDto facesDetectionResponseDto = facesMapper.toFacesDetectionResponseDto(findFacesResponse);
+        FindFacesResponse findFacesResponse1 = new FindFacesResponse();
+        findFacesResponse1.setPluginsVersions(findFacesResponse.getPluginsVersions());
+        List<FindFacesResult> findFacesResultslist = new ArrayList<>();
+
+        for ( FindFacesResult findFacesResult1 : findFacesResponse.getResult() )
+        {
+            if (findFacesResult1.getBox().getProbability() > 0.70)
+            {
+                findFacesResultslist.add(findFacesResult1);
+            }
+        }
+        findFacesResponse1.setResult(findFacesResultslist);
+
+        FacesDetectionResponseDto facesDetectionResponseDto = facesMapper.toFacesDetectionResponseDto(findFacesResponse1);
         return facesDetectionResponseDto.prepareResponse(processImageParams);
     }
 }
