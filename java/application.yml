@@ -22,7 +22,7 @@ spring:
       indent-output: true
   datasource-pg:
     driver-class-name: org.postgresql.Driver
-    url: ${POSTGRES_URL:jdbc:postgresql://192.168.1.133:5432/test_auto_table10}
+    url: ${POSTGRES_URL:jdbc:postgresql://192.168.2.20:5432/global_face}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
     continue-on-error: true
@@ -55,8 +55,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: ${MAX_FILE_SIZE:5MB}
-      max-request-size: ${MAX_REQUEST_SIZE:10MB}
+      max-file-size: ${MAX_FILE_SIZE:512MB}
+      max-request-size: ${MAX_REQUEST_SIZE:1024MB}
 
 
 logging:
@@ -69,16 +69,20 @@ logging:
 # "environment" and "image" blocks should be same in those files:
 #    * api/src/main/resources/application.properties
 #    * admin/src/main/resources/application.properties
-
+#environment.storage.path
 environment:
   servers:
     PYTHON:
       url: ${PYTHON_URL:http://192.168.1.133:3020}
     STORAGE:
-      url: ${STORAGE_URL:http://127.0.0.1:9300}
+      url: ${STORAGE_URL:http://192.168.1.133:9300}
+#    DRONE:
+#      url: ${DRONE_URL:http://192.168.1.133:5556}
+  drone:
+    url: ${DRONE_URL:http://192.168.1.133:5556}
   storage:
-      path: E:/Work/face/images
-      url: http://127.0.0.1/chensong
+      path: E:/Work/face/storage
+      url: http://192.168.1.133:10001/storage
   
 image:
   types:
@@ -104,7 +108,7 @@ app:
       api-key: ${APPERY_API_KEY:#{null}}
     faces:
       connect-timeout: ${CONNECTION_TIMEOUT:10000}
-      read-timeout: ${READ_TIMEOUT:60000}
+      read-timeout: ${READ_TIMEOUT:600000}
       retryer:
         max-attempts: ${MAX_ATTEMPTS:1}
     storage:

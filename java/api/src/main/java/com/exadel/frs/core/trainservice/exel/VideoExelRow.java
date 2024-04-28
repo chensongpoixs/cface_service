@@ -20,7 +20,7 @@ public class VideoExelRow
 
     private String  deviceIdAddress;
 
-    private Integer  timestamp;
+    private long  timestamp;
 
     private String  VideImg;
 

@@ -72,7 +72,7 @@ CREATE TABLE t_savefaceimg_subtable (
 -- landmarks,gender,age
 CREATE TABLE t_video_img_table (
 	"id" BIGSERIAL	PRIMARY KEY, 
-	"timestamp"  uuid NOT NULL,
+	"timestamp"  int4 NOT NULL,
 	"device_id"   int4  NOT NULL,
 	"img_url"  	varchar(1024)  NOT NULL
 );

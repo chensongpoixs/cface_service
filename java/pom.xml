@@ -62,6 +62,7 @@
         <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
         <hibernate-types.version>2.16.2</hibernate-types.version>
         <nd4j.version>1.0.0-beta7</nd4j.version>
+<!--        <nd4j.version>1.0.0-M2</nd4j.version>-->
         <liquibase.version>4.8.0</liquibase.version>
         <pgjdbc-ng.version>0.8.9</pgjdbc-ng.version>
         <embedded-database-spring-test.version>1.6.2</embedded-database-spring-test.version>
@@ -185,11 +186,13 @@
             <dependency>
                 <groupId>org.nd4j</groupId>
                 <artifactId>nd4j-native</artifactId>
+<!--                <artifactId>nd4j-native-platform</artifactId>-->
                 <version>${nd4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.nd4j</groupId>
                 <artifactId>nd4j-native</artifactId>
+<!--                <artifactId>nd4j-native-platform</artifactId>-->
                 <version>${nd4j.version}</version>
                 <classifier>${nd4j.classifier}</classifier>
             </dependency>

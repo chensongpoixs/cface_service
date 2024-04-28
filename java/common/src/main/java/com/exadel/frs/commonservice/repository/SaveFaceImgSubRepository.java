@@ -77,7 +77,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%) 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
@@ -96,7 +96,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%)
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
@@ -111,11 +111,11 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   where
                         a.saveFaceImg.apiKey = :apiKey
                   and
-                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp 
+                        a.saveFaceImg.timestamp between :startTimestamp and :endTimestamp
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%)
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
@@ -134,7 +134,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%)
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
@@ -156,7 +156,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%) 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
@@ -177,7 +177,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName) 
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%) 
                   order by
                         a.saveFaceImg.timestamp asc
                   """ )
@@ -198,7 +198,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%)
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )
@@ -219,7 +219,7 @@ public interface SaveFaceImgSubRepository extends JpaRepository<SaveFaceImgSub, 
                   and
                         (cast(:gender as string) is '0' or a.gender = :gender)
                   and
-                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName = :subjectName)
+                         (cast(:subjectName as string) is null or a.embeddingId.subject.subjectName LIKE %:subjectName%)
                   order by
                         a.saveFaceImg.timestamp desc
                   """ )

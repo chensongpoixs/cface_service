@@ -145,10 +145,12 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native</artifactId>
+<!--            <artifactId>nd4j-native-platform</artifactId>-->
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native</artifactId>
+<!--            <artifactId>nd4j-native-platform</artifactId>-->
             <classifier>${nd4j.classifier}</classifier>
         </dependency>
         <dependency>

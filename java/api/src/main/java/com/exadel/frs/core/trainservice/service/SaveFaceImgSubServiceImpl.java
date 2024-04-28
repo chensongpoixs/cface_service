@@ -5,6 +5,7 @@ import com.exadel.frs.commonservice.projection.DownloadDataProjection;
 import com.exadel.frs.commonservice.projection.SaveFaceImgProjection;
 import com.exadel.frs.commonservice.repository.SaveFaceImgSubRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
 {
 
@@ -80,6 +82,7 @@ public class SaveFaceImgSubServiceImpl implements SaveFaceImgSubService
             return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGroupidAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, groupIds,  gender,  subjectName,  pageable);
 
         }
+//         log.info("---------------> subjectName = " +subjectName);
         return saveFaceImgSubRepository.findBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameAsc (apiKey, (int) startTimestamp, (int) endTimestamp, gender,  subjectName,  pageable);
     }
 

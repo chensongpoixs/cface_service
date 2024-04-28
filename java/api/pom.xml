@@ -10,11 +10,11 @@
         <groupId>com.exadel</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
     <artifactId>frs-core-app</artifactId>
     <version>${parent.version}</version>
     <description>Core service with machine learning stuff for face recognition service</description>
     <packaging>jar</packaging>
+
 
     <dependencies>
         <dependency>
@@ -140,12 +140,15 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native</artifactId>
+<!--            <artifactId>nd4j-native-platform</artifactId>-->
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native</artifactId>
+<!--            <artifactId>nd4j-native-platform</artifactId>-->
             <classifier>${nd4j.classifier}</classifier>
         </dependency>
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -201,13 +204,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-<!--                <configuration>-->
-<!--                    <compilerVersion>${java.version}</compilerVersion>-->
-<!--                    <source>${java.version}</source>-->
-<!--                    <target>${java.version}</target>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                    <useIncrementalCompilation>false</useIncrementalCompilation>-->
-<!--                </configuration>-->
+                <configuration>
+                    <compilerVersion>${java.version}</compilerVersion>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

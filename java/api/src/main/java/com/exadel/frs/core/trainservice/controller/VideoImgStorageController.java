@@ -265,7 +265,13 @@ public class VideoImgStorageController
             @RequestParam( name = "id" , required = true)
             final long id
     ) {
-         return new VideoDto(videoImgStorageService.DeleteVideoImgId(id));
+        Optional<VideoImgStorageTable> videoImgStorageTableOptional = videoImgStorageService.findById(id);
+        if (!videoImgStorageTableOptional.isEmpty())
+        {
+            String url = env.getProperty("environment.storage.url");
+            ZipFile.deleteFile(url + videoImgStorageTableOptional.get().getImgUrl());
+        }
+        return new VideoDto(videoImgStorageService.DeleteVideoImgId(id));
     }
 
     @GetMapping("/download")
