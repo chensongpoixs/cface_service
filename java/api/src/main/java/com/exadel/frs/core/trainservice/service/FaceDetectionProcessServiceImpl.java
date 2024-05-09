@@ -44,7 +44,8 @@ public class FaceDetectionProcessServiceImpl implements FaceProcessService {
 
         for ( FindFacesResult findFacesResult1 : findFacesResponse.getResult() )
         {
-            if (findFacesResult1.getBox().getProbability() > 0.70)
+
+            if (findFacesResult1.getMask().getProbability() > 0.70)
             {
                 findFacesResultslist.add(findFacesResult1);
             }

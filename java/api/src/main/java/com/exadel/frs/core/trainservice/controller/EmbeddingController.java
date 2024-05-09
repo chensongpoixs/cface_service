@@ -86,6 +86,7 @@ public class EmbeddingController {
     ) throws IOException {
         imageValidator.validate(file);
 
+
         final Pair<Subject, Embedding> pair = subjectService.saveCalculatedEmbedding(
                 file,
                 subjectName,

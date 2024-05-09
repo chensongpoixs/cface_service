@@ -74,7 +74,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
             where
                 e.subject.apiKey = :apiKey
             and
-                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+                (cast(:subjectName as string) is null or e.subject.subjectName LIKE %:subjectName%)
             order by
                  e.subject.subjectName asc
             """)
@@ -88,7 +88,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
             where
                 e.subject.apiKey = :apiKey
             and
-                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+                (cast(:subjectName as string) is null or e.subject.subjectName LIKE %:subjectName%)
             order by
                  e.subject.subjectName desc
             """)
@@ -103,7 +103,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
             where
                 e.subject.apiKey = :apiKey
             and
-                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+                (cast(:subjectName as string) is null or e.subject.subjectName LIKE %:subjectName%)
             and
                 e.subject.subId = :sub_id
             order by
@@ -120,7 +120,7 @@ public interface EmbeddingRepository extends JpaRepository<Embedding, UUID> {
             where
                 e.subject.apiKey = :apiKey
             and
-                (cast(:subjectName as string) is null or e.subject.subjectName = :subjectName)
+                (cast(:subjectName as string) is null or e.subject.subjectName LIKE %:subjectName%)
             and
                 e.subject.subId = :sub_id
             order by

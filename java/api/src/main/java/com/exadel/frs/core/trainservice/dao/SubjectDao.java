@@ -160,7 +160,9 @@ public class SubjectDao {
 
     public Subject createSubject(final String apiKey, final String subjectName, int subId) {
         final Optional<Subject> subjectOptional = subjectRepository.findByApiKeyAndSubjectNameIgnoreCase(apiKey, subjectName);
-        if (subjectOptional.isPresent()) {
+        if (subjectOptional.isPresent())
+        {
+//             return saveSubject(subjectOptional.get().getId(), apiKey, subjectName, subId);
             throw new SubjectAlreadyExistsException();
         }
 
@@ -242,6 +244,17 @@ public class SubjectDao {
 
     private Subject saveSubject(String apiKey, String subjectName, int subId) {
         var subject = new Subject()
+                .setApiKey(apiKey)
+                .setSubjectName(subjectName)
+                .setSubId(  subId)
+                .setCreateTime(System.currentTimeMillis()/1000);
+
+        return subjectRepository.save(subject);
+    }
+
+    private Subject saveSubject(UUID uuid ,String apiKey, String subjectName, int subId) {
+        var subject = new Subject()
+                .setId(uuid)
                 .setApiKey(apiKey)
                 .setSubjectName(subjectName)
                 .setSubId(  subId)

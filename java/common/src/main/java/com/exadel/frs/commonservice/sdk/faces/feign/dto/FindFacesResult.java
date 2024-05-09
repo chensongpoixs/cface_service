@@ -43,4 +43,5 @@ public class FindFacesResult {
     private ExecutionTimeDto executionTime;
     private List<List<Integer>> landmarks;
     private FacesMask mask;
+    private String  imageUrl;
 }

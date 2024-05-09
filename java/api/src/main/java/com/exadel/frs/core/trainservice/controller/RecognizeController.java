@@ -132,8 +132,8 @@ public class RecognizeController {
 
        if (timestamp > 0)
        {
-           new Thread(() ->
-           {
+//           new Thread(() ->
+//           {
                String path = env.getProperty("environment.storage.path");
 //               log.info("storage path = " + path);
                if (facesRecognitionResponseDto.getResult().size() > 0)
@@ -210,6 +210,7 @@ public class RecognizeController {
 //                           break;
 //                       }
                        saveFaceImgSub.setSubImgUrl(file_prefix +master_file_name + subImgName);
+//                       facePredictionResultDto.set;
                        saveFaceImgSub.setBoxMinX(facePredictionResultDto.getBox().getXMin());
                        saveFaceImgSub.setBoxMinY(facePredictionResultDto.getBox().getYMin());
                        saveFaceImgSub.setBoxMaxX(facePredictionResultDto.getBox().getXMax());
@@ -218,7 +219,7 @@ public class RecognizeController {
                        saveFaceImgSubService.AddSaveFaceImgSub(saveFaceImgSub);
                    }
                }
-           }, "save img ").start();
+//           }, "save img ").start();
        }
 //        log.info("storage send -storage-->>>>> " + storageFeignClient.findFaces(9, 0.9, "d", true));
 //        String outpath = "D:/Work/cai/face/images/" ;//+ sdf.format(day) +"/" + apiKey + "/";
