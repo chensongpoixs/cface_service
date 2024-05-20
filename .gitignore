@@ -14,3 +14,8 @@ build/
 
 ### VS Code ###
 .vscode/
+/java/*.log
+/java/api/*.log
+/java/storage/target
+/java/common/hs_err_pid45392.log
+/java/common/replay_pid45392.log

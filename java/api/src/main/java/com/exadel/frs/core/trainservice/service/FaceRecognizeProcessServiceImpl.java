@@ -2,6 +2,7 @@ package com.exadel.frs.core.trainservice.service;
 
 import com.exadel.frs.commonservice.exception.IncorrectPredictionCountException;
 import com.exadel.frs.commonservice.sdk.faces.feign.dto.FindFacesResponse;
+import com.exadel.frs.commonservice.sdk.faces.feign.dto.FindFacesResult;
 import com.exadel.frs.core.trainservice.component.FaceClassifierPredictor;
 import com.exadel.frs.core.trainservice.dto.FacePredictionResultDto;
 import com.exadel.frs.core.trainservice.dto.FaceSimilarityDto;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.exadel.frs.core.trainservice.system.global.Constants.PREDICTION_COUNT;
@@ -30,6 +33,9 @@ public class FaceRecognizeProcessServiceImpl implements FaceProcessService {
     private final FacesApiClient facesApiClient;
     private final ImageExtensionValidator imageExtensionValidator;
     private final FacesMapper facesMapper;
+
+
+
 
     @Override
     public FacesRecognitionResponseDto processImage(ProcessImageParams processImageParams) {
@@ -61,16 +67,68 @@ public class FaceRecognizeProcessServiceImpl implements FaceProcessService {
                     processImageParams.getDetectFaces()
             );
         }
+
         long end_ms = System.currentTimeMillis();
         log.info("[======== >>> " + (end_ms - cur_ms) + " ms]");
-       log.info(findFacesResponse.toString());
+        log.info(findFacesResponse.toString());
+
+        if (findFacesResponse == null) {
+            return FacesRecognitionResponseDto.builder().build();
+        }
+//        FindFacesResponse new_findFacesResponse = new FindFacesResponse();
+//        new_findFacesResponse.setPluginsVersions(findFacesResponse.getPluginsVersions());
+//        List<FindFacesResult> findFacesResults_ = new ArrayList<>();
+//        for (FindFacesResult findResult1 : findFacesResponse.getResult())
+//        {
+//            if (findResult1.getMask().getProbability() > 0.7)
+//            {
+//                findFacesResults_.add(findResult1);
+//            }
+////            @Override
+////            public FacesRecognitionResponseDto toFacesRecognitionResponseDto(FindFacesResponse facesResponse)
+////            {
+////            if ( facesResponse == null )
+////            {
+////                return null;
+////            }
+//
+//
+////            return facesRecognitionResponseDto;
+//        }
+//        if (findFacesResults_.size() <= 0)
+//        {
+//            return FacesRecognitionResponseDto.builder().build();
+//        }
+//        new_findFacesResponse.setResult(findFacesResults_);
+//        FacesRecognitionResponseDto facesRecognitionDto = new FacesRecognitionResponseDto();
+//
+//        facesRecognitionDto.setPluginsVersions( pluginsVersionsToPluginsVersionsDto( facesResponse.getPluginsVersions() ) );
+//        facesRecognitionDto.setResult( findFacesResultListToFacePredictionResultDtoList( facesResponse.getResult() ) );
+//
+
+//        }
         val facesRecognitionDto = facesMapper.toFacesRecognitionResponseDto(findFacesResponse);
         if (facesRecognitionDto == null) {
             return FacesRecognitionResponseDto.builder().build();
         }
 
         String apiKey = processImageParams.getApiKey();
-        for (val findResult : facesRecognitionDto.getResult()) {
+        for (val findResult : facesRecognitionDto.getResult())
+        {
+
+            /*
+             List<FacePredictionResultDto> list1 = new ArrayList<FacePredictionResultDto>( list.size() );
+        for ( FindFacesResult findFacesResult : list )
+        {
+
+            if (findFacesResult.getMask().getProbability() > 0.70)
+            {
+                list1.add( findFacesResultToFacePredictionResultDto( findFacesResult ) );
+            }
+
+        }
+             */
+//            if (findResult.g)
             final ArrayList<FaceSimilarityDto> faces = processFaceResult(predictionCount, apiKey, findResult);
 
             findResult.setSubjects(faces);

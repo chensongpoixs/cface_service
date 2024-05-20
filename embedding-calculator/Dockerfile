@@ -77,7 +77,7 @@ ARG SKIP_TESTS
 COPY pytest.ini .
 RUN if [ -z $SKIP_TESTS  ]; then pytest -m "not performance" /app/ml/src; fi
 
-EXPOSE 3000
+EXPOSE 9601  9602
 
 COPY uwsgi.ini .
 CMD ["uwsgi", "--ini", "uwsgi.ini"]

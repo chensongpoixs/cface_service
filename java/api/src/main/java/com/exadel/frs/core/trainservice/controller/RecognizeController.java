@@ -90,6 +90,9 @@ public class RecognizeController {
             @ApiParam(value = DET_PROB_THRESHOLD_DESC, example = NUMBER_VALUE_EXAMPLE)
             @RequestParam(value = DET_PROB_THRESHOLD, required = false)
             final Double detProbThreshold,
+            @ApiParam(value = " face mask", example = NUMBER_VALUE_EXAMPLE)
+            @RequestParam(defaultValue = "0.75", value = "face mask", required = false)
+            final Double face_mask,
             @ApiParam(value = FACE_PLUGINS_DESC)
             @RequestParam(value = FACE_PLUGINS, required = false, defaultValue = "landmarks, gender, age")
             final String facePlugins,
@@ -132,6 +135,8 @@ public class RecognizeController {
 
        if (timestamp > 0)
        {
+           log.info("face_mask == " + face_mask);
+           facesRecognitionResponseDto.builderDto(face_mask);
 //           new Thread(() ->
 //           {
                String path = env.getProperty("environment.storage.path");

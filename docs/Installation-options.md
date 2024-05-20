@@ -123,3 +123,20 @@ docker run -d --name=CompreFace -v compreface-db:/var/lib/postgresql/data -p 800
 10. If you want to restart CompreFace, run `docker restart CompreFace`.
 11. If you want to clear CompreFace installation, first stop it with `docker stop CompreFace`.  Remove container with `docker rm CompreFace`. Then delete the volume `docker volume rm compreface-db`. Then run CompreFace again.
 12. To update the CompreFace version or change custom build, stop CompreFace with `docker stop CompreFace`. Remove container with `docker rm CompreFace`. Then run the new CompreFace version.
+
+
+
+sudo apt-get install -y nvidia-container-toolkit时报错“Unable to locate package nvidia-container-toolkit"解决方案：
+
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+  sudo apt-key add -
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+  sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update
+
+再次sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit 就好了
+ 
+ 
+ 
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html

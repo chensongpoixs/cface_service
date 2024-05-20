@@ -19,6 +19,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +40,42 @@ public class FacesRecognitionResponseDto extends FaceProcessResponse {
     private PluginsVersionsDto pluginsVersions;
     private List<FacePredictionResultDto> result;
 
+
+    public FacesRecognitionResponseDto  builderDto(Double mask_)
+    {
+        if (this.getResult()==null || this.getResult().isEmpty())
+        {
+            return this;
+        }
+
+        List<FacePredictionResultDto> facePredictionResultDtoList = new ArrayList<>();
+        for (FacePredictionResultDto facePredictionResultDto:  this.getResult())
+        {
+            List<FaceSimilarityDto> faceSimilarityDtos = new ArrayList<>();
+            for (FaceSimilarityDto faceSimilarityDto : facePredictionResultDto.subjects)
+            {
+                if (faceSimilarityDto.getSimilarity() > mask_)
+                {
+                    faceSimilarityDtos.add(faceSimilarityDto);
+                }
+            }
+            if (faceSimilarityDtos.size() > 0)
+            {
+                FacePredictionResultDto facePredictionResultDto1 = new FacePredictionResultDto();
+                facePredictionResultDto1 = facePredictionResultDto;
+                facePredictionResultDto1.setSubjects(faceSimilarityDtos);
+                facePredictionResultDtoList.add(facePredictionResultDto1);
+            }
+//            if ((facePredictionResultDto.getMask() == null)||
+//                    (facePredictionResultDto.getMask() != null && facePredictionResultDto.getMask().getProbability()> 0.75))
+//            {
+//                facePredictionResultDtoList.add(facePredictionResultDto);
+//            }
+
+        }
+        result = facePredictionResultDtoList;
+        return this;
+    }
     @Override
     public FacesRecognitionResponseDto prepareResponse(ProcessImageParams processImageParams) {
         if (this.getResult()==null || this.getResult().isEmpty()){
@@ -53,7 +91,25 @@ public class FacesRecognitionResponseDto extends FaceProcessResponse {
             this.setPluginsVersions(null);
             this.getResult().forEach(r -> r.setExecutionTime(null));
         }
+//        List<FacePredictionResultDto> facePredictionResultDtoList = new ArrayList<>();
 
+//        for (FacePredictionResultDto facePredictionResultDto:  this.getResult())
+//        {
+//            for (FaceSimilarityDto faceSimilarityDto : facePredictionResultDto.subjects)
+//            {
+//                if (faceSimilarityDto.getSimilarity() > 0.75)
+//                {
+//
+//                }
+//            }
+////            if ((facePredictionResultDto.getMask() == null)||
+////                    (facePredictionResultDto.getMask() != null && facePredictionResultDto.getMask().getProbability()> 0.75))
+////            {
+////                facePredictionResultDtoList.add(facePredictionResultDto);
+////            }
+//
+//        }
+//        this.setResult(facePredictionResultDtoList);
         return this;
     }
 }
