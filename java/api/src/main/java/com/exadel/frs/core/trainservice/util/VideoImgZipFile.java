@@ -9,10 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 @Slf4j
@@ -26,12 +23,13 @@ public class VideoImgZipFile
     public static void zipImages(String imgprofixpath, List<VideoImgStorageProjection> imagePaths, String zipFilePath, Map<Integer, DeviceInfo> deviceInfoMap) throws IOException {
         // 创建ZIP输出流
 //        String DroneUrl = env.getProperty("environment.drone.url");
+        Map<Integer, Integer> hash = new HashMap<>();
+        int count = 0;
 //        Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
         try (FileOutputStream fos = new FileOutputStream(zipFilePath);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
-
+            log.info("imagePaths = " + imagePaths.size());
             for (VideoImgStorageProjection videoImgStorageProjection : imagePaths)
-//            while(count < 100000)
             {
                 // 读取图片文件并添加到ZIP输出流
                 File imageFile = new File(imgprofixpath + videoImgStorageProjection.imgUrl());
@@ -39,19 +37,33 @@ public class VideoImgZipFile
                 String new_file_name = "";
                 if (null ==  deviceInfo )
                 {
-                    new_file_name =  "未知设备" ;
+                    new_file_name =   "未知设备" + String.valueOf(++count)  ;
                 }
                 else
                 {
                     new_file_name = deviceInfo.getName();
                    // exelRow.setDeviceIdAddress(deviceInfo.getName());
                 }
+                 Integer hash_value = hash.get(videoImgStorageProjection.timestamp());
+                Integer temp = 0;
+                if (hash_value == null)
+                {
+                    hash.put(videoImgStorageProjection.timestamp(), 1);
+                    temp = 1;
+                }
+                else
+                {
+                    hash.put(videoImgStorageProjection.timestamp(), hash_value + 1);
+                    temp = 1 + hash_value;
+                }
                 SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMddHHmmss");
 //            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
                 String master_file_name = file_prefixDate.format(new Date((long) videoImgStorageProjection.timestamp() * 1000))  /*+ ".jpg"*/;
 
+               String file_name_ptr= new_file_name +"_"+ master_file_name + "_" + String.valueOf(temp)   + videoImgStorageProjection.imgUrl().substring( videoImgStorageProjection.imgUrl().lastIndexOf("."));
+                log.info("deviceInfoMap size = " +deviceInfoMap.toString()+ "videoImgStorageProjection " + videoImgStorageProjection.toString()+"img name = " + file_name_ptr);
                 if (imageFile.exists() && !imageFile.isDirectory()) {
-                    addToZipFile(imageFile, zos, new_file_name + master_file_name   + videoImgStorageProjection.imgUrl().substring( videoImgStorageProjection.imgUrl().lastIndexOf(".")));
+                    addToZipFile(imageFile, zos, file_name_ptr);
                 } else {
                     log.info("File not found or is a directory: " +videoImgStorageProjection.imgUrl());
 //                    System.err.println("File not found or is a directory: " +imagePaths[2]);

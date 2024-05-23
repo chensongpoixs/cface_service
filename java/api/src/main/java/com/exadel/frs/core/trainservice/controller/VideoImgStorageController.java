@@ -335,6 +335,7 @@ public class VideoImgStorageController
             List<VideoImgStorageProjection> downloadDatalist = videoImgStorageService.findVideoImageAndDeviceIds(imgids);
 //            return new ReslutDownload(downloadDatalist.toString(), result);
 
+            log.info("downloadDatalist ==>>" + downloadDatalist.size());
             if (null != downloadDatalist && downloadDatalist.size() > 0)
             {
                 String imgprofixpath = env.getProperty("environment.storage.path");
