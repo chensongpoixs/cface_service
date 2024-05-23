@@ -144,7 +144,7 @@ public class FaceRecognizeProcessServiceImpl implements FaceProcessService {
         for (val prediction : predictions) {
             var pred = BigDecimal.valueOf(prediction.getLeft());
             pred = pred.setScale(5, HALF_UP);
-            faces.add(new FaceSimilarityDto(prediction.getRight().getSubjectName(), prediction.getRight().getEmbeddingId(), pred.floatValue()));
+            faces.add(new FaceSimilarityDto(prediction.getRight().getSubjectName(), prediction.getRight().getEmbeddingId(), pred.floatValue(), ""));
         }
 
         var inBoxProb = BigDecimal.valueOf(findResult.getBox().getProbability());

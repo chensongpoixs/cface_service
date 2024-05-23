@@ -23,6 +23,7 @@ import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.VideoImgStorageServiceImpl;
 import com.exadel.frs.core.trainservice.util.FileBase64;
 import com.exadel.frs.core.trainservice.util.MultipartFileToFileUtils;
+import com.exadel.frs.core.trainservice.util.VideoImgZipFile;
 import com.exadel.frs.core.trainservice.util.ZipFile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
@@ -336,74 +337,26 @@ public class VideoImgStorageController
 
             if (null != downloadDatalist && downloadDatalist.size() > 0)
             {
-
                 String imgprofixpath = env.getProperty("environment.storage.path");
                 str = "";
-                VideoExelTable exelTable = new VideoExelTable();
                 String DroneUrl = env.getProperty("environment.drone.url");
                 Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
-                for (VideoImgStorageProjection videoImgStorageProjection : downloadDatalist)
-                {
-//                    log.info("[id = "+ videoImgStorageProjection.id() +"][timestamp = "+ videoImgStorageProjection.timestamp()+"]");
-                    VideoExelRow   exelRow = new VideoExelRow();
-                    exelRow.setId(videoImgStorageProjection.id());
-                    exelRow.setTimestamp(videoImgStorageProjection.timestamp() * 1000);
 
-                    DeviceInfo deviceInfo =   deviceInfoMap.get(videoImgStorageProjection.device_id());
-                    if (null ==  deviceInfo )
-                    {
-                        exelRow.setDeviceIdAddress("未知设备");
-                    }
-                    else
-                    {
-                        exelRow.setDeviceIdAddress(deviceInfo.getName());
-                    }
-                    exelRow.setVideImg(FileBase64.FileBase64ToString(imgprofixpath + videoImgStorageProjection.imgUrl()));
-//                    exelRow.setCreateTimestamp(downloadDataProjection.timestamp());
-//                    exelRow.setDeviceIdAddress(String.valueOf(downloadDataProjection.deviceId()));
-//                    exelRow.setUserName(downloadDataProjection.userName());
-//                    exelRow.setGender(String.valueOf(downloadDataProjection.gender()));
-//                    exelRow.setSimilarity(downloadDataProjection.similarity());
-//                    exelRow.setCaptureImg(FileBase64.FileBase64ToString(imgprofixpath + downloadDataProjection.captureImgUrl()));
-//                    exelRow.setFaceImg(Base64.getEncoder().encodeToString(downloadDataProjection.faceImg()));
-                    exelTable.add(exelRow);
-                }
                 Date date = new Date();
                 SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
                 String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
 
-
-
                 String uuid = UUID.randomUUID().toString()   ;
 
-
-                String xlsfilepath = uuid + ".xls";
-
-
                 zipPath += uuid+   ".zip";
-                String absolutePath = null;
-                File zipdir = new File(env.getProperty("environment.storage.path") + zipPath);
-                if (!zipdir.exists()) {
-                    try {
-                        absolutePath = zipdir.getCanonicalPath();
-
-                        /*判断路径中的文件夹是否存在，如果不存在，先创建文件夹*/
-                        String dirPath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
-                        File dir = new File(dirPath);
-                        if (!dir.exists()) {
-                            dir.mkdirs();
-                        }
-
-                    } catch (IOException e) {
-                        log.info("IOException" + String.valueOf(e));
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    VideoImgZipFile.zipImages(imgprofixpath, downloadDatalist, imgprofixpath + zipPath, deviceInfoMap );
                 }
-
-                if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable.ExelTableToString()))
-                {
-                    log.info("zip img failed !!!");
-                }
+                 catch (IOException e)
+                 {
+                     result = 200;
+                     log.info( e.getMessage());
+                 }
 
                 return new  ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
             }

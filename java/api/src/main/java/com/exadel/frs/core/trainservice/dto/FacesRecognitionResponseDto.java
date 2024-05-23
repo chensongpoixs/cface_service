@@ -64,6 +64,53 @@ public class FacesRecognitionResponseDto extends FaceProcessResponse {
                 FacePredictionResultDto facePredictionResultDto1 = new FacePredictionResultDto();
                 facePredictionResultDto1 = facePredictionResultDto;
                 facePredictionResultDto1.setSubjects(faceSimilarityDtos);
+//                facePredictionResultDto1.setSubjects();
+                facePredictionResultDtoList.add(facePredictionResultDto1);
+            }
+//            if ((facePredictionResultDto.getMask() == null)||
+//                    (facePredictionResultDto.getMask() != null && facePredictionResultDto.getMask().getProbability()> 0.75))
+//            {
+//                facePredictionResultDtoList.add(facePredictionResultDto);
+//            }
+
+        }
+        result = facePredictionResultDtoList;
+        return this;
+    }
+
+
+
+    public FacesRecognitionResponseDto  builderFaceImgDto(Double mask_)
+    {
+        if (this.getResult()==null || this.getResult().isEmpty())
+        {
+            return this;
+        }
+
+        List<FacePredictionResultDto> facePredictionResultDtoList = new ArrayList<>();
+        for (FacePredictionResultDto facePredictionResultDto:  this.getResult())
+        {
+            List<FaceSimilarityDto> faceSimilarityDtos = new ArrayList<>();
+            for (FaceSimilarityDto faceSimilarityDto : facePredictionResultDto.subjects)
+            {
+                if (faceSimilarityDto.getSimilarity() > mask_)
+                {
+                   // 保存路径位置
+//                    FaceSimilarityDto faceSimilarityDto1 = new FaceSimilarityDto();
+//                    faceSimilarityDto
+                }
+                else
+                {
+                    // 临时目录位置
+                }
+                faceSimilarityDtos.add(faceSimilarityDto);
+            }
+            if (faceSimilarityDtos.size() > 0)
+            {
+                FacePredictionResultDto facePredictionResultDto1 = new FacePredictionResultDto();
+                facePredictionResultDto1 = facePredictionResultDto;
+                facePredictionResultDto1.setSubjects(faceSimilarityDtos);
+//                facePredictionResultDto1.setSubjects();
                 facePredictionResultDtoList.add(facePredictionResultDto1);
             }
 //            if ((facePredictionResultDto.getMask() == null)||

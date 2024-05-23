@@ -17,13 +17,17 @@
 package com.exadel.frs.core.trainservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Value
 @Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 @JsonInclude(NON_NULL)
 public class FaceSimilarityDto {
 
@@ -32,5 +36,7 @@ public class FaceSimilarityDto {
     String embeddingId;
 
     float similarity;
+
+    String  imgUrl;
 
 }
