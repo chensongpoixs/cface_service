@@ -22,8 +22,12 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @EnableScheduling
 @EnableFeignClients(basePackages = "com.exadel.frs.commonservice.system.feign")
@@ -38,8 +42,32 @@ public class TrainServiceApplication {
 //            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
         String master_file_name = file_prefixDate.format(new Date((long) 1716445538 *1000))  /*+ ".jpg"*/;
         System.out.println("charset = "+System.getProperty("file.encoding") + " date = " + master_file_name);
+//
+//        final int GIGABYTE = 1024 * 1024 * 1024;
+//        final int sizeInGigabytes = 10;
+//        int sizeToWrite = sizeInGigabytes * GIGABYTE; // 10GB in bytes
+//
+//        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream("output.zip"))) {
+//            ZipEntry zipEntry = new ZipEntry("data.txt");
+//            zipOut.putNextEntry(zipEntry);
+//
+//            // 创建一个包含10GB数据的StringBuffer
+//            StringBuffer data = new StringBuffer(sizeToWrite);
+//            for (int i = 0; i < sizeToWrite; ++i) {
+//                data.append('a'); // 或者其他字符，这里使用'a'进行演示
+//            }
+//
+//            // 将数据写入ZipOutputStream
+//            zipOut.write(data.toString().getBytes());
+//
+//            zipOut.closeEntry();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            System.out.println("-" + e.toString());
+//        }
         SpringApplication.run(TrainServiceApplication.class, args);
     }
+
 }
 
 

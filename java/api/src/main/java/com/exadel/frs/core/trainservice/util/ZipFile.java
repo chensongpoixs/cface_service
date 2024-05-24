@@ -1,5 +1,6 @@
 package com.exadel.frs.core.trainservice.util;
 
+import com.exadel.frs.core.trainservice.exel.ExelTable;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -8,7 +9,7 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class ZipFile
 {
-    public static boolean ZipFile(String zipFilenamePath, String fileToCompress, String data)
+    public static boolean ZipFile(String zipFilenamePath, String fileToCompress, ExelTable tabledata)
     {
 
 
@@ -21,15 +22,7 @@ public class ZipFile
             throw new RuntimeException(e);
         }
 
-        ZipEntry zipEntry = new ZipEntry(fileToCompress);
 
-
-        try {
-            zipOutputStream.putNextEntry(zipEntry);
-        } catch (IOException e) {
-            log.info("IOException ="+String.valueOf(e));
-            throw new RuntimeException(e);
-        }
 
 //        FileInputStream fileInputStream = null;
 //        try {
@@ -52,11 +45,24 @@ public class ZipFile
 //            throw new RuntimeException(e);
 //        }
 
-        try {
-            zipOutputStream.write(data.getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+
+
+            tabledata.write(zipOutputStream, fileToCompress);
+//            zipOutputStream.write(data.toString().getBytes());
+//            data.append(1);
+//            data.length();
+
+//            int total_count = data.length();
+//            int count = total_count / (1024 * 1024);
+//            int s = total_count %(1024 * 1024);
+//            for (int i = 0; i < count; ++i)
+//            {
+////                data.getChars();
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         try {
             zipOutputStream.finish();
 //            zipOutputStream.closeEntry();

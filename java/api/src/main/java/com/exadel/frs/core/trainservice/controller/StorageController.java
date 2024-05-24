@@ -327,7 +327,8 @@ public class StorageController
                 }
             }
 
-            if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable.ExelTableToString()))
+
+            if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable))
             {
                 log.info("zip img failed !!!");
             }
@@ -465,7 +466,7 @@ public class StorageController
                     }
                 }
 
-                if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable.ExelTableToString()))
+                if (!ZipFile.ZipFile( env.getProperty("environment.storage.path") +zipPath, xlsfilepath, exelTable))
                 {
                     log.info("zip img failed !!!");
                 }
