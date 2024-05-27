@@ -78,5 +78,16 @@ public interface CaputreRepository extends JpaRepository<CaputreImg, Long>
     Page<CaputreImgProjection> findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndInDeviceIdAndGenderAndSubjectNameDesc ( String apiKey , Integer startTimestamp,  Integer endTimestamp,   List  deviceIds,    Pageable pageable);
 
 
+    @Query(  """
+                  select
+                        new com.exadel.frs.commonservice.projection.CaputreImgProjection(a.id, a.timestamp , a.imgUrl, a.deviceId)
+                  from
+                        SaveFaceImg   a
+                  where
+                        a.apiKey = :apiKey
+                  and
+                        a.deviceId in  (:deviceIds)
+                  """ )
+    Page<CaputreImgProjection> findDownloadBySaveFaceImgSubApiKeyAndIds ( String apiKey , List  deviceIds);
 
 }

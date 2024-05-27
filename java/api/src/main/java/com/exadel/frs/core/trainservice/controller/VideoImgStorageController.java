@@ -21,10 +21,7 @@ import com.exadel.frs.core.trainservice.mapper.VideoImgStorageMapper;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.VideoImgStorageServiceImpl;
-import com.exadel.frs.core.trainservice.util.FileBase64;
-import com.exadel.frs.core.trainservice.util.MultipartFileToFileUtils;
-import com.exadel.frs.core.trainservice.util.VideoImgZipFile;
-import com.exadel.frs.core.trainservice.util.ZipFile;
+import com.exadel.frs.core.trainservice.util.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +41,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -347,9 +345,12 @@ public class VideoImgStorageController
                 SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
                 String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
 
+                DirectoryChecker.mkdirDirectory(imgprofixpath + zipPath);
+//                Path.of(zipPath);
                 String uuid = UUID.randomUUID().toString()   ;
 
                 zipPath += uuid+   ".zip";
+
                 try {
                     VideoImgZipFile.zipImages(imgprofixpath, downloadDatalist, imgprofixpath + zipPath, deviceInfoMap );
                 }

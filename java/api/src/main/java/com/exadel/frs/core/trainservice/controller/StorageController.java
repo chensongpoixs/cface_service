@@ -21,9 +21,7 @@ import com.exadel.frs.core.trainservice.service.CaptureImgImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgServiceImpl;
 import com.exadel.frs.core.trainservice.service.SaveFaceImgSubService;
 import com.exadel.frs.core.trainservice.service.StorageSaveFaceImgServiceImpl;
-import com.exadel.frs.core.trainservice.util.FileBase64;
-import com.exadel.frs.core.trainservice.util.StringUtilSub;
-import com.exadel.frs.core.trainservice.util.ZipFile;
+import com.exadel.frs.core.trainservice.util.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -202,6 +200,144 @@ public class StorageController
         //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
 //        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
     }
+
+
+
+    @GetMapping("download_all_capture")
+    public ReslutDownload DownLoadStorageAllCapture(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
+            @Valid
+            @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
+            final String device_id, //API_STORAGE_FACE_GENDER_DES
+
+            @ApiParam(value = API_STORAGE_TIMESTAMP_SORT_DES )
+            @Valid
+            @RequestParam(defaultValue = "0", name = API_STORAGE_TIMESTAMP_SORT, required = false )
+            final int ASCDESC ,
+            @ApiParam(value = API_STORAGE_START_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_START_TIMESTAMP )
+            final long start_timestamp,
+            @ApiParam(value = API_STORAGE_END_TIMESTAMP_DES , required = true)
+            @Valid
+            @RequestParam(name = API_STORAGE_END_TIMESTAMP )
+            final long end_timestamp
+    )
+    {
+
+        Pageable pageable = PageRequest.of(0, 1000000, Sort.unsorted());
+        List<Integer>   devicdids   = StringUtilSub.SplitArraySum(device_id);
+
+        for(Integer v : devicdids)
+        {
+            log.info("----> devieid = " + v);
+        }
+       Page<CaputreDto>  page_capture =  captureImg.AllListFaceSubImg(apiKey, (int) start_timestamp, (int) end_timestamp, devicdids,    ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/);
+
+//        return new CaptureImgs(captureImg.AllListFaceSubImg(apiKey, (int) start_timestamp, (int) end_timestamp, devicdids,    ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+//                env.getProperty("environment.storage.url"));
+        int result = 0;
+        String str = "";
+        if (page_capture.getSize() > 0)
+        {
+            // 请求
+            String DroneUrl = env.getProperty("environment.drone.url");
+            Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
+
+            Date date = new Date();
+            SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
+            String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
+            String imgprofixpath = env.getProperty("environment.storage.path");
+            DirectoryChecker.mkdirDirectory(imgprofixpath + zipPath);
+            String uuid = UUID.randomUUID().toString()   ;
+            zipPath += uuid+   ".zip";
+
+
+
+
+            try {
+                VideoImgZipFile.zipFaceImages(imgprofixpath, page_capture.getContent(), imgprofixpath + zipPath, deviceInfoMap );
+            }
+            catch (IOException e)
+            {
+                result = 200;
+                log.info( e.getMessage());
+            }
+
+            return new ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
+        }
+        else
+        {
+            result = 500;
+        }
+        return new ReslutDownload(str, result);
+    }
+
+
+
+    @GetMapping("download_capture")
+    public ReslutDownload DownLoadStorageCapture(
+            @ApiParam(value = API_KEY_DESC, required = true)
+            @RequestHeader(name = X_FRS_API_KEY_HEADER)
+            final String apiKey,
+            @ApiParam(value = "img id" , required = true)
+            @Valid
+            @RequestParam(name = "id" )
+            final String ids
+    )
+    {
+
+        Pageable pageable = PageRequest.of(0, 1000000, Sort.unsorted());
+        List<Integer>   idds   = StringUtilSub.SplitArraySum(ids);
+
+        for(Integer v : idds)
+        {
+            log.info("----> img id = " + v);
+        }
+        Page<CaputreImgProjection>  page_capture =  captureImg.GetListFaced(apiKey, idds);
+
+//        return new CaptureImgs(captureImg.AllListFaceSubImg(apiKey, (int) start_timestamp, (int) end_timestamp, devicdids,    ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+//                env.getProperty("environment.storage.url"));
+        int result = 0;
+        String str = "";
+        if (page_capture.getSize() > 0)
+        {
+            // 请求
+            String DroneUrl = env.getProperty("environment.drone.url");
+            Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
+
+            Date date = new Date();
+            SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
+            String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
+            String imgprofixpath = env.getProperty("environment.storage.path");
+            DirectoryChecker.mkdirDirectory(imgprofixpath + zipPath);
+            String uuid = UUID.randomUUID().toString()   ;
+            zipPath += uuid+   ".zip";
+
+
+
+
+            try {
+                VideoImgZipFile.zipFaceProImages(imgprofixpath, page_capture.getContent(), imgprofixpath + zipPath, deviceInfoMap );
+            }
+            catch (IOException e)
+            {
+                result = 200;
+                log.info( e.getMessage());
+            }
+
+            return new ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
+        }
+        else
+        {
+            result = 500;
+        }
+        return new ReslutDownload(str, result);
+    }
+
 
     @GetMapping("/alldownload")
     public ReslutDownload alldownloadimg(
