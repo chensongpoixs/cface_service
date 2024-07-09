@@ -39,7 +39,7 @@ public class CaptureImgImpl
         return caputreRepository.findDownloadBySaveFaceImgSubApiKeyBetweenTimestampAndGenderAndSubjectNameDesc(apiKey, startTimestamp, endTimestamp, pageable);
     }
     @Transactional
-    public Page<CaputreImgProjection> GetListFaced(String apiKey,  List ids )
+    public List<CaputreImgProjection> GetListFaced(String apiKey,  List ids )
     {
 
         return caputreRepository.findDownloadBySaveFaceImgSubApiKeyAndIds(apiKey, ids);

@@ -86,8 +86,8 @@ public interface CaputreRepository extends JpaRepository<CaputreImg, Long>
                   where
                         a.apiKey = :apiKey
                   and
-                        a.deviceId in  (:deviceIds)
+                        a.id in  (:ids)
                   """ )
-    Page<CaputreImgProjection> findDownloadBySaveFaceImgSubApiKeyAndIds ( String apiKey , List  deviceIds);
+    List<CaputreImgProjection> findDownloadBySaveFaceImgSubApiKeyAndIds ( String apiKey , List  ids);
 
 }

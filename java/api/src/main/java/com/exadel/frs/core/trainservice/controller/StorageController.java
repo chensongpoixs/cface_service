@@ -256,7 +256,7 @@ public class StorageController
             zipPath += uuid+   ".zip";
 
 
-
+            DirectoryChecker. DeleteExpireDir(imgprofixpath + "/zip/");
 
             try {
                 VideoImgZipFile.zipFaceImages(imgprofixpath, page_capture.getContent(), imgprofixpath + zipPath, deviceInfoMap );
@@ -297,13 +297,13 @@ public class StorageController
         {
             log.info("----> img id = " + v);
         }
-        Page<CaputreImgProjection>  page_capture =  captureImg.GetListFaced(apiKey, idds);
+        List<CaputreImgProjection>  page_capture =  captureImg.GetListFaced(apiKey, idds);
 
 //        return new CaptureImgs(captureImg.AllListFaceSubImg(apiKey, (int) start_timestamp, (int) end_timestamp, devicdids,    ASCDESC, pageable).map(saveFaceImgMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
 //                env.getProperty("environment.storage.url"));
         int result = 0;
         String str = "";
-        if (page_capture.getSize() > 0)
+        if (page_capture.size() > 0)
         {
             // 请求
             String DroneUrl = env.getProperty("environment.drone.url");
@@ -318,10 +318,11 @@ public class StorageController
             zipPath += uuid+   ".zip";
 
 
+            DirectoryChecker. DeleteExpireDir(imgprofixpath + "/zip/");
 
 
             try {
-                VideoImgZipFile.zipFaceProImages(imgprofixpath, page_capture.getContent(), imgprofixpath + zipPath, deviceInfoMap );
+                VideoImgZipFile.zipFaceProImages(imgprofixpath, page_capture, imgprofixpath + zipPath, deviceInfoMap );
             }
             catch (IOException e)
             {
@@ -441,7 +442,7 @@ public class StorageController
 
 
             String xlsfilepath = uuid + ".xls";
-
+            DirectoryChecker. DeleteExpireDir(imgprofixpath + "/zip/");
 
             zipPath += uuid+   ".zip";
             String absolutePath = null;
@@ -574,7 +575,7 @@ public class StorageController
                 SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
                 String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
 
-
+                DirectoryChecker. DeleteExpireDir(imgprofixpath + "/zip/");
 
                 String uuid = UUID.randomUUID().toString()   ;
 

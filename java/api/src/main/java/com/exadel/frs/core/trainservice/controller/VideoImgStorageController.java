@@ -131,6 +131,7 @@ public class VideoImgStorageController
 
 
 
+
     @GetMapping("/video_search")
     public VideoImgStorage listStorageVideoImg
             (
@@ -273,71 +274,71 @@ public class VideoImgStorageController
         return new VideoDto(videoImgStorageService.DeleteVideoImgId(id));
     }
 
-    @GetMapping("/download")
+    @PostMapping("/download")
     public ReslutDownload Download(
             @ApiParam(value = API_KEY_DESC, required = true)
             @RequestHeader(name = X_FRS_API_KEY_HEADER)
             final String apiKey,
-            @ApiParam(value = "img id  (1,2,3,4,5)" , required = true)
             @Valid
-            @RequestParam(defaultValue = "-1", name = "ids" )
-            final String ids)
+            @RequestBody
+            final ImageArrayDto ids)
     {
 
-        List<Long>   imgids = new ArrayList< >();
-        String str = "";
-        if (   ids.length() >0)
-        {
-            if (ids.charAt(0) != '-')
-            {
-                for (int i = 0; i < ids.length(); ++i)
-                {
-                    log.info("[i = " + i + "],[ char = " + ids.charAt(i) + "][ size = " + ids.length() + "]");
-                    if (ids.charAt(i) < ('9' +1) && ids.charAt(i) > ('0' -1))
-                    {
-                        str +=ids.charAt(i);
-                    }
-                    else if (ids.charAt(i) == ',' )
-                    {
-                        // TODO@chensong Java的接口定义需要这样玩的哈
-                        if (str != "")
-                        {
-                            imgids.add(Long.parseLong(str));
-
-                            str = "";
-                        }
-                    }
-                    if (ids.length() ==  (i+1) )
-                    {
-                        if (str != "")
-                        {
-                            imgids.add(Long.parseLong(str));
-
-                            str = "";
-                        }
-                    }
-                }
-            }
-
-        }
+//        List<Long>   imgids = new ArrayList< >();
+//        imgids = ids.getImageIds();
+//        String str = "";
+//        if (   ids.length() >0)
+//        {
+//            if (ids.charAt(0) != '-')
+//            {
+//                for (int i = 0; i < ids.length(); ++i)
+//                {
+//                    log.info("[i = " + i + "],[ char = " + ids.charAt(i) + "][ size = " + ids.length() + "]");
+//                    if (ids.charAt(i) < ('9' +1) && ids.charAt(i) > ('0' -1))
+//                    {
+//                        str +=ids.charAt(i);
+//                    }
+//                    else if (ids.charAt(i) == ',' )
+//                    {
+//                        // TODO@chensong Java的接口定义需要这样玩的哈
+//                        if (str != "")
+//                        {
+//                            imgids.add(Long.parseLong(str));
+//
+//                            str = "";
+//                        }
+//                    }
+//                    if (ids.length() ==  (i+1) )
+//                    {
+//                        if (str != "")
+//                        {
+//                            imgids.add(Long.parseLong(str));
+//
+//                            str = "";
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
 
 
         int result = 0;
 //        List< DownloadDataProjection> downloadDatalist = null;
-        for (Long v : imgids)
+        for (Long v : ids.getImageIds())
         {
             log.info("imgid = " + v);
         }
 //        if (imgids.size()> 0)
         {
-            List<VideoImgStorageProjection> downloadDatalist = videoImgStorageService.findVideoImageAndDeviceIds(imgids);
+            List<VideoImgStorageProjection> downloadDatalist = videoImgStorageService.findVideoImageAndDeviceIds(ids.getImageIds());
 //            return new ReslutDownload(downloadDatalist.toString(), result);
 
             log.info("downloadDatalist ==>>" + downloadDatalist.size());
             if (null != downloadDatalist && downloadDatalist.size() > 0)
             {
                 String imgprofixpath = env.getProperty("environment.storage.path");
-                str = "";
+//                str = "";
                 String DroneUrl = env.getProperty("environment.drone.url");
                 Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
 
@@ -348,7 +349,7 @@ public class VideoImgStorageController
                 DirectoryChecker.mkdirDirectory(imgprofixpath + zipPath);
 //                Path.of(zipPath);
                 String uuid = UUID.randomUUID().toString()   ;
-
+                DirectoryChecker. DeleteExpireDir(imgprofixpath + "/zip/");
                 zipPath += uuid+   ".zip";
 
                 try {
@@ -368,10 +369,140 @@ public class VideoImgStorageController
 //
 ////        str = downloadDatalist.toString();
 //
-        return new  ReslutDownload(str, result);
+        return new  ReslutDownload("", result);
 
 
 
+    }
+
+
+
+    @PostMapping("/download_video_search")
+    public ReslutDownload download_video_search
+            (
+                    @ApiParam(value = API_KEY_DESC, required = true)
+                    @RequestHeader(name = X_FRS_API_KEY_HEADER)
+                    final String apiKey,
+                    @ApiParam(value = API_STORAGE_START_TIMESTAMP_DES , required = true)
+                    @Valid
+                    @RequestParam(name = API_STORAGE_START_TIMESTAMP )
+                    final long start_timestamp,
+                    @ApiParam(value = API_STORAGE_END_TIMESTAMP_DES , required = true)
+                    @Valid
+                    @RequestParam(name = API_STORAGE_END_TIMESTAMP )
+                    final long end_timestamp,
+                    @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
+                    @Valid
+                    @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
+                    final String device_id//, //API_STORAGE_FACE_GENDER_DES
+//                    @ApiParam(value = "page", required = true)
+//                    @Validated
+//                    @RequestParam(value = "page" )
+//                    final int page,
+//                    @ApiParam(value = "page_size", required = true)
+//                    @Validated
+//                    @RequestParam(value = "page_size" )
+//                    final int pageSize
+            )
+    {
+        Pageable pageable = PageRequest.of(0, 100000, Sort.unsorted());
+        String url = env.getProperty("environment.storage.url");
+        log.info("storage path = " + url + ", device_id = " + device_id);
+
+        List<Integer>   devicdids = new ArrayList<>();
+        String str = "";
+        if (  device_id.length() >0)
+        {
+            log.info("device_id.charAt(0) = " + device_id.charAt(0));
+            if (device_id.charAt(0) != '-')
+            {
+                for (int i = 0; i < device_id.length(); ++i)
+                {
+                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+                    {
+                        str +=device_id.charAt(i);
+                    }
+                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i)*/ )
+                    {
+                        // TODO@chensong Java的接口定义需要这样玩的哈
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                        devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
+                    }
+                    if (device_id.length() ==  (i+1) )
+                    {
+                        if (str != "")
+                        {
+                            devicdids.add(Integer.parseInt(str));
+//                        devicdids.add(Integer.parseInt(str));
+
+                            str = "";
+                        }
+                    }
+                }
+            }
+        }
+
+        for(Integer v : devicdids)
+        {
+            log.info("----> devieid = " + v);
+        }
+        String zip_url = "";
+        int result = 0;
+        List<VideoImgStorageProjection>  videoImgStorageProjectionPage = videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  devicdids, start_timestamp, end_timestamp, pageable).getContent();
+       if (videoImgStorageProjectionPage == null)
+       {
+           result = 300;
+       }
+       else if (videoImgStorageProjectionPage.size() <= 0)
+       {
+           result = 400;
+       }
+       else
+       {
+           String imgprofixpath = env.getProperty("environment.storage.path");
+//           zip_url = "";
+           String DroneUrl = env.getProperty("environment.drone.url");
+           Map<Integer, DeviceInfo> deviceInfoMap = Http_Client.GetDeviceListInfo(DroneUrl + HttpDefault.DRONE_API_DEVICE_LIST);
+
+           Date date = new Date();
+           SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyyMMdd");
+           String zipPath = "/zip/" + file_prefixDate.format(date) + "/"    ;
+
+           DirectoryChecker.mkdirDirectory(imgprofixpath + zipPath);
+//                Path.of(zipPath);
+           String uuid = UUID.randomUUID().toString()   ;
+           DirectoryChecker. DeleteExpireDir(imgprofixpath + "/zip/");
+           zipPath += uuid+   ".zip";
+
+
+           try {
+               VideoImgZipFile.zipImages(imgprofixpath, videoImgStorageProjectionPage, imgprofixpath + zipPath, deviceInfoMap );
+           }
+           catch (IOException e)
+           {
+               result = 200;
+               log.info( e.getMessage());
+           }
+
+           return new  ReslutDownload(env.getProperty("environment.storage.url") + zipPath, result);
+       }
+//        return new VideoImgStorage(videoImgStorageService.listStorageVideoImgAndDeiveId(  devicdids,  pageable).map(videoImgStorageMapper::toResponseDto/*SaveFaceImgMapper::toResponseDto*/),
+//                url);
+//        return null;
+        //return new StorageImg(storageSaveFaceImgService.findStorageImg(apiKey, timestamp, pageable));
+//        return new StorageImg(saveFaceImgService.listStorageImgs(apiKey, timestamp, pageable) .map( p -> new StorageImgDto()));
+
+        result = 500;
+//
+//
+////        str = downloadDatalist.toString();
+//
+        return new  ReslutDownload(zip_url, result);
     }
 
     @RequiredArgsConstructor

@@ -16,15 +16,29 @@
 
 package com.exadel.frs;
 
+import com.exadel.frs.core.trainservice.util.DirectoryChecker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.Base64Utils;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,10 +48,93 @@ import java.util.zip.ZipOutputStream;
 //@EnableFeignClients(basePackages = "com")
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class TrainServiceApplication {
+    public static String DEFAULT_PRIVATE_KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAICH+nMOUCp/XcNs/mVUTaShftG8koZ+sDkyXldYJDqQ1CTJvYy/UvwY4gwu+XIxa3czLnB6KWQkZZL1H3jeDtl7dtlmIJX33gEW9fQh0my1WimkqImWUXWLv7pQ2Oj06v+rMUFGbLvRnmLjgGG8rCzfaA8dLhKJvWnWYNdVtXolAgMBAAECgYBI72CSS4v4IaBOVhoh2+3XPwEc+TnYcimDu25HeC/OwAJyAby7EpJ/lYsoSLuqLhsCYBu5HclBF1pAQzKhvriDqSqq8fs0psToB3PrRDbTbqg6XrWxOjf/5xqa1mN/tICZgqItnNkFT0w+WkBJpxZfMdohw3raEDPGSrr9UZj9vQJBALWvD3Y3oAFgaOdI3AiZKkZ+FunuTlq0r1bBNs/NYKxJBxI5HdZhKDt9JCv8Us3NGox9M4auSjwO/BQ/rOyTVE8CQQC1Gw+TXR6sbmrMlbgFYlEQiK0gJvz/V/MaJqO2lad+ojgEFu2CmXahlKPJoul4F40Etzft5B3HVs8Tz2132wlLAkAznFQ/F9QbMAD82qSuyJvKxJzLvUeC2tsIQQDKDSSOLHyWv6TrNlRQed8ho57+GWqWSCav9qjd4L/ZHLGJztxfAkAZLiIEQzY4k0GWIFrtpLXQrrAjgEg82GWchTLN+BDJspRHPUjYl62+2YPMTTJY2C1rMm48TTM2vAMepgB6YaHxAkEAgyAh6Zw4V4BROS+ysU7pjdsqqGIr8NWpjtQWKPLSn5RgDgzK6UMWpB7A39p3C/5vYR/Os288GdYUrASJzWr6Cw==";
 
+
+    public static String decrypt(String str, String privateKey)  {
+        byte[] inputByte = Base64Utils.decodeFromString(str);
+        byte[] decoded = Base64Utils.decodeFromString(privateKey);
+        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(decoded);
+        KeyFactory keyFactory = null;
+        try {
+            keyFactory = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("-----");
+//            throw new RuntimeException(e);
+        }
+        RSAPrivateKey RSAKey = null;
+        try {
+            RSAKey = (RSAPrivateKey) keyFactory.generatePrivate(pkcs8KeySpec);
+        } catch (InvalidKeySpecException e) {
+            System.out.println("---###--");
+//            throw new RuntimeException(e);
+        }
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("----$$$$$-");
+//            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            System.out.println("----………………-");
+//            throw new RuntimeException(e);
+        }
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, RSAKey);
+        } catch (InvalidKeyException e) {
+            System.out.println("--………………￥￥￥---");
+//            throw new RuntimeException(e);
+        }
+        try {
+            return new String(cipher.doFinal(inputByte));
+        } catch (IllegalBlockSizeException e) {
+            System.out.println("--@@@@---");
+//            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+
+            System.out.println("-----++++" + inputByte+"+++++++++" + e.toString());
+//            throw new RuntimeException(e);
+        }
+        return null;
+    }
+    public static String decrypt(String str) throws Exception {
+        return decrypt(str, DEFAULT_PRIVATE_KEY);
+    }
+    public static void test_dir( )
+    {
+        File folder = new File(".");
+        File[] files = folder.listFiles();
+
+        for (File file:files)
+        {
+            if (file.isDirectory())
+            {
+                file.delete();
+                file.getName();
+            }
+        }
+        Arrays.stream(files)
+                .filter(File::isDirectory)
+                .map(File::getName)
+                .forEach(System.out::println);
+    }
+    public static void test_encode()
+    {
+        String password  = "CMNOwA9FzmMBCXd306lUOm2lItMIDO6uwZDBYc+LBcnMwuAmHoFNlE+vpmqEvyKrhb6IFqQNecm3w2sRenByCxyyVKs9pJ47lU/8s9zFEWJMsdO70AgDcEY5tH0mnns1IWXdhw63gG/pah17vU6wMmbM6RFTeT50BMH4dbe/uuw=";
+        try {
+            String out =  decrypt(password);
+            System.out.println("out = " + out);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+//            throw new RuntimeException(e);
+        }
+    }
     public static void main(String[] args)
     {
+        test_encode();
 
+//        DirectoryChecker.DeleteExpireDir("C:\\Users\\Administrator\\Desktop\\beijingtaishan");
+        //test_dir();
         SimpleDateFormat file_prefixDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //            String new_file_name = file_prefixDate.format(day) + "_" +UUID.randomUUID();
         String master_file_name = file_prefixDate.format(new Date((long) 1716445538 *1000))  /*+ ".jpg"*/;
