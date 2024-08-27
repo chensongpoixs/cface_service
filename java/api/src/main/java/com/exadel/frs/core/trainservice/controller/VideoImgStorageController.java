@@ -391,10 +391,13 @@ public class VideoImgStorageController
                     @Valid
                     @RequestParam(name = API_STORAGE_END_TIMESTAMP )
                     final long end_timestamp,
-                    @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
+//                    @ApiParam(value = API_STORAGE_FACE_DEVICEID_DES  )
+//                    @Valid
+//                    @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
+//                    final String device_id//, //API_STORAGE_FACE_GENDER_DES
                     @Valid
-                    @RequestParam(defaultValue = "-1", name = API_STORAGE_FACE_DEVICEID, required = false )
-                    final String device_id//, //API_STORAGE_FACE_GENDER_DES
+                    @RequestBody
+                     DeviceArrayDto  device_ids
 //                    @ApiParam(value = "page", required = true)
 //                    @Validated
 //                    @RequestParam(value = "page" )
@@ -407,53 +410,53 @@ public class VideoImgStorageController
     {
         Pageable pageable = PageRequest.of(0, 100000, Sort.unsorted());
         String url = env.getProperty("environment.storage.url");
-        log.info("storage path = " + url + ", device_id = " + device_id);
+//        log.info("storage path = " + url + ", device_id = " + device_id);
 
-        List<Integer>   devicdids = new ArrayList<>();
+//        List<Integer>   devicdids = new ArrayList<>();
         String str = "";
-        if (  device_id.length() >0)
-        {
-            log.info("device_id.charAt(0) = " + device_id.charAt(0));
-            if (device_id.charAt(0) != '-')
-            {
-                for (int i = 0; i < device_id.length(); ++i)
-                {
-                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
-                    {
-                        str +=device_id.charAt(i);
-                    }
-                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i)*/ )
-                    {
-                        // TODO@chensong Java的接口定义需要这样玩的哈
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                        devicdids.add(Integer.parseInt(str));
+//        if (  device_id.length() >0)
+//        {
+//            log.info("device_id.charAt(0) = " + device_id.charAt(0));
+//            if (device_id.charAt(0) != '-')
+//            {
+//                for (int i = 0; i < device_id.length(); ++i)
+//                {
+//                    if (device_id.charAt(i) < ('9' +1) && device_id.charAt(i) > ('0' -1))
+//                    {
+//                        str +=device_id.charAt(i);
+//                    }
+//                    else if (device_id.charAt(i) == ',' /*|| device_id.length() ==  (i)*/ )
+//                    {
+//                        // TODO@chensong Java的接口定义需要这样玩的哈
+//                        if (str != "")
+//                        {
+//                            devicdids.add(Integer.parseInt(str));
+////                        devicdids.add(Integer.parseInt(str));
+//
+//                            str = "";
+//                        }
+//                    }
+//                    if (device_id.length() ==  (i+1) )
+//                    {
+//                        if (str != "")
+//                        {
+//                            devicdids.add(Integer.parseInt(str));
+////                        devicdids.add(Integer.parseInt(str));
+//
+//                            str = "";
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
-                            str = "";
-                        }
-                    }
-                    if (device_id.length() ==  (i+1) )
-                    {
-                        if (str != "")
-                        {
-                            devicdids.add(Integer.parseInt(str));
-//                        devicdids.add(Integer.parseInt(str));
-
-                            str = "";
-                        }
-                    }
-                }
-            }
-        }
-
-        for(Integer v : devicdids)
+        for(Integer v : device_ids.getDevice_ids())
         {
             log.info("----> devieid = " + v);
         }
         String zip_url = "";
         int result = 0;
-        List<VideoImgStorageProjection>  videoImgStorageProjectionPage = videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  devicdids, start_timestamp, end_timestamp, pageable).getContent();
+        List<VideoImgStorageProjection>  videoImgStorageProjectionPage = videoImgStorageService.listStorageVideoImgAndDeiveIdAndTimestamp(  device_ids.getDevice_ids(), start_timestamp, end_timestamp, pageable).getContent();
        if (videoImgStorageProjectionPage == null)
        {
            result = 300;

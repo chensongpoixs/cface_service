@@ -88,8 +88,8 @@ public class SecurityValidationFilter implements Filter {
         val httpResponse = (HttpServletResponse) servletResponse;
 //        httpRequest.g
 
-//        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
-//        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Credentials", "true");
+        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
+        ((HttpServletResponse) servletResponse).setHeader("Access-Control-Allow-Credentials", "true");
 //        Access-Control-Allow-Headers: X-Custom-Header
 //        Access-Control-Allow-Credentials: true
 //        log.info("==============================================doFilter==============================================" + httpRequest.getMethod().toLowerCase());
